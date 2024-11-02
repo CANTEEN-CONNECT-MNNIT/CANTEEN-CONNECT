@@ -36,10 +36,9 @@ const Sidebar = ({ isOpen, setOpen }) => {
 >
 
         <div className="p-4 flex justify-between items-center border-b">
-          {isOpen ? (
-            <h2 className="text-xl font-bold text-gray-800">Infinity Canteen</h2>
-          ) : (
-            <span className="text-xl font-bold text-gray-800">IC  </span>
+        <span className="pt-1 text-xl font-bold text-gray-800"><ion-icon name="fast-food-outline"/></span>
+          {isOpen && (
+            <h2 className="text-xl font-bold text-gray-800">Canteen Connect</h2>
           )}
           <button onClick={() => setOpen(!isOpen)} className="p-2 hover:bg-gray-100 rounded-full">
             {isOpen ? <FaRegArrowAltCircleLeft className="h-5 w-5" /> : <FaBars className="h-5 w-5" />}

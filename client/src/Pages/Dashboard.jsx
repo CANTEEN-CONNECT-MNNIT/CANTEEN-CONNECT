@@ -3,7 +3,7 @@ import Header from "../Components/Header/Header";
 import MainContent from "../Components/Main/MainContent";
 import Sidebar from "../Components/SideBar/Sidebar";
 
-const Home = () => {
+const Dashboard = () => {
   const [darkMode, setDarkMode] = useState(false);
   const [isOpen,setOpen]=useState(false);
 
@@ -21,4 +21,4 @@ const Home = () => {
   )
 };
 
-export default Home
+export default Dashboard
