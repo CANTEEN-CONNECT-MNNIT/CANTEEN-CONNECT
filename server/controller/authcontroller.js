@@ -17,7 +17,7 @@ const createrefreshandacesstoken = (id) => {
 };
 
 export const signup = asynchandler(async (req, res, next) => {
-  const { name, email, password, username, college, branch, year } = req.body;
+  const { name, email, password, username } = req.body;
   const user =
     (await User.findOne({ username })) || (await User.findOne({ email }));
   if (user) {
