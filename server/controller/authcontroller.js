@@ -2,6 +2,7 @@ import ApiError from '../utils/apierror.js';
 import asynchandler from '../utils/asynchandler.js';
 import User from '../models/usermodel.js';
 import jwt from 'jsonwebtoken';
+import { promisify } from 'util';
 
 const createrefreshandacesstoken = (id) => {
   const acesstoken = jwt.sign({ id: id }, process.env.ACESS_TOKEN_STRING, {
@@ -88,4 +89,62 @@ export const login = asynchandler(async (req, res, next) => {
       refreshtoken,
     },
   });
+});
+
+export const protect = asynchandler(async (req, res, next) => {
+  const test_token = req.headers.authorization;
+
+  // console.log(req.headers.authorization);
+
+  let acesstoken, refreshtoken;
+  if (test_token && test_token.startsWith('Bearer')) {
+    acesstoken = test_token.split(' ')[1];
+    refreshtoken = test_token.split(' ')[2];
+  } else {
+    acesstoken = req.cookies.acesstoken;
+    refreshtoken = req.cookies.refreshtoken;
+  }
+
+  // console.log(refreshtoken);
+
+  // console.log('Hello');
+
+  // console.log(acesstoken);
+
+  if (!acesstoken || !refreshtoken) {
+    return next(new ApiError('You have to login again or sign up', 400));
+  }
+
+  let decodedtoken = await promisify(jwt.verify)(
+    acesstoken,
+    process.env.ACESS_TOKEN_STRING
+  );
+
+  // console.log(decodedtoken);
+
+  if (!decodedtoken) {
+    decodedtoken = await promisify(jwt.verify)(
+      refreshtoken,
+      process.env.REFRESH_TOKEN_STRING
+    );
+  }
+
+  if (!decodedtoken) {
+    return next(new ApiError('You are unauthorised', 400));
+  }
+
+  const user = await User.findById(decodedtoken.id);
+  // console.log(user);
+
+  if (!user) {
+    next(new ApiError('User not found', 400));
+  }
+
+  if (await user.ispasswordchanged(decodedtoken.iat)) {
+    next(new ApiError('Password is changed you have to login again', 402));
+  }
+
+  req.user = user;
+
+  next();
 });

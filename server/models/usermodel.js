@@ -50,6 +50,12 @@ const userSchema = new mongoose.Schema({
     enum: ['Student', 'Staff', 'Canteen'],
     default: 'Student',
   },
+  orders: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Order',
+    },
+  ],
 });
 
 userSchema.pre('save', async function (next) {
@@ -62,6 +68,12 @@ userSchema.pre('save', async function (next) {
 
 userSchema.methods.comparepassword = async function (password) {
   return await bcrypt.compare(password, this.password);
+};
+
+userSchema.methods.ispasswordchanged = async function (jwttimestamp) {
+  // console.log(this.passwordchangedat.getTime());
+  // console.log(jwttimestamp * 1000);
+  return parseInt(this.passwordchangedat.getTime() / 1000) > jwttimestamp;
 };
 
 const User = mongoose.model('User', userSchema);
