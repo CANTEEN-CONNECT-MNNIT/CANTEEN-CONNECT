@@ -15,14 +15,16 @@ const FoodItems = ({darkMode}) => {
       <div className={`${darkMode ? 'bg-slate-800 text-white' : 'bg-slate-100 text-slate-800'} flex w-full flex-wrap gap-4 justify-center relative top-3`}>
         {FoodData.slice(0,8).map((food) => (
           <FoodCard 
-            key={food.id}  
-            id={food.id}
-            name={food.name}
-            price={food.price}
-            desc={food.desc}
-            rating={food.rating}
-            img={food.img}
-            handleToast={handleToast} 
+          key={food.id}
+          id={food.id}
+          name={food.name}
+          price={food.price}
+          desc={food.desc}
+          rating={food.rating}
+          img={food.img}
+          nutrients={food.nutrients}  
+          handleToast={handleToast} 
+          darkMode={darkMode}
           />
         ))}
       </div>

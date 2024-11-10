@@ -6,18 +6,25 @@ import {
 import { FaRegArrowAltCircleLeft, FaWallet, FaCoins } from "react-icons/fa";
 import { SlLocationPin } from "react-icons/sl";
 import { MdHeadphones,MdFavoriteBorder } from "react-icons/md";
-import { IoSettingsOutline } from "react-icons/io5";
+import { IoGiftOutline} from "react-icons/io5";
 
 const menuItems = [
   { icon: LuLayoutDashboard, label: 'Dashboard' },
   { icon: LuUtensils, label: 'Canteen' },
   { icon: SlLocationPin, label: 'Track Order' }, 
   { icon: MdFavoriteBorder, label: 'Favorites' }, 
-  { icon: IoSettingsOutline, label: 'Settings' },
+  { icon: IoGiftOutline, label: 'Offers' },
   { icon: MdHeadphones, label: 'Contact Us' }
 ];
 
-const Sidebar = ({ isOpen, setOpen, darkMode }) => {
+const scrollToFooter = () => {
+  const footerElement = document.querySelector('footer');
+  if (footerElement) {
+    footerElement.scrollIntoView({ behavior: 'smooth' });
+  }
+};
+
+const Sidebar = ({ isOpen, setOpen, darkMode,setCurrentPage }) => {
   return (
     <>
       {/* Overlay */}
@@ -76,6 +83,10 @@ const Sidebar = ({ isOpen, setOpen, darkMode }) => {
         <nav className="p-4 flex flex-col items-center">
           {menuItems.map((item, index) => (
             <button
+            onClick={() => {
+              if(item.label=='Contact Us'){
+                scrollToFooter();}
+              setCurrentPage(item.label)}} 
               key={index}
               className={`flex items-center space-x-3 p-3 rounded-lg mb-1 transition-colors justify-center w-full text-left ${darkMode ? 'hover:bg-gray-800 text-white' : 'hover:bg-gray-100 text-gray-800'}`}
             >
