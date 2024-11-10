@@ -6,7 +6,7 @@ import authroute from './router/authrouter.js';
 import itemroute from './router/fooditemrouter.js';
 import canteenroute from './router/canteenrouter.js';
 import globalerrorhandler from './controller/errorcontroller.js';
-
+import cartrouter from './router/cartrouter.js';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 
@@ -32,6 +32,7 @@ app.use(protect);
 
 app.use('/api/item', itemroute);
 app.use('/api/canteen', canteenroute);
+app.use('cart', cartrouter);
 app.use(globalerrorhandler);
 
 export default app;
