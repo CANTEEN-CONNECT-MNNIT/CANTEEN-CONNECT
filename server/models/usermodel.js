@@ -42,13 +42,20 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['Student', 'Staff', 'Canteen'],
+    enum: ['Student', 'Canteen'],
     default: 'Student',
   },
+  cardupdate: {},
   orders: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Order',
+    },
+  ],
+  cart: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'FoodItem',
     },
   ],
 });

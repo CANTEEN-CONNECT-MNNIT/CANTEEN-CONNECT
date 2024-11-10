@@ -17,10 +17,9 @@ const createrefreshandacesstoken = (id) => {
 };
 
 export const signup = asynchandler(async (req, res, next) => {
-  console.log("invoke")
-  const { name, email, password, } = req.body;
-  const user =
-     (await User.findOne({ email }));
+  console.log('invoke');
+  const { name, email, password } = req.body;
+  const user = await User.findOne({ email });
   if (user) {
     return next(new ApiError('User are already exist', 404));
   }
@@ -43,18 +42,19 @@ export const signup = asynchandler(async (req, res, next) => {
   }
 
   const options = {
-    httpOnly: true, 
+    httpOnly: true,
     secure: false,
-    sameSite: 'Lax'
-  }
-  
-  res.cookie('acesstoken', acesstoken, options)
-  .cookie('refreshtoken', refreshtoken, options)
+    sameSite: 'Lax',
+  };
+
+  res
+    .cookie('acesstoken', acesstoken, options)
+    .cookie('refreshtoken', refreshtoken, options);
 
   res.status(201).json({
     message: 'User Account created and logged in Succesfully',
     data: {
-      user: requser,
+      user: newuser,
       acesstoken,
       refreshtoken,
     },
@@ -64,7 +64,7 @@ export const signup = asynchandler(async (req, res, next) => {
 export const login = asynchandler(async (req, res, next) => {
   const { email, password } = req.body;
 
-  if (!email ) {
+  if (!email) {
     return next(new ApiError('Please enter email', 400));
   }
 
@@ -72,13 +72,10 @@ export const login = asynchandler(async (req, res, next) => {
     return next(new ApiError('Please Enter the password', 400));
   }
 
-  const requser =
-    (await User.findOne({ email }).select('+password'));
+  const requser = await User.findOne({ email }).select('+password');
 
   if (!requser) {
-    return next(
-      new ApiError('User Not found Please Enter valid email ', 400)
-    );
+    return next(new ApiError('User Not found Please Enter valid email ', 400));
   }
 
   if (!(await requser.comparepassword(password))) {
@@ -93,13 +90,14 @@ export const login = asynchandler(async (req, res, next) => {
   }
 
   const options = {
-    httpOnly: true, 
+    httpOnly: true,
     secure: false,
-    sameSite: 'Lax'
-  }
-  
-  res.cookie('acesstoken', acesstoken, options)
-  .cookie('refreshtoken', refreshtoken, options)
+    sameSite: 'Lax',
+  };
+
+  res
+    .cookie('acesstoken', acesstoken, options)
+    .cookie('refreshtoken', refreshtoken, options);
 
   res.status(201).json({
     message: 'User login succesfully',
@@ -114,7 +112,7 @@ export const login = asynchandler(async (req, res, next) => {
 export const protect = asynchandler(async (req, res, next) => {
   const test_token = req.headers.authorization;
 
-  // console.log(req.headers.authorization);
+  console.log('protect middleware is invoked');
 
   let acesstoken, refreshtoken;
   if (test_token && test_token.startsWith('Bearer')) {
@@ -125,11 +123,11 @@ export const protect = asynchandler(async (req, res, next) => {
     refreshtoken = req.cookies.refreshtoken;
   }
 
-  // console.log(refreshtoken);
+  console.log(refreshtoken);
 
-  // console.log('Hello');
+  console.log('Hello');
 
-  // console.log(acesstoken);
+  console.log(acesstoken);
 
   if (!acesstoken || !refreshtoken) {
     return next(new ApiError('You have to login again or sign up', 400));

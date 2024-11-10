@@ -10,7 +10,7 @@ const canteenSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    College: {
+    college: {
       type: String,
       required: true,
     },
