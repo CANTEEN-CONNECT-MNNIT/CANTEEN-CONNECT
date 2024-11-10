@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { FaHeart, FaShoppingCart, FaStar } from 'react-icons/fa'; // Import icons from react-icons
+import { FaHeart, FaShoppingCart, FaStar, FaInfoCircle } from 'react-icons/fa'; // Import icons from react-icons
 import { useDispatch } from 'react-redux';
 import { addToCart } from '../../Redux/Slices/cartSlice';
 
-const FoodCard = ({ id, name, price, desc, img, rating, handleToast, darkMode }) => {
+const FoodCard = ({ id, name, price, desc, img, rating, nutrients, handleToast, darkMode }) => {
   const [isLoved, setIsLoved] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [showInfo, setShowInfo] = useState(false); 
   const dispatch = useDispatch();
 
   const handleAddToCart = () => {
@@ -29,7 +30,7 @@ const FoodCard = ({ id, name, price, desc, img, rating, handleToast, darkMode })
         <img
           src={img}
           alt={name}
-          className="w-full h-40 object-cover transform transition-transform duration-700 group-hover:scale-110" // Adjusted height
+          className="w-full h-40 object-cover transform transition-transform duration-700 group-hover:scale-110" 
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
@@ -42,10 +43,15 @@ const FoodCard = ({ id, name, price, desc, img, rating, handleToast, darkMode })
           }`}
         >
           <FaHeart
-            className={`w-5 h-5 transition-transform duration-300 ${
-              isLoved ? 'fill-current scale-110' : ''
-            }`}
+            className={`w-5 h-5 transition-transform duration-300 ${isLoved ? 'fill-current scale-110' : ''}`}
           />
+        </button>
+
+        <button
+          onClick={() => setShowInfo(true)} 
+          className="absolute top-3 left-3 p-2.5 rounded-full backdrop-blur-md bg-white/20 text-white hover:bg-white/40"
+        >
+          <FaInfoCircle className="w-5 h-5" />
         </button>
 
         <div className="absolute bottom-3 left-3 right-3 flex justify-between items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -65,9 +71,7 @@ const FoodCard = ({ id, name, price, desc, img, rating, handleToast, darkMode })
 
       <div className="flex flex-col gap-3 p-5"> 
         <h3 className={`font-bold text-lg ${textColor} mb-1`}>{name}</h3>
-        <p className={`text-sm ${descColor} line-clamp-2`}>
-          {desc}
-        </p>
+        <p className={`text-sm ${descColor} line-clamp-2`}>{desc}</p>
 
         <button
           onClick={handleAddToCart}
@@ -77,6 +81,27 @@ const FoodCard = ({ id, name, price, desc, img, rating, handleToast, darkMode })
           <span className="font-medium">Add to Cart</span>
         </button>
       </div>
+
+      {showInfo && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full">
+            <h2 className="text-xl font-semibold mb-4">More about {name}</h2>
+            <div className="mb-4">
+              <p className="text-gray-700 dark:text-gray-300 mb-2">{desc}</p>
+              <div className="text-sm text-gray-600 dark:text-gray-400">
+                <strong>Nutrients:</strong>
+                <p>{nutrients}</p>
+              </div>
+            </div>
+            <button
+              onClick={() => setShowInfo(false)} 
+              className="mt-4 bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded-lg"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
