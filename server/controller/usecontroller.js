@@ -41,8 +41,6 @@ export const update = asynchandler(async (req, res, next) => {
   });
 });
 
-export const forgotpassword = asynchandler(async (req, res, next) => {});
-
 export const getme = asynchandler(async (req, res, next) => {
   const id = req.user._id;
   const getuser = await User.findById(id);
