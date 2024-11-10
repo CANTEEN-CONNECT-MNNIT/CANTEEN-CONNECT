@@ -4,7 +4,7 @@ import {
   getcart,
   deleteincart,
   createorder,
-} from '../controller/usercontroller.js';
+} from '../controller/cartcontroller.js';
 const router = express.Router();
 
 router.patch('/update/:id', addincart);
