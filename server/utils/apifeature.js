@@ -5,10 +5,13 @@ class Apifeature {
   }
 
   filter() {
-    console.log(this.queryobj);
-  }
+    console.log(this.queryobj.name);
 
-  paginate() {}
+    this.models = this.models.find({
+      name: { $regex: this.queryobj.name, $options: 'i' },
+    });
+    return this;
+  }
 }
 
 export default Apifeature;

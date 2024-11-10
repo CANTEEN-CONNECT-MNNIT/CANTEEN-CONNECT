@@ -60,9 +60,82 @@ export const getall = asynchandler(async (req, res, next) => {
 
   console.log(queryobj);
 
-  const applyfilter = new Apifeature(Fooditem.find(), queryobj);
+  const applyfilter = new Apifeature(Fooditem.find(), queryobj).filter();
+
+  const allitems = await applyfilter.models;
 
   res.status(201).json({
     message: 'sucess',
+    data: {
+      allitems,
+    },
+  });
+});
+
+export const getitem = asynchandler(async (req, res, next) => {
+  const id = req.params.id;
+
+  if (!id) {
+    return next(new ApiError('Item Not found ', 403));
+  }
+
+  const reqitem = await Fooditem.findById(id);
+
+  if (!reqitem) {
+    return next(new ApiError('Item Not found ', 403));
+  }
+
+  res.status(201).json({
+    message: 'Item fetch sucessfully',
+    data: {
+      reqitem,
+    },
+  });
+});
+
+export const deleteitem = asynchandler(async (req, res, next) => {
+  const id = req.params.id;
+
+  if (!id) {
+    return next(new ApiError('Item Not found ', 403));
+  }
+
+  const reqitem = await Fooditem.findById(id);
+
+  if (!reqitem) {
+    return next(new ApiError('Item Not found ', 403));
+  }
+
+  await Fooditem.findByIdAndDelete(id);
+
+  res.status(201).json({
+    message: 'Item delete sucessfully',
+  });
+});
+
+export const updateitem = asynchandler(async (req, res, next) => {
+  if (!id) {
+    return next(new ApiError('Item Not found ', 403));
+  }
+
+  const { name, description, price, image, available, quantity } = req.body;
+
+  const reqitem = await Fooditem.findById(id);
+
+  if (!reqitem) {
+    return next(new ApiError('Item Not found ', 403));
+  }
+
+  const updateditem = await Fooditem.findByIdAndUpdate(
+    id,
+    { name, description, price, image, available, quantity },
+    { new: true, runValidators: true }
+  );
+
+  res.status(201).json({
+    message: 'Task updataed Sucessfully',
+    data: {
+      updateditem,
+    },
   });
 });
