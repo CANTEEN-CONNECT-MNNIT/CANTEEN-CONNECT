@@ -3,7 +3,7 @@ import Sidebar from "../Components/SideBar/Sidebar";
 import NavigationBar from "../Components/Header/NavigationBar";
 import Header from "../Components/Header/Header";
 import MainContent from "../Components/Main/MainContent";
-import Footer  from "../Components/Home/Footer";
+import { Footer } from "../Components/Home/Footer";
 
 
 const Dashboard = ({CurrentPage,setCurrentPage,darkMode,setDarkMode,isOpen,setOpen}) => {
