@@ -28,6 +28,10 @@ const fooditemSchema = new mongoose.Schema(
       ref: 'Canteen',
       required: true,
     },
+    quantity: {
+      type: Number,
+      default: 1,
+    },
   },
   { timestamps: true }
 );

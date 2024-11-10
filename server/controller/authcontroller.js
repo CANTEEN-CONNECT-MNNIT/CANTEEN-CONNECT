@@ -101,7 +101,7 @@ export const login = asynchandler(async (req, res, next) => {
 export const protect = asynchandler(async (req, res, next) => {
   const test_token = req.headers.authorization;
 
-  // console.log(req.headers.authorization);
+  console.log('protect middleware is invoked');
 
   let acesstoken, refreshtoken;
   if (test_token && test_token.startsWith('Bearer')) {
@@ -112,11 +112,11 @@ export const protect = asynchandler(async (req, res, next) => {
     refreshtoken = req.cookies.refreshtoken;
   }
 
-  // console.log(refreshtoken);
+  console.log(refreshtoken);
 
-  // console.log('Hello');
+  console.log('Hello');
 
-  // console.log(acesstoken);
+  console.log(acesstoken);
 
   if (!acesstoken || !refreshtoken) {
     return next(new ApiError('You have to login again or sign up', 400));
