@@ -42,8 +42,15 @@ export const signup = asynchandler(async (req, res, next) => {
     return next(new ApiError('Token cannot generated', 402));
   }
 
+  newuser.password = undefined;
+
   res.status(201).json({
     message: 'User Account created Succesfully',
+    data: {
+      user: newuser,
+      acesstoken,
+      refreshtoken,
+    },
   });
 });
 
