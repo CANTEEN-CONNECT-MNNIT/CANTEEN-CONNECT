@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import Sidebar from "../Components/SideBar/Sidebar";
 import NavigationBar from "../Components/Header/NavigationBar";
-import { Footer } from "../Components/Home/Footer";
+import Footer from "../Components/Home/Footer";
 import OrdersDetails from "../Components/Canteen-Merchant/OrdersTable";
 import RevenueStats from "../Components/Canteen-Merchant/RevenueStats";
 import MenuManagement from "../Components/Canteen-Merchant/MenuMangement";

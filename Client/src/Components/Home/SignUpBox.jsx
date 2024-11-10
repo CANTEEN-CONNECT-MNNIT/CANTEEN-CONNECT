@@ -9,15 +9,34 @@ export default function SignUpBox({ setSuccess, setShowLoginModal, setShowSignUp
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    }
+  });
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [error,setError] = useState("");
 
-  const handleSignUp = async () => {
-    setTimeout(() => {
-      setSuccess(true);
-    }, 500);
+  const handleSignUp = async (data) => {
+    console.log("SignUpBox:", data);
+    setSuccess(false);
+    setError("");
+    try {
+      const res = await authService.signup(data);
+      if (res) {
+        setTimeout(() => {
+          setSuccess(true);
+        }, 500);
+      }
+    } catch (error) {
+      console.log(error.response?.data?.message);
+      setError(error.response?.data?.message);
+    }
   };
 
   const handleGoogleSignin = () => {
@@ -41,7 +60,7 @@ export default function SignUpBox({ setSuccess, setShowLoginModal, setShowSignUp
           className="fixed inset-0 bg-black bg-opacity-50 transition-opacity duration-300"
           onClick={onClose}
         />
-        
+
         <div
           className={`relative w-full max-w-md rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-white'} p-8 shadow-xl transform transition-all duration-300 ease-out`}
         >
@@ -93,66 +112,74 @@ export default function SignUpBox({ setSuccess, setShowLoginModal, setShowSignUp
               {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
             </div>
 
-             {/* Password Input */}
-      <div>
-        <label htmlFor="password" className={`block text-sm font-medium ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>
-          Password
-        </label>
-        <div className="relative">
-          <input
-            type={showPassword ? 'text' : 'password'} // Toggle between text and password
-            id="password"
-            placeholder="Your password..."
-            {...register('password', {
-              required: 'Password is required',
-              minLength: { value: 6, message: 'Password must be at least 6 characters' },
-            })}
-            className="w-full mt-1 px-3 py-2 border rounded-md"
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)} // Toggle password visibility
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
-          >
-            {showPassword ? <FaEyeSlash /> : <FaEye />}  {/* Show/Hide icon */}
-          </button>
-        </div>
-        {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
-      </div>
+            {/* Password Input */}
+            <div>
+              <label htmlFor="password" className={`block text-sm font-medium ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>
+                Password
+              </label>
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'} // Toggle between text and password
+                  id="password"
+                  placeholder="Your password..."
+                  {...register('password', {
+                    required: 'Password is required',
+                    minLength: { value: 6, message: 'Password must be at least 6 characters' },
+                    pattern: {
+                      value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                      message: "Password must contain at least one uppercase letter, one lowercase letter, one number, one special character, and be at least 8 characters long.",
+                    },
+                  })}
+                  className="w-full mt-1 px-3 py-2 border rounded-md"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)} // Toggle password visibility
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+                >
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}  {/* Show/Hide icon */}
+                </button>
+              </div>
+              {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
+            </div>
 
-      {/* Confirm Password Input */}
-      <div>
-        <label htmlFor="confirmPassword" className={`block text-sm font-medium ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>
-          Confirm Password
-        </label>
-        <div className="relative">
-          <input
-            type={showConfirmPassword ? 'text' : 'password'} // Toggle between text and password
-            id="confirmPassword"
-            placeholder="Confirm your password..."
-            {...register('confirmPassword', {
-              required: 'Please confirm your password',
-              validate: (value) => value === password || 'Passwords do not match',
-            })}
-            className="w-full mt-1 px-3 py-2 border rounded-md"
-          />
-          <button
-            type="button"
-            onClick={() => setShowConfirmPassword(!showConfirmPassword)} // Toggle confirm password visibility
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
-          >
-            {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}  {/* Show/Hide icon */}
-          </button>
-        </div>
-        {errors.confirmPassword && <p className="text-red-500 text-sm">{errors.confirmPassword.message}</p>}
-      </div>
-
+            {/* Confirm Password Input */}
+            <div>
+              <label htmlFor="confirmPassword" className={`block text-sm font-medium ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>
+                Confirm Password
+              </label>
+              <div className="relative">
+                <input
+                  type={showConfirmPassword ? 'text' : 'password'} // Toggle between text and password
+                  id="confirmPassword"
+                  placeholder="Confirm your password..."
+                  {...register('confirmPassword', {
+                    required: 'Please confirm your password',
+                    validate: (value) => value === password || 'Passwords do not match',
+                  })}
+                  className="w-full mt-1 px-3 py-2 border rounded-md"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)} // Toggle confirm password visibility
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+                >
+                  {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}  {/* Show/Hide icon */}
+                </button>
+              </div>
+              {errors.confirmPassword && <p className="text-red-500 text-sm">{errors.confirmPassword.message}</p>}
+            </div>
+            <div>
+              {error.length>0 && (
+                <p className="text-red-500 text-sm">{error}</p>
+              )}
             <button
               type="submit"
               className="w-full rounded-md bg-orange-500 px-4 py-2 text-white hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-coral-500 focus:ring-offset-2"
             >
               Sign Up
             </button>
+            </div>
 
             <div className="text-center text-gray-600 mt-4">
               Already have an account?

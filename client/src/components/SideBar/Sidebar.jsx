@@ -1,24 +1,30 @@
 import React from 'react';
 import { 
   LuLayoutDashboard, 
-  LuUtensils, 
+  LuUtensils 
 } from "react-icons/lu";
-import { FaRegArrowAltCircleLeft,FaMapMarkerAlt ,FaWallet,FaCoins  } from "react-icons/fa";
-import { MdHeadphones, MdHistory } from "react-icons/md";
-import { IoSettingsOutline } from "react-icons/io5";
-import { BiDonateHeart } from 'react-icons/bi';
-import { FaBars } from "react-icons/fa6";
+import { FaRegArrowAltCircleLeft, FaWallet, FaCoins } from "react-icons/fa";
+import { SlLocationPin } from "react-icons/sl";
+import { MdHeadphones,MdFavoriteBorder } from "react-icons/md";
+import { IoGiftOutline} from "react-icons/io5";
 
 const menuItems = [
   { icon: LuLayoutDashboard, label: 'Dashboard' },
-  { icon: LuUtensils, label: 'Food Order' },
-  { icon: FaMapMarkerAlt, label: 'Track Order' },
-  { icon: MdHistory, label: 'Order History' },
-  { icon: IoSettingsOutline, label: 'Settings' },
+  { icon: LuUtensils, label: 'Canteen' },
+  { icon: SlLocationPin, label: 'Track Order' }, 
+  { icon: MdFavoriteBorder, label: 'Favorites' }, 
+  { icon: IoGiftOutline, label: 'Offers' },
   { icon: MdHeadphones, label: 'Contact Us' }
 ];
 
-const Sidebar = ({ isOpen, setOpen }) => {
+const scrollToFooter = () => {
+  const footerElement = document.querySelector('footer');
+  if (footerElement) {
+    footerElement.scrollIntoView({ behavior: 'smooth' });
+  }
+};
+
+const Sidebar = ({ isOpen, setOpen, darkMode,setCurrentPage }) => {
   return (
     <>
       {/* Overlay */}
@@ -30,95 +36,72 @@ const Sidebar = ({ isOpen, setOpen }) => {
       )}
 
       {/* Sidebar */}
-      <div
-  className={`fixed top-0 left-0 h-full bg-white shadow-lg z-50
-     transition-all duration-500 ease-in-out ${isOpen ? 'w-60' : 'w-20'}`}
->
-
-        <div className="p-4 flex justify-between items-center border-b">
-        <span className="pt-1 text-xl font-bold text-gray-800"><ion-icon name="fast-food-outline"/></span>
-          {isOpen && (
-            <h2 className="text-xl font-bold text-gray-800">Canteen Connect</h2>
-          )}
-          <button onClick={() => setOpen(!isOpen)} className="p-2 hover:bg-gray-100 rounded-full">
-            {isOpen ? <FaRegArrowAltCircleLeft className="h-5 w-5" /> : <FaBars className="h-5 w-5" />}
+      <div className={`fixed top-0 left-0 h-full ${darkMode ? 'bg-slate-700' : 'bg-white'} shadow-lg z-50 transition-all duration-300 ease-in-out ${isOpen ? 'w-60' : 'w-0 overflow-hidden'}`}>
+        <div className={`p-4 flex justify-between items-center border-b ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+          <h2 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Canteen Connect</h2>
+          <button onClick={() => setOpen(!isOpen)} className={`p-2 rounded-full ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
+            <FaRegArrowAltCircleLeft className={`size-5 ${darkMode ? 'text-white' : 'text-gray-800'}`} /> 
           </button>
         </div>
 
-
-
-          {/* Profile Section */}
-        {isOpen ? (
-          <div className="py-4 border-b text-center">
-            <div className="flex flex-col items-center gap-1">
-              <div className="relative">
-                <img
-                  src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=150"
-                  alt="Profile"
-                  className="w-20 h-20 rounded-full object-cover border-2 border-orange-500"
-                />
-              </div>
-              <div className="space-y-1">
-                <h3 className="font-medium text-gray-800">John Doe</h3>
-              </div>
+        {/* Profile Section */}
+        {isOpen && (
+          <div className={`py-4 text-center border-b ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+            <div className="flex flex-col items-center">
+              <img
+                src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=150"
+                alt="Profile"
+                className="w-20 h-20 rounded-full object-cover border-2 border-orange-500"
+              />
+              <h3 className={`font-semibold text-lg ${darkMode ? 'text-white' : 'text-gray-800 '}`}>User</h3>
             </div>
           </div>
-        ):(
-              <div className="pl-3 pt-3 realtive">
-                <img
-                  src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=150"
-                  alt="Profile"
-                  className="w-16 h-16 rounded-full object-cover border-2 border-orange-500"
-                />
-              </div>
         )}
 
         {/* Wallet Section */}
         {isOpen && (
-          <div className="p-2 border-b bg-orange-50">
-            <div className="flex items-center justify-between mb-1">
-              <div className="flex items-center space-x-2">
-                <FaWallet className="h-5 w-5 text-orange-500" />
-                <span className="font-medium text-gray-800">My Wallet</span>
-              </div>
+          <div className={`p-2 border-b ${darkMode ? 'bg-gray-500 border-gray-700' : 'bg-orange-50 border-gray-200'}`}>
+            <div className="flex items-center gap-3 ml-4 mb-1">
+              <span className={`${darkMode ? 'text-white' : 'text-gray-800'}`}>My Wallet</span>
+              <FaWallet className={`${darkMode ? 'text-orange-500' : 'text-gray-800'}`} />
             </div>
-            <div className="bg-white p-3 rounded-lg shadow-sm">
+            <div className={`p-3 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-white'} shadow-sm`}>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-500">Available Balance</p>
-                  <p className="text-l font-bold text-gray-800">2,500 coins</p>
+                  <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Available Balance</p>
+                  <p className={`text-lg font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>2,500 coins</p>
                 </div>
                 <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
-                  <span className="text-orange-500 font-bold"><FaCoins /></span>
+                  <FaCoins className="text-orange-500 font-bold" />
                 </div>
               </div>
             </div>
           </div>
         )}
 
-
+        {/* Navigation Menu */}
         <nav className="p-4 flex flex-col items-center">
           {menuItems.map((item, index) => (
             <button
+            onClick={() => {
+              if(item.label=='Contact Us'){
+                scrollToFooter();}
+              setCurrentPage(item.label)}} 
               key={index}
-              className={`flex items-center space-x-3 p-3 hover:bg-gray-100 rounded-lg mb-1 transition-colors
-                ${isOpen ? 'justify-start' : 'justify-center'}
-              `}
+              className={`flex items-center space-x-3 p-3 rounded-lg mb-1 transition-colors justify-center w-full text-left ${darkMode ? 'hover:bg-gray-800 text-white' : 'hover:bg-gray-100 text-gray-800'}`}
             >
-              <item.icon className="h-5 w-5 text-gray-600" />
-              {isOpen && <span className="text-gray-700">{item.label}</span>}
+              <item.icon className={`h-5 w-5 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`} />
+              <span>{item.label}</span>
             </button>
           ))}
         </nav>
 
         <div className="absolute bottom-5 w-full px-4">
           {isOpen && (
-            <>
-              <button className="w-full flex items-center justify-center space-x-2 bg-slate-400 text-white py-3 px-4 rounded-lg hover:bg-red-500 transition-colors mt-2">
-                <span>Sign Out</span>
-              </button>
-            </>
-          ) }
+            <button className={`w-full flex items-center justify-center space-x-2 py-3 rounded-lg transition-colors mt-2 ${darkMode ? 'bg-red-500 text-white' : 'bg-slate-400 text-white'} hover:bg-red-600`}>
+              <span>Sign Out</span>
+            </button>
+          )}
         </div>
       </div>
     </>

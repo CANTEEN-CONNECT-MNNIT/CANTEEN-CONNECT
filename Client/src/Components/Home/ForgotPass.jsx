@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm } from '../../../node_modules/react-hook-form/dist';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 export default function ForgotPassword({ onClose, darkMode }) {

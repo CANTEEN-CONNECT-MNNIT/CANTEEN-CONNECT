@@ -2,14 +2,44 @@ import React, { useState, useEffect } from 'react';
 import { IoFlameSharp } from "react-icons/io5";
 
 const trendingItems = [
-  { id: 't1', name: 'Supreme Pizza', image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&q=80&w=500', price: 19.99, orders: 250 },
-  { id: 't2', name: 'Deluxe Burger', image: 'https://images.unsplash.com/photo-1586190848861-99aa4a171e90?auto=format&fit=crop&q=80&w=500', price: 15.99, orders: 180 },
-  { id: 't3', name: 'Sushi Platter', image: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&q=80&w=500', price: 24.99, orders: 150 },
-  { id: 't4', name: 'Pasta Carbonara', image: 'https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?auto=format&fit=crop&q=80&w=500', price: 17.99, orders: 220 },
-  { id: 't5', name: 'Tacos', image: 'https://images.unsplash.com/photo-1604147706283-ec292055ff15?auto=format&fit=crop&q=80&w=500', price: 10.99, orders: 190 },
+  {
+    id: 't1',
+    name: 'Butter Chicken',
+    image: 'https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?auto=format&fit=crop&q=80&w=500',
+    price: 120,
+    orders: 280
+  },
+  {
+    id: 't2',
+    name: 'Biryani',
+    image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&q=80&w=500',
+    price: 100,
+    orders: 310
+  },
+  {
+    id: 't3',
+    name: 'Paneer Tikka',
+    image: 'https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?auto=format&fit=crop&q=80&w=500',
+    price: 50,
+    orders: 220
+  },
+  {
+    id: 't4',
+    name: 'Masala Dosa',
+    image: 'https://images.unsplash.com/photo-1630383249896-424e482df921?auto=format&fit=crop&q=80&w=500',
+    price: 70,
+    orders: 245
+  },
+  {
+    id: 't5',
+    name: 'Thali Special',
+    image: 'https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?auto=format&fit=crop&q=80&w=500',
+    price: 150,
+    orders: 190
+  }
 ];
 
-const TrendingFood = () => {
+const TrendingFood = ({darkMode}) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   // Auto-slide effect
@@ -21,20 +51,20 @@ const TrendingFood = () => {
   }, [currentIndex]);
 
   const handleNext = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % trendingItems.length);
+    setCurrentIndex((prevIndex) => (prevIndex + 2) % trendingItems.length);
   };
 
   const handlePrev = () => {
-    setCurrentIndex((prevIndex) => (prevIndex - 1 + trendingItems.length) % trendingItems.length);
+    setCurrentIndex((prevIndex) => (prevIndex - 2 + trendingItems.length) % trendingItems.length);
   };
 
-  const translateX = -(currentIndex * 100);
+  const translateX = -(currentIndex * 50); // Adjusted to show two items per view
 
   return (
     <div className="mb-14">
       <div className="flex items-center relative ml-14 mb-6">
         <IoFlameSharp className="h-6 w-6 text-orange-500" />
-        <h2 className="text-2xl font-bold text-gray-800">Trending Now</h2>
+        <h2 className={`${darkMode ? 'text-white' : 'text-slate-800'} text-2xl font-bold`}>Trending Now</h2>
       </div>
 
       <div className="relative max-w-screen-lg mx-auto overflow-hidden">
@@ -47,7 +77,7 @@ const TrendingFood = () => {
           style={{ transform: `translateX(${translateX}%)` }}
         >
           {[...trendingItems, ...trendingItems].map((item, index) => (
-            <div key={index} className="min-w-[25%] flex-shrink-0 px-2">
+            <div key={index} className="min-w-[50%] flex-shrink-0 px-2"> {/* Adjusted width to 50% to show two items */}
               <div className="relative w-full h-72 rounded-2xl overflow-hidden group">
                 <img
                   src={item.image}
@@ -58,7 +88,7 @@ const TrendingFood = () => {
                   <div className="absolute bottom-0 left-0 right-0 p-4">
                     <h3 className="text-white text-xl font-bold mb-2">{item.name}</h3>
                     <div className="flex justify-between items-center">
-                      <span className="text-white text-lg">${item.price}</span>
+                      <span className="text-white text-lg">₹{item.price}</span>
                       <span className="text-orange-400 text-xs">{item.orders}+ orders today</span>
                     </div>
                   </div>

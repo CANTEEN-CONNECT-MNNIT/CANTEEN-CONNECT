@@ -1,18 +1,42 @@
 import React, { useState } from 'react';
 import { FaEye, FaEyeSlash, FaGoogle, FaFacebook, FaLinkedin } from 'react-icons/fa';
 import { useForm } from 'react-hook-form';
+import authService from '../../ApiService/authApiService';
+import { useDispatch } from 'react-redux';
+import { login } from '../../Redux/Slices/UserSlice'
 
-export default function LoginBox({setSuccess, onforgetPass, onClose, darkMode }) {
+export default function LoginBox({ setSuccess, onforgetPass, onClose, darkMode }) {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      email: "",
+      password: "",
+    }
+  });
+
+  const dispatch = useDispatch();
 
   const [showPassword, setShowPassword] = useState(false);
+  const [error,setError] = useState(false);
 
-  const handleLogin = async () => {
-      setTimeout(setSuccess(true),400);
+  const handleLogin = async (data) => {
+    console.log("loginBox:", data);
+    setSuccess(false);
+    setError("");
+    try {
+      const res = await authService.login(data);
+      if (res) {
+        dispatch(login(res));
+        navigate("/dashboard");
+        setTimeout(setSuccess(true), 400);
+      }
+    } catch (error) {
+      console.log("loginBox/Error:", error);
+      setError(error?.response?.data?.message);
+    }
   };
 
   const handleGoogleSignin = () => {
@@ -34,7 +58,7 @@ export default function LoginBox({setSuccess, onforgetPass, onClose, darkMode })
           className="fixed inset-0 bg-black bg-opacity-50 transition-opacity duration-300"
           onClick={onClose}
         />
-        
+
         <div
           className={`relative w-full max-w-md rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-white'} p-8 shadow-xl transform transition-all duration-300 ease-out`}
         >
@@ -71,7 +95,7 @@ export default function LoginBox({setSuccess, onforgetPass, onClose, darkMode })
                 })}
                 className={`mt-1 block w-full rounded-md ${darkMode ? 'bg-gray-700 text-white border-gray-600' : 'bg-white text-gray-900 border-gray-300'} border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2`}
               />
-              {errors.email && (
+              {errors && errors?.email && (
                 <p className="text-red-500 text-sm">{errors.email.message}</p>
               )}
             </div>
@@ -100,23 +124,28 @@ export default function LoginBox({setSuccess, onforgetPass, onClose, darkMode })
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </button>
               </div>
-              {errors.password && (
+              {errors && errors?.password && (
                 <p className="text-red-500 text-sm">{errors.password.message}</p>
               )}
             </div>
 
             {/* Submit Button */}
+            <div>
+            {error.length>0 && (
+                <p className="text-red-500 text-sm">{error}</p>
+              )}
             <button
               type="submit"
               className="w-full rounded-md bg-orange-500 px-4 py-2 text-white hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-all duration-300"
             >
               Login
             </button>
+            </div>
 
             {/* Forgot Password Link */}
-            <button 
-            onClick={onforgetPass}
-            className={`w-full text-slate-300 hover:text-orange-400 item-center text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+            <button
+              onClick={onforgetPass}
+              className={`w-full text-slate-300 hover:text-orange-400 item-center text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
               Forgot password?
             </button>
           </form>
