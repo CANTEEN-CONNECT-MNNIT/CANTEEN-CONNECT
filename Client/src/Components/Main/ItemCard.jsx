@@ -2,7 +2,7 @@ import React from 'react';
 import { MdDelete } from 'react-icons/md';
 import { CiSquarePlus, CiSquareMinus } from 'react-icons/ci';
 import { useDispatch } from 'react-redux';
-import { removeFromCart, incrementQty, decrementQty } from '../../Redux/Slices/cartSlice';
+import { removeFromCart, incrementQty, decrementQty } from '../../Redux/Slices/CartSlice';
 import { toast } from 'react-hot-toast';
 
 const ItemCard = ({ id, name, qty, price, img }) => {
