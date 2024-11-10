@@ -12,14 +12,10 @@ export const userSlice=createSlice({
         login: (state,action)=>{
             state.user=action.payload.user;
             state.status=true;
-            localStorage.setItem("accesstoken",JSON.stringify(action.payload.acesstoken));
-            localStorage.setItem("refreshtoken",JSON.stringify(action.payload.refreshtoken));
         },
         logout:(state)=>{
             state.user=null;
             state.status=false;
-            localStorage.removeItem("accesstoken");
-            localStorage.removeItem("refreshtoken");
         }
     }
 });

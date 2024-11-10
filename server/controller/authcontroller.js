@@ -17,13 +17,14 @@ const createrefreshandacesstoken = (id) => {
 };
 
 export const signup = asynchandler(async (req, res, next) => {
-  const { name, email, password, username } = req.body;
+  console.log("invoke")
+  const { name, email, password, } = req.body;
   const user =
-    (await User.findOne({ username })) || (await User.findOne({ email }));
+     (await User.findOne({ email }));
   if (user) {
     return next(new ApiError('User are already exist', 404));
   }
-  if (!email || !password || !username) {
+  if (!email || !password) {
     return next(new ApiError('Please Enter all the detail', 404));
   }
 
@@ -31,10 +32,9 @@ export const signup = asynchandler(async (req, res, next) => {
     name,
     email,
     password,
-    username,
   });
 
-  // console.log(newuser);
+  console.log(newuser);
 
   const { acesstoken, refreshtoken } = createrefreshandacesstoken(newuser.id);
 
@@ -42,16 +42,30 @@ export const signup = asynchandler(async (req, res, next) => {
     return next(new ApiError('Token cannot generated', 402));
   }
 
+  const options = {
+    httpOnly: true, 
+    secure: false,
+    sameSite: 'Lax'
+  }
+  
+  res.cookie('acesstoken', acesstoken, options)
+  .cookie('refreshtoken', refreshtoken, options)
+
   res.status(201).json({
-    message: 'User Account created Succesfully',
+    message: 'User Account created and logged in Succesfully',
+    data: {
+      user: requser,
+      acesstoken,
+      refreshtoken,
+    },
   });
 });
 
 export const login = asynchandler(async (req, res, next) => {
-  const { email, username, password } = req.body;
+  const { email, password } = req.body;
 
-  if (!email && !username) {
-    return next(new ApiError('Please enter email or username', 400));
+  if (!email ) {
+    return next(new ApiError('Please enter email', 400));
   }
 
   if (!password) {
@@ -59,12 +73,11 @@ export const login = asynchandler(async (req, res, next) => {
   }
 
   const requser =
-    (await User.findOne({ email }).select('+password')) ||
-    (await User.findOne({ username }).select('+password'));
+    (await User.findOne({ email }).select('+password'));
 
   if (!requser) {
     return next(
-      new ApiError('User Not found Please Enter valid email or Username', 400)
+      new ApiError('User Not found Please Enter valid email ', 400)
     );
   }
 
@@ -79,7 +92,14 @@ export const login = asynchandler(async (req, res, next) => {
     return next(new ApiError('Token cannot generated', 402));
   }
 
-  delete requser.password;
+  const options = {
+    httpOnly: true, 
+    secure: false,
+    sameSite: 'Lax'
+  }
+  
+  res.cookie('acesstoken', acesstoken, options)
+  .cookie('refreshtoken', refreshtoken, options)
 
   res.status(201).json({
     message: 'User login succesfully',

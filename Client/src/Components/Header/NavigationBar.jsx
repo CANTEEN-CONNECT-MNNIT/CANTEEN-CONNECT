@@ -7,7 +7,7 @@ const NavigationBar = ({  isOpen, setOpen, darkMode, setDarkMode }) => {
   return (
     <div
       className={`absolute ${darkMode? '': location.pathname === "/dashboard"? '' : 'bg-stone-800 shadow-lg'
-      } top-0 left-0 right-0 z-55 px-4`}
+      } top-0 left-0 right-0 z-10 px-4`}
     >
       <div className="flex items-center justify-between py-4">
        

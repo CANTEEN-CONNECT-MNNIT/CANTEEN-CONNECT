@@ -25,7 +25,7 @@ class ApiService{
         try {
             const response=await this.api.post("signup",data);
             console.log("authApi/signup: ",response);
-            return response?.status === 201;
+            return response?.data?.data;
         } catch (error) {
             console.log("authApi/signup: ",error);
             throw error;

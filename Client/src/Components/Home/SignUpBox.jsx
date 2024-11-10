@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { FaEye, FaEyeSlash, FaGoogle, FaFacebook, FaLinkedin } from 'react-icons/fa';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+import authService from '../../ApiService/authApiService';
+import { useDispatch } from 'react-redux';
+import { login } from '../../Redux/Slices/UserSlice';
 
 export default function SignUpBox({ setSuccess, setShowLoginModal, setShowSignUpModal, onClose, darkMode }) {
   const {
@@ -18,23 +21,31 @@ export default function SignUpBox({ setSuccess, setShowLoginModal, setShowSignUp
     }
   });
 
+  const dispatch=useDispatch();
+  const navigate=useNavigate();
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error,setError] = useState("");
+  const [succ,setSucc] = useState(false);
 
   const handleSignUp = async (data) => {
     console.log("SignUpBox:", data);
     setSuccess(false);
     setError("");
+    setSucc(false);
     try {
       const res = await authService.signup(data);
       if (res) {
+        dispatch(login(res));
         setTimeout(() => {
           setSuccess(true);
         }, 500);
+        setSucc(true);
+        navigate('/dashboard');
       }
     } catch (error) {
-      console.log(error.response?.data?.message);
+      console.log(error);
       setError(error.response?.data?.message);
     }
   };
@@ -126,7 +137,7 @@ export default function SignUpBox({ setSuccess, setShowLoginModal, setShowSignUp
                     required: 'Password is required',
                     minLength: { value: 6, message: 'Password must be at least 6 characters' },
                     pattern: {
-                      value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                      value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/,
                       message: "Password must contain at least one uppercase letter, one lowercase letter, one number, one special character, and be at least 8 characters long.",
                     },
                   })}
@@ -170,9 +181,11 @@ export default function SignUpBox({ setSuccess, setShowLoginModal, setShowSignUp
               {errors.confirmPassword && <p className="text-red-500 text-sm">{errors.confirmPassword.message}</p>}
             </div>
             <div>
-              {error.length>0 && (
+              {error && error.length>0 && (
                 <p className="text-red-500 text-sm">{error}</p>
               )}
+              
+          {succ && <p className=' my-2 text-center text-md font-bold text-green-600 '>Successfull! </p>}
             <button
               type="submit"
               className="w-full rounded-md bg-orange-500 px-4 py-2 text-white hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-coral-500 focus:ring-offset-2"
@@ -183,7 +196,7 @@ export default function SignUpBox({ setSuccess, setShowLoginModal, setShowSignUp
 
             <div className="text-center text-gray-600 mt-4">
               Already have an account?
-              <button className="hover:text-orange-800 text-orange-500" onClick={() => { setShowLoginModal(true); setShowSignUpModal(false); }}>
+              <button className="hover:text-orange-800 text-orange-500 ml-2" onClick={() => { setShowLoginModal(true); setShowSignUpModal(false); }}>
                 Login
               </button>
             </div>

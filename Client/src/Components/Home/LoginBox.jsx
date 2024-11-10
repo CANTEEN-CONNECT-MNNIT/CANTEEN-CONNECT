@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import authService from '../../ApiService/authApiService';
 import { useDispatch } from 'react-redux';
 import { login } from '../../Redux/Slices/UserSlice'
+import { useNavigate } from 'react-router-dom';
 
 export default function LoginBox({ setSuccess, onforgetPass, onClose, darkMode }) {
   const {
@@ -18,6 +19,7 @@ export default function LoginBox({ setSuccess, onforgetPass, onClose, darkMode }
   });
 
   const dispatch = useDispatch();
+  const navigate=useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
   const [error,setError] = useState(false);
@@ -131,7 +133,7 @@ export default function LoginBox({ setSuccess, onforgetPass, onClose, darkMode }
 
             {/* Submit Button */}
             <div>
-            {error.length>0 && (
+            {error && error.length>0 && (
                 <p className="text-red-500 text-sm">{error}</p>
               )}
             <button

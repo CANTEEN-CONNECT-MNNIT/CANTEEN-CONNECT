@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { FaSun, FaMoon, FaBars, FaTimes } from 'react-icons/fa';
-import CanteenInfo from '../components/Home/CanteenInfo';
-import LoginBox from '../components/Home/LoginBox';
-import SignUpBox from '../components/Home/SignUpBox';
-import FoodCarousel from '../components/Home/FoodCarousel';
-import ForgotPassword from '../components/Home/ForgotPass';
+import CanteenInfo from '../Components/Home/CanteenInfo';
+import LoginBox from '../Components/Home/LoginBox';
+import SignUpBox from '../Components/Home/SignUpBox';
+import FoodCarousel from '../Components/Home/FoodCarousel';
+import ForgotPassword from './ForgotPass';
 import { useNavigate } from 'react-router-dom';
-import Loading from '../components/Home/Loading';
-import Hero from '../components/Home/Hero';
+import Loading from '../Components/Home/Loading';
+import Hero from '../Components/Home/Hero';
 import Footer from '../Components/Home/Footer';
 
 function Home({ darkMode, setDarkMode }) {
