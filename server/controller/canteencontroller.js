@@ -35,3 +35,88 @@ export const addcanteen = asynchandler(async (req, res, next) => {
     },
   });
 });
+
+export const updatecanteen = asynchandler(async (req, res, next) => {
+  const { name, description, college } = req.body;
+
+  const id = req.params.id;
+
+  const reqcanteen = await Canteen.findById(id);
+
+  if (!reqcanteen) {
+    return next(new ApiError('Task not found', 403));
+  }
+
+  const updatedcanteen = await Canteen.findByIdAndUpdate(
+    id,
+    { name, description, college },
+    { new: true, runValidators: true }
+  );
+
+  res.status(201).json({
+    message: 'Message updated Sucessfully',
+    data: {
+      updatecanteen,
+    },
+  });
+});
+
+export const deletecanteen = asynchandler(async (req, res, next) => {
+  const id = req.user._id;
+
+  const requser = await User.findById(id);
+
+  if (!requser) {
+    return next(new ApiError('User Not Found', 403));
+  }
+
+  const c_id = req.params.id;
+
+  const reqcanteen = await Canteen.findById(c_id);
+
+  if (!reqcanteen) {
+    return next(new ApiError('Canteen Not found', 401));
+  }
+
+  await findByIdAndDelete(id);
+
+  res.status(201).json({
+    message: 'Delete canteen Successfully',
+  });
+});
+
+export const getall = asynchandler(async (req, res, next) => {
+  const id = req.user._id;
+
+  const requser = User.findById(id);
+
+  if (!requser) {
+    return next(new ApiError('User not found', 403));
+  }
+
+  const allcanteen = await Canteen.find({ owner: id });
+
+  res.status(201).json({
+    message: 'Canteen fetched sucessfully',
+    data: {
+      allcanteen,
+    },
+  });
+});
+
+export const getcanteen = asynchandler(async (req, res, next) => {
+  const id = req.params.id;
+
+  const reqcanteen = await Canteen.findById(id);
+
+  if (!reqcanteen) {
+    return next(new ApiError('Canteen not found', 401));
+  }
+
+  res.status(201).json({
+    message: 'Canteen fetch sucessfully',
+    data: {
+      reqcanteen,
+    },
+  });
+});

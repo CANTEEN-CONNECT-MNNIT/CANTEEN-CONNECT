@@ -10,7 +10,7 @@ import {
 const router = express.Router();
 
 router.post('/create/:c_id', additem);
-router.patch('/update', updateitem);
+router.patch('/update/:id', updateitem);
 router.get('/getall', getall);
 router.get('/get/:id', getitem);
 router.delete('/delete/:id', deleteitem);
