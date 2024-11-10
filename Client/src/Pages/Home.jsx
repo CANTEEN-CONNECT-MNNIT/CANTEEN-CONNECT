@@ -20,11 +20,9 @@ function Home({ darkMode, setDarkMode }) {
 
   useEffect(() => {
     if (success) {
-      setTimeout(() => {
-        navigate('/dashboard');
-      }, 3000); 
+      setTimeout(() => { }, 3000); 
     }
-  }, [success, navigate]);
+  }, [success,navigate]);
 
   const toggleDarkMode = () => setDarkMode(!darkMode);
 

@@ -24,6 +24,47 @@ class UserService{
         }
     }
 
+    async update(data){
+        try {
+            const response=await this.api.patch("update",data);
+            console.log("userApi/update: ",response);
+            if(response){
+                return true;
+            }
+            else return false;
+        } catch (error) {
+            console.log("userApi/update: ",error);
+            throw error;
+        }
+    }
+
+    async getMe(){
+        try {
+            const response=await this.api.get("me");
+            console.log("userApi/getMe: ",response);
+            if(response){
+                return response?.data;
+            }
+        } catch (error) {
+            console.log("userApi/getMe: ",error);
+            throw error;
+        }
+    }
+
+
+    async deleteUser(data){
+        try {
+            const response=await this.api.delete(`delete/${data?._id}`);
+            console.log("userApi/deleteUser: ",response);
+            if(response){
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.log("userApi/deleteUser: ",error);
+            throw error;
+        }
+    }
     
 
 }

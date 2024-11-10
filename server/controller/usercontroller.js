@@ -7,15 +7,9 @@ const deletetheuser = asynchandler(async (id) => {
 });
 
 export const logout = asynchandler(async (req, res, next) => {
-  const options = {
-    httpOnly: true,
-    secure: false,
-    sameSite: 'Lax',
-  };
-  res
-    .cookie('acesstoken', 'loggedout', options)
-    .cookie('refreshtoken', 'loggedout', options);
-  res.status(200).json({ status: 'success' });
+  res.clearCookie('acesstoken');
+    res.clearCookie('refreshtoken');
+    res.status(200).json({ message: 'Logged out successfully' });
 });
 
 export const update = asynchandler(async (req, res, next) => {
@@ -63,5 +57,9 @@ export const deleteme = asynchandler(async (req, res, next) => {
   }
   finduser.active = false;
   logout();
-  setTimeout(deletetheuser(finduser._id), 30 * 24 * 60 * 60 * 1000);
+  deletetheuser(finduser._id);
+ 
+  res.status(201).json({
+    message:"User ddeleted sucessfully"
+  })
 });
