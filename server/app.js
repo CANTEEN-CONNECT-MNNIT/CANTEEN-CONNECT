@@ -7,6 +7,7 @@ import itemroute from './router/fooditemrouter.js';
 import canteenroute from './router/canteenrouter.js';
 import globalerrorhandler from './controller/errorcontroller.js';
 import cartrouter from './router/cartrouter.js';
+import userroute from './router/userrouter.js';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 
@@ -29,10 +30,10 @@ app.use(morgan('dev'));
 
 app.use('/api/auth', authroute);
 app.use(protect);
-
+app.use('/api/user', userroute);
 app.use('/api/item', itemroute);
 app.use('/api/canteen', canteenroute);
-app.use('cart', cartrouter);
+app.use('/api/cart', cartrouter);
 app.use(globalerrorhandler);
 
 export default app;
