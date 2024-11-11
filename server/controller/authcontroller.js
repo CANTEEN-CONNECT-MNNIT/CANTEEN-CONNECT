@@ -137,7 +137,6 @@ export const protect = asynchandler(async (req, res, next) => {
     acesstoken,
     process.env.ACESS_TOKEN_STRING
   );
-
   // console.log(decodedtoken);
 
   if (!decodedtoken) {

@@ -22,7 +22,8 @@ export const additem = asynchandler(async (req, res, next) => {
     upload.single('image');
 
     const path = req.files.image.path;
-    if (path) imagepath = await uploadOnCloudinary;
+    console.log(path);
+    if (path) imagepath = await uploadOnCloudinary(path);
   }
 
   if (!name || !price) {
@@ -125,6 +126,8 @@ export const deleteitem = asynchandler(async (req, res, next) => {
 });
 
 export const updateitem = asynchandler(async (req, res, next) => {
+  const id = req.params.id;
+  console.log(id);
   if (!id) {
     return next(new ApiError('Item Not found ', 403));
   }

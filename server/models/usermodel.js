@@ -45,7 +45,6 @@ const userSchema = new mongoose.Schema({
     enum: ['Student', 'Canteen'],
     default: 'Student',
   },
-  cardupdate: {},
   orders: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -54,8 +53,14 @@ const userSchema = new mongoose.Schema({
   ],
   cart: [
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'FoodItem',
+      foodItem: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'FoodItem', // reference to the 'FoodItem' model
+      },
+      quantity: {
+        type: Number,
+        default: 1,
+      },
     },
   ],
 });

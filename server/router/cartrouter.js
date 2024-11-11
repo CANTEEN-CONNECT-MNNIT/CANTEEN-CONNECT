@@ -10,6 +10,6 @@ const router = express.Router();
 router.patch('/update/:id', addincart);
 router.get('/get', getcart);
 router.delete('/delete/:id', deleteincart);
-router.get('/order', createorder);
+router.post('/order', createorder);
 
 export default router;

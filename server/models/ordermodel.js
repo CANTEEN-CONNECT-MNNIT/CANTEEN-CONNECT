@@ -7,14 +7,21 @@ const orderSchema = new mongoose.Schema(
       ref: 'User',
       required: true,
     },
+    quantity: {
+      type: Number,
+      default: 1,
+      min: 1,
+    },
     status: {
       type: String,
       enum: ['Pending', 'Preparing', 'Ready for pickup', 'Delivered', 'Sucess'],
       default: 'Sucess',
     },
-    fooditems: [
-      { type: mongoose.Schema.Types.ObjectId, ref: 'Fooditem', required: true },
-    ],
+    fooditems: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Fooditem',
+      required: true,
+    },
   },
   { timestamps: true }
 );

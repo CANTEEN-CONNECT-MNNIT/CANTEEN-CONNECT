@@ -90,18 +90,26 @@ export const createorder = asynchandler(async (req, res, next) => {
   }
 
   requser.orders = requser.cart.map(async (f_id) => {
-    const reqitem = await Fooditem.findById(f_id);
+    const reqitem = await Fooditem.findOne(f_id[0]);
     if (!reqitem) {
       return next(new ApiError('Some Food Item not found', 401));
     }
 
-    const fooditems = requser.fooditems.push(f_id);
+    const updateditems = await Fooditem.findByIdAndUpdate(
+      f_id[0],
+      { quantity: quantity - f_id[1] },
+      { new: true, runValidators: true }
+    );
 
-    const neworder = await Order.create({ user: user_id, fooditems });
+    const neworder = await Order.create({
+      user: user_id,
+      fooditems: f_id[0],
+      quantity: f_id[1],
+    });
 
     return neworder._id;
   });
-
+  ///add a middleware which tell us order is sucess or not
   requser.cart = [];
   requser.save();
 

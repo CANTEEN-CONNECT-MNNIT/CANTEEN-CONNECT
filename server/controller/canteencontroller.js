@@ -56,7 +56,7 @@ export const updatecanteen = asynchandler(async (req, res, next) => {
   res.status(201).json({
     message: 'Message updated Sucessfully',
     data: {
-      updatecanteen,
+      updatedcanteen,
     },
   });
 });
