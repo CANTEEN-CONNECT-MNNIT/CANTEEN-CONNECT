@@ -33,9 +33,10 @@ app.use('/api/auth', authroute);
 app.use(protect);
 app.use('/api/user', userroute);
 app.use('/api/item', itemroute);
-app.use('/api/canteen', canteenroute);
 app.use('/api/cart', cartrouter);
 app.use('/api/order', orderroute);
+
+app.use('/api/canteen', canteenroute);
 app.use(globalerrorhandler);
 
 export default app;

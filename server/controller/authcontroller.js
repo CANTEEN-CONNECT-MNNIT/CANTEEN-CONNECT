@@ -165,3 +165,7 @@ export const protect = asynchandler(async (req, res, next) => {
 
   next();
 });
+
+export const rolevalidation = asynchandler(async (req, res, next) => {
+  const id = req.user._id;
+});
