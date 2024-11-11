@@ -4,7 +4,6 @@ import { FaCoffee } from 'react-icons/fa';
 function Loading() {
   const [progress, setProgress] = useState(0);
 
-  // Simulate loading progress with useEffect
   useEffect(() => {
     const interval = setInterval(() => {
       setProgress((prevProgress) => {

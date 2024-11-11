@@ -1,15 +1,16 @@
+// NavigationBar.jsx
 import React from 'react';
-import { FiSun, FiMoon, FiShoppingBag, FiUser, FiMenu } from 'react-icons/fi';
+import { FiSun, FiMoon, FiBell, FiUser, FiMenu } from 'react-icons/fi';
 import { useLocation } from 'react-router-dom';
 
-const NavigationBar = ({  isOpen, setOpen, darkMode, setDarkMode }) => {
+const NavigationBar = ({ isOpen, setOpen, darkMode, setDarkMode, setprofileOpen }) => {
   const location = useLocation();
+
   return (
     <div
-      className={`absolute ${darkMode? '': location.pathname === "/dashboard"? '' : 'bg-stone-800 shadow-lg'
-      } top-0 left-0 right-0 z-55 px-4`}
+      className={`absolute ${darkMode ? 'bg-transparent' : location.pathname === "/dashboard" ? '' : 'bg-stone-800 shadow-lg'} top-0 z-10 left-0 right-0 px-4`}
     >
-      <div className="flex items-center justify-between py-4">
+      <div className="flex mt-0 items-center justify-between py-4">
        
         <div className="flex items-center gap-4 ml-4">
           <button
@@ -19,11 +20,8 @@ const NavigationBar = ({  isOpen, setOpen, darkMode, setDarkMode }) => {
             <FiMenu className="bg-slate-800 rounded-2xl p-1" size={30} />
           </button>
 
-          {/* Logo */}
           <div
-            className={`flex items-center gap-2 text-2xl md:text-3xl font-bold text-white tracking-tight transition-transform duration-300 ${
-              isOpen ? 'translate-x-48' : ''
-            }`}
+            className={`flex items-center gap-2 text-2xl md:text-3xl font-bold text-white tracking-tight transition-transform duration-300 ${isOpen ? 'translate-x-48' : ''}`}
           >
             <span>Canteen</span>
             <span className="text-orange-500 hover:text-orange-400 transition-colors"> Connect</span>
@@ -39,11 +37,16 @@ const NavigationBar = ({  isOpen, setOpen, darkMode, setDarkMode }) => {
             {darkMode ? <FiSun size={20} /> : <FiMoon size={20} />}
           </button>
 
-          <button className="text-white hover:text-orange-400 transition-colors">
-            <FiShoppingBag size={20} />
+          <button
+            className="text-white hover:text-orange-400 transition-colors"
+            aria-label="Open Profile"
+          >
+            <FiBell size={20} />
           </button>
 
-          <button className="text-white hover:text-orange-400 transition-colors">
+          <button 
+           onClick={() => setprofileOpen(true)}
+          className="text-white hover:text-orange-400 transition-colors">
             <FiUser size={20} />
           </button>
         </div>

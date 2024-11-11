@@ -10,7 +10,6 @@ const ItemCard = ({ id, name, qty, price, img }) => {
 
   return (
     <div className="relative flex items-center gap-4 shadow-md bg-white mb-3 rounded-lg p-4 border border-gray-200">
-      {/* Delete Icon */}
       <MdDelete
         onClick={() => {
           dispatch(removeFromCart({ id, img, name, price, qty }));
@@ -19,7 +18,6 @@ const ItemCard = ({ id, name, qty, price, img }) => {
         className="absolute size-5 top-4 right-3 cursor-pointer text-2xl text-red-300 hover:text-red-700 transition duration-200"
       />
 
-      {/* Item Image */}
       <img
         src={img}
         alt={name}

@@ -3,7 +3,7 @@ import FoodItems from './FoodItems';
 import Cart from './Cart';
 import TrendingFood from './Trending';
 
-const MainContent = ({isOpen, darkMode }) => {
+const MainContent = ({isOpen, darkMode,onCheckout}) => {
   return (
     <div
       className={`transition-all duration-500 ease-in-out w-full h-full ${
@@ -31,7 +31,7 @@ const MainContent = ({isOpen, darkMode }) => {
           <FoodItems darkMode={darkMode} />
         </div>
       </div>
-      <Cart/>
+      <Cart onCheckout={onCheckout}/>
     </div>
   );
 };
