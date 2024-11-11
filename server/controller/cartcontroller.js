@@ -7,12 +7,12 @@ import asynchandler from '../utils/asynchandler.js';
 export const getcart = asynchandler(async (req, res, next) => {
   const id = req.user;
 
-  const cart = await User.findById(id).populate('cart').cart;
+  const carts = await User.findById(id).populate('cart');
 
   res.status(201).json({
     message: 'fetch cart Suceefully',
     data: {
-      cart,
+      carts,
     },
   });
 });
@@ -28,23 +28,20 @@ export const addincart = asynchandler(async (req, res, next) => {
     return next(new ApiError('Item not found', 403));
   }
 
-  const requser = await User.findById(id);
+  let requser = await User.findById(id);
 
   if (!requser) {
     return next(new ApiError('User Not found', 403));
   }
 
+  console.log(requser);
+
   requser.cart.push(f_id);
-
   requser.save();
-
-  const carts = requser.populate('cart');
 
   res.status(201).json({
     message: 'Iten Add in cart succesfully',
-    data: {
-      carts,
-    },
+    data: requser.cart,
   });
 });
 
@@ -83,34 +80,36 @@ export const deleteincart = asynchandler(async (req, res, next) => {
 export const createorder = asynchandler(async (req, res, next) => {
   const user_id = req.user._id;
 
-  const requser = await User.findById(id);
+  const requser = await User.findById(user_id);
 
   if (!requser) {
     return next(new ApiError('User not found', 403));
   }
 
-  requser.orders = requser.cart.map(async (f_id) => {
-    const reqitem = await Fooditem.findOne(f_id[0]);
-    if (!reqitem) {
-      return next(new ApiError('Some Food Item not found', 401));
-    }
+  // Resolving all promises within the map
+  requser.orders = await Promise.all(
+    requser.cart.map(async (f_id) => {
+      const reqitem = await Fooditem.findOne(f_id);
+      if (!reqitem) {
+        throw new ApiError('Some Food Item not found', 401);
+      }
 
-    const updateditems = await Fooditem.findByIdAndUpdate(
-      f_id[0],
-      { quantity: quantity - f_id[1] },
-      { new: true, runValidators: true }
-    );
+      const neworder = await Order.create({
+        user: user_id,
+        fooditems: f_id,
+      });
 
-    const neworder = await Order.create({
-      user: user_id,
-      fooditems: f_id[0],
-      quantity: f_id[1],
-    });
+      return neworder._id; // Return the ObjectId of the newly created order
+    })
+  );
 
-    return neworder._id;
-  });
-  ///add a middleware which tell us order is sucess or not
+  console.log(requser.orders);
   requser.cart = [];
+  // Save the user with updated orders if necessary
+  await requser.save();
+
+  ///add a middleware which tell us order is sucess or not
+
   requser.save();
 
   res.status(201).json({

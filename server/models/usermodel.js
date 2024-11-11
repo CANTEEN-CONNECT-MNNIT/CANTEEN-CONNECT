@@ -53,14 +53,8 @@ const userSchema = new mongoose.Schema({
   ],
   cart: [
     {
-      foodItem: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'FoodItem', // reference to the 'FoodItem' model
-      },
-      quantity: {
-        type: Number,
-        default: 1,
-      },
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'FoodItem', // reference to the 'FoodItem' model
     },
   ],
 });
