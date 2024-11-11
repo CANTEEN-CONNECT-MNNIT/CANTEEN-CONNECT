@@ -7,7 +7,7 @@ import asynchandler from '../utils/asynchandler.js';
 export const getcart = asynchandler(async (req, res, next) => {
   const id = req.user;
 
-  const cart = await User.findById(id).populate('FoodItem');
+  const cart = await User.findById(id).populate('cart').cart;
 
   res.status(201).json({
     message: 'fetch cart Suceefully',
@@ -20,8 +20,8 @@ export const getcart = asynchandler(async (req, res, next) => {
 export const addincart = asynchandler(async (req, res, next) => {
   const id = req.user._id;
 
-  const f_id = req.param.id;
-
+  const f_id = req.params.id;
+  console.log(f_id);
   const reqitem = await Fooditem.findById(f_id);
 
   if (!reqitem) {
@@ -38,7 +38,7 @@ export const addincart = asynchandler(async (req, res, next) => {
 
   requser.save();
 
-  const carts = requser.cart.populate();
+  const carts = requser.populate('cart');
 
   res.status(201).json({
     message: 'Iten Add in cart succesfully',

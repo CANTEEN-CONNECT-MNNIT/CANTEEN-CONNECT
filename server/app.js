@@ -10,6 +10,7 @@ import cartrouter from './router/cartrouter.js';
 import userroute from './router/userrouter.js';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
+import orderroute from './router/orderroute.js';
 
 const app = express();
 app.use(express.json());
@@ -34,6 +35,7 @@ app.use('/api/user', userroute);
 app.use('/api/item', itemroute);
 app.use('/api/canteen', canteenroute);
 app.use('/api/cart', cartrouter);
+app.use('/api/order', orderroute);
 app.use(globalerrorhandler);
 
 export default app;
