@@ -1,8 +1,8 @@
 import React from 'react';
 import { FaTimes, FaClock, FaUserAlt } from 'react-icons/fa';
-import { useDispatch ,useSelector} from 'react-redux';
+import { useSelector} from 'react-redux';
 function OrderDetailsModal({ order, onClose }) {
-    const dispatch=useDispatch();
+    
     const darkMode = useSelector((state) => state.theme.isDarkMode);
   return (
     <div className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 ${darkMode ? 'bg-opacity-80' : 'bg-opacity-50'}`}>
@@ -38,24 +38,32 @@ function OrderDetailsModal({ order, onClose }) {
           </div>
 
           <div>
-            <h4 className={`font-medium ${darkMode ? 'text-white' : 'text-gray-900'} mb-2`}>Order Summary</h4>
-            <div className={`bg-gray-50 rounded-lg p-3 space-y-2 ${darkMode ? 'bg-gray-800' : ''}`}>
-              {order.items.map((item, idx) => (
-                <div key={idx} className={`flex justify-between text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                  <span>
-                    {item.quantity}× {item.name}
-                  </span>
-                  <span className={`text-gray-900 ${darkMode ? 'text-gray-100' : ''}`}>₹{item.price}</span>
-                </div>
-              ))}
-              <div className="border-t pt-2 mt-2">
-                <div className={`flex justify-between font-medium ${darkMode ? 'text-white' : ''}`}>
-                  <span>Total Amount</span>
-                  <span>₹{order.total}</span>
-                </div>
+          <h4 className={`font-medium ${darkMode ? 'text-white' : 'text-gray-900'} mb-2`}>
+            Order Summary
+          </h4>
+          <div className={`rounded-lg p-3 space-y-2 ${darkMode ? 'text-slate-50 bg-gray-800' : 'bg-gray-50'}`}>
+            {order.items.map((item, idx) => (
+              <div key={idx} className={`flex justify-between text-sm`}>
+                <span className={`${darkMode ? 'text-gray-300' : 'text-gray-900'}`}>
+                  {item.quantity}× {item.name}
+                </span>
+                <span className={`text-gray-100 ${darkMode ? 'text-gray-100' : 'text-gray-600'}`}>
+                  ₹{item.price}
+                </span>
+              </div>
+            ))}
+            <div className="border-t pt-2 mt-2">
+              <div className={`flex justify-between font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                <span>Total Amount</span>
+                <span className={`${darkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+                  ₹{order.total}
+                </span>
               </div>
             </div>
           </div>
+        </div>
+
+
 
           <div className={`bg-blue-50 rounded-lg p-3 ${darkMode ? 'bg-blue-600' : ''}`}>
             <h4 className={`text-sm font-medium ${darkMode ? 'text-blue-100' : 'text-blue-900'} mb-1`}>Counter Information</h4>

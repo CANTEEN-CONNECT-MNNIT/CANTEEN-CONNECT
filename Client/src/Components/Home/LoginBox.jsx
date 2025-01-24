@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { FaEye, FaEyeSlash, FaGoogle, FaFacebook, FaLinkedin } from 'react-icons/fa';
 import { useForm } from 'react-hook-form';
-import { useSelector,useDispatch } from 'react-redux';
+import { useSelector} from 'react-redux';
 
-export default function LoginBox({setSuccess, onforgetPass, onClose,}) {
+export default function LoginBox({setSuccess,setShowLoginModal, setShowSignUpModal, onforgetPass, onClose,}) {
   const darkMode=useSelector((state)=> state.theme.isDarkMode)
   const {
     register,
@@ -147,7 +147,12 @@ export default function LoginBox({setSuccess, onforgetPass, onClose,}) {
               </button>
             </div>
           </div>
-
+          <div className="text-center text-gray-600 mt-4 flex-row flex justify-center gap-2">
+              New User?
+              <button className="hover:text-orange-800 text-orange-500" onClick={() => { setShowLoginModal(false); setShowSignUpModal(true); }}>
+                Register
+              </button>
+            </div>
         </div>
       </div>
     </div>

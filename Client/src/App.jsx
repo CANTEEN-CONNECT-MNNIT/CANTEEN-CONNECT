@@ -13,6 +13,7 @@ import { useDispatch,useSelector } from "react-redux";
 import { navigateTo } from "./Redux/Slices/pageSlice";
 import { setCurrentPage } from "./Redux/Slices/pageSlice";
 import { setProfileOpen } from "./Redux/Slices/pageSlice";
+import { AppProvider } from "./Context/AppContext.jsx";
 const App = () => {
   const dispatch=useDispatch();
   const darkMode = useSelector((state) => state.theme.isDarkMode);
@@ -39,7 +40,8 @@ const App = () => {
 console.log(profileOpen)
   
   return (
-    <div>
+    <AppProvider> 
+      <div>
       {CurrentPage === 'Canteen' && <Canteen onClose={onClose} />}
       {CurrentPage === 'Favorites' && <Favorite onClose={onClose} />}
 
@@ -75,6 +77,8 @@ console.log(profileOpen)
         <Route path="/*" element={<Error />} />
       </Routes>
     </div>
+    </AppProvider>
+    
   );
 };
 

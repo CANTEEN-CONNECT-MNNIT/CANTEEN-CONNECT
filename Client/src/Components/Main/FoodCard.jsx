@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { FaHeart, FaShoppingCart, FaStar, FaInfoCircle } from 'react-icons/fa'; // Import icons from react-icons
-import { useDispatch } from 'react-redux';
-import { addToCart } from '../../Redux/Slices/cartSlice';
-import { useSelector } from 'react-redux';
+import { useSelector ,useDispatch } from 'react-redux';
+import { addToCart } from '../../Redux/Slices/CartSlice';
+
 
 const FoodCard = ({ id, name, price, desc, img, rating, nutrients, handleToast }) => {
     const dispatch=useDispatch();

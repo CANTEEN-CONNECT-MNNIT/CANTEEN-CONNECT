@@ -3,10 +3,12 @@ import { HiChevronDown } from 'react-icons/hi';
 import { FaEye, FaClock } from 'react-icons/fa'; 
 import FoodPreview from './FoodPreview';
 import orders from '../../Data/OrderData';
+import { useSelector } from 'react-redux';
 
 function OrderTable({ filter, canteen }) {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const darkMode = useSelector((state) => state.theme.isDarkMode);
 
   const getStatusColor = (status) => {
     return {
@@ -31,17 +33,16 @@ function OrderTable({ filter, canteen }) {
     return statusMatch && canteenMatch;
   });
   
-  
   const noDataAvailable = filteredOrders.length === 0;
 
   return (
     <>
-      <div className="hidden md:block bg-white rounded-lg shadow overflow-hidden">
+      <div className={`hidden md:block rounded-lg shadow overflow-hidden ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
         <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+          <thead className={`${darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
             <tr>
               {['Order ID', 'Order Name', 'Location', 'Date', 'Amount', 'Status', 'Waiting #', 'Actions'].map((header) => (
-                <th key={header} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th key={header} className={`px-6 py-3 text-left text-xs font-medium ${darkMode ? 'text-gray-400' : 'text-gray-500'} uppercase`}>
                   <span className="flex items-center space-x-1">
                     {header} <HiChevronDown size={12} />
                   </span>
@@ -49,27 +50,27 @@ function OrderTable({ filter, canteen }) {
               ))}
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className={`${darkMode ? 'bg-gray-800 divide-gray-600' : 'bg-white divide-gray-200'}`}>
             {noDataAvailable ? (
               <tr>
-                <td colSpan={8} className="px-6 py-4 text-sm text-center text-gray-500">
+                <td colSpan={8} className={`px-6 py-4 text-sm text-center ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                   No orders available.
                 </td>
               </tr>
             ) : (
               filteredOrders.map((order) => (
-                <tr key={order.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">{order.id}</td>
-                  <td className="px-6 py-4 text-sm text-gray-500">{order.name}</td>
-                  <td className="px-6 py-4 text-sm text-gray-500">{order.location}</td>
-                  <td className="px-6 py-4 text-sm text-gray-500">{order.date}</td>
-                  <td className="px-6 py-4 text-sm text-gray-500">{order.amount}</td>
+                <tr key={order.id} className={`hover:${darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
+                  <td className={`px-6 py-4 text-sm font-medium ${darkMode ? 'text-gray-200' : 'text-gray-900'}`}>{order.id}</td>
+                  <td className={`px-6 py-4 text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{order.name}</td>
+                  <td className={`px-6 py-4 text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{order.location}</td>
+                  <td className={`px-6 py-4 text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{order.date}</td>
+                  <td className={`px-6 py-4 text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{order.amount}</td>
                   <td className="px-6 py-4">
                     <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(order.status)}`}>
                       {order.status}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-500">
+                  <td className={`px-6 py-4 text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                     {order.waitingNumber ? (
                       <span className="flex items-center text-orange-500">
                         <FaClock size={14} className="mr-1" /> #{order.waitingNumber}
@@ -91,22 +92,22 @@ function OrderTable({ filter, canteen }) {
       {/* Mobile View */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:hidden">
         {noDataAvailable ? (
-          <div className="bg-white p-4 rounded-lg shadow-sm border col-span-3">
-            <p className="text-sm text-center text-gray-500">No orders available.</p>
+          <div className={`bg-white p-4 rounded-lg shadow-sm border col-span-3 ${darkMode ? 'bg-gray-800' : ''}`}>
+            <p className={`text-sm text-center ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>No orders available.</p>
           </div>
         ) : (
           filteredOrders.map((order) => (
-            <div key={order.id} className="bg-white p-4 rounded-lg shadow-sm border">
+            <div key={order.id} className={`bg-white p-4 rounded-lg shadow-sm border ${darkMode ? 'bg-gray-800' : ''}`}>
               <div className="flex justify-between items-start mb-3">
                 <div>
-                  <h3 className="font-medium text-gray-900">{order.name}</h3>
-                  <p className="text-sm text-gray-500">{order.id}</p>
+                  <h3 className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-900'}`}>{order.name}</h3>
+                  <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{order.id}</p>
                 </div>
                 <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(order.status)}`}>
                   {order.status}
                 </span>
               </div>
-              <div className="text-sm text-gray-500 space-y-1">
+              <div className={`text-sm space-y-1 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                 <p>Location: {order.location}</p>
                 <p>Date: {order.date}</p>
                 <p>Amount: {order.amount}</p>

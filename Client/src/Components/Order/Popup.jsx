@@ -1,16 +1,18 @@
 import React from 'react';
-import { useSelector,useDispatch } from 'react-redux';
-const Popup = ({ isOpen,onClose, orderDetails }) => {
+import { useSelector } from 'react-redux';
+
+const Popup = ({ isOpen, onClose, orderDetails }) => {
   if (!isOpen) return null;
+  const darkMode = useSelector((state) => state.theme.isDarkMode);
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-lg max-w-md w-full">
-        <h2 className="text-lg font-bold">Order Details</h2>
-        <p className="mt-2">{orderDetails}</p>
+      <div className={`p-6 rounded-lg shadow-lg max-w-md w-full ${darkMode ? 'bg-slate-800' : 'bg-white'}`}>
+        <h2 className={`text-lg font-bold ${darkMode ? 'text-white' : 'text-black'}`}>Order Details</h2>
+        <p className={`mt-2 ${darkMode ? 'text-gray-300' : 'text-black'}`}>{orderDetails}</p>
         <button
           onClick={onClose}
-          className="mt-4 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+          className={`mt-4 ${darkMode ? 'bg-red-600 hover:bg-red-700' : 'bg-red-500 hover:bg-red-600'} text-white px-4 py-2 rounded`}
         >
           Close
         </button>

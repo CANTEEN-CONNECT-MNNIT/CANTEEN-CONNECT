@@ -10,8 +10,8 @@ import { toggleTheme } from "../Redux/Slices/themeSlice";
 import { setProfileOpen } from "../Redux/Slices/pageSlice";
 
 const Dashboard = () => {
+
   const profileOpen=useSelector((state)=>state.page.profileOpen)
-  // console.log(profileOpen)
   const CurrentPage=useSelector((state)=>state.page.currentPage)
   const isOpen=useSelector((state)=>state.page.isOpen)
   const dispatch=useDispatch;
@@ -26,11 +26,11 @@ const Dashboard = () => {
     <div className={`h-full font-serif ${darkMode ? "bg-slate-800" : "bg-slate-100"}`}>
       <Sidebar/>
       <NavigationBar/>
-      <div className="flex flex-col -z-10 gap-7 h-full w-full">
+      <div className="flex flex-col -z-10  h-full w-full">
         {showPayment ? (
           <Payment showPayment={showPayment} setShowPayment={setShowPayment}/>
         ) : (
-          <div className="flex flex-col gap-7 h-full w-full">
+          <div className="flex flex-col h-full w-full">
             <Header/>
             <MainContent 
               onCheckout={handleCheckout} 

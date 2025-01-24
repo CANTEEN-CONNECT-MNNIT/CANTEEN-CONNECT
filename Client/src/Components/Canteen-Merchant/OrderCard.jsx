@@ -1,7 +1,9 @@
 import React from 'react';
 import { FaClock, FaUserAlt, FaInfoCircle } from 'react-icons/fa';
+import { useSelector} from 'react-redux';
+function OrderCard({ order, onUpdateStatus, onViewDetails }) {
+  const darkMode = useSelector((state) => state.theme.isDarkMode);
 
-function OrderCard({ order, onUpdateStatus, onViewDetails, darkMode }) {
   const getStatusStyle = (status) => {
     const styles = {
       'Pending': 'bg-orange-100 text-orange-800',
@@ -24,11 +26,11 @@ function OrderCard({ order, onUpdateStatus, onViewDetails, darkMode }) {
       </td>
       <td className={`px-6 py-4 ${darkMode ? 'text-gray-100' : 'text-gray-900'}`}>
         <div className="flex items-center">
-          <div className={`h-8 w-8 ${darkMode ? 'bg-blue-700' : 'bg-blue-100'} rounded-full p-1.5 text-blue-600 mr-3 flex justify-center items-center`}>
+          <div className={`h-8 w-8 ${darkMode ? 'bg-blue-900' : 'bg-blue-100'} rounded-full p-1.5 text-blue-600 mr-3 flex justify-center items-center`}>
             <FaUserAlt className="h-6 w-6" />
           </div>
           <div>
-            <div className={`text-sm font-medium ${darkMode ? 'text-gray-100' : 'text-gray-900'}`}>{order.student}</div>
+            <div className={`text-sm font-medium ${darkMode ? ' text-gray-100' : 'text-gray-900'}`}>{order.student}</div>
             <div className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{order.studentId}</div>
           </div>
         </div>
@@ -36,7 +38,7 @@ function OrderCard({ order, onUpdateStatus, onViewDetails, darkMode }) {
       <td className={`px-4 py-4 ${darkMode ? 'text-gray-100' : 'text-gray-900'}`}>
         <div className="flex items-center justify-between">
           <div>
-            <div className={`text-xs font-medium ${darkMode ? 'text-blue-100' : 'text-blue-600'} bg-blue-50 inline-block px-2 py-1 rounded mb-2`}>
+            <div className={`text-xs font-medium ${darkMode ? 'bg-slate-700 text-blue-100' : 'text-blue-600'} bg-blue-50 inline-block px-2 py-1 rounded mb-2`}>
               {order.counter}
             </div>
   
@@ -62,7 +64,7 @@ function OrderCard({ order, onUpdateStatus, onViewDetails, darkMode }) {
         </div>
       </td>
       <td className={`px-6 py-4 ${darkMode ? 'text-gray-100' : 'text-gray-900'}`}>
-        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusStyle(order.status)} ${darkMode ? 'bg-opacity-40' : ''}`}>
+        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusStyle(order.status)} ${darkMode ? 'bg-opacity-100' : ''}`}>
           {order.status}
         </span>
       </td>

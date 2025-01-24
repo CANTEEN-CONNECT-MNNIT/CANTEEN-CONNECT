@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { FaEye, FaEyeSlash, FaGoogle, FaFacebook, FaLinkedin } from 'react-icons/fa';
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 export default function SignUpBox({ setSuccess, setShowLoginModal, setShowSignUpModal, onClose }) {
@@ -109,14 +108,14 @@ export default function SignUpBox({ setSuccess, setShowLoginModal, setShowSignUp
               required: 'Password is required',
               minLength: { value: 6, message: 'Password must be at least 6 characters' },
             })}
-            className="w-full mt-1 px-3 py-2 border rounded-md"
+            className={`w-full mt-1 px-3 py-2 border rounded-md ${darkMode ? 'bg-gray-700 text-white' : 'bg-white text-gray-900'}`}
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)} // Toggle password visibility
             className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
           >
-            {showPassword ? <FaEyeSlash /> : <FaEye />}  {/* Show/Hide icon */}
+            {showPassword ? <FaEyeSlash /> : <FaEye />}  
           </button>
         </div>
         {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
@@ -136,7 +135,7 @@ export default function SignUpBox({ setSuccess, setShowLoginModal, setShowSignUp
               required: 'Please confirm your password',
               validate: (value) => value === password || 'Passwords do not match',
             })}
-            className="w-full mt-1 px-3 py-2 border rounded-md"
+            className={`w-full mt-1 px-3 py-2 border rounded-md ${darkMode ? 'bg-gray-700 text-white' : 'bg-white text-gray-900'}`}
           />
           <button
             type="button"
@@ -156,7 +155,7 @@ export default function SignUpBox({ setSuccess, setShowLoginModal, setShowSignUp
               Sign Up
             </button>
 
-            <div className="text-center text-gray-600 mt-4">
+            <div className="text-center text-gray-600 mt-4 flex flex-row gap-2 justify-center">
               Already have an account?
               <button className="hover:text-orange-800 text-orange-500" onClick={() => { setShowLoginModal(true); setShowSignUpModal(false); }}>
                 Login

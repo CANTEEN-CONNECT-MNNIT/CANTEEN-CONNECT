@@ -3,8 +3,10 @@ import { FiSearch} from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch,useSelector } from 'react-redux';
 import { setCurrentPage } from '../../Redux/Slices/pageSlice';
+import { useAppContext } from '../../Context/AppContext';
+
 const Header = () => { 
-  
+  const { setLoc } = useAppContext()
     const dispatch=useDispatch();
     const darkMode = useSelector((state) => state.theme.isDarkMode);
   const [searchQuery, setSearchQuery] = useState('');
@@ -53,7 +55,7 @@ const Header = () => {
                 navigate("/Orderpage")}}>
                 Order Now
               </button>
-              <button className="px-8 py-3 bg-white/10 hover:bg-white/20 text-white rounded-full shadow-lg backdrop-blur-md transition-all duration-300 border-2 border-white/30 hover:border-white/50">
+              <button onClick={()=>setLoc("menu")} className="px-8 py-3 bg-white/10 hover:bg-white/20 text-white rounded-full shadow-lg backdrop-blur-md transition-all duration-300 border-2 border-white/30 hover:border-white/50">
                 View Menu
               </button>
             </div>

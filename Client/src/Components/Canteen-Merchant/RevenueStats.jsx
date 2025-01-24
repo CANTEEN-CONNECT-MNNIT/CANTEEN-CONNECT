@@ -1,8 +1,8 @@
 import React from 'react';
 import { GiCoffeeCup, GiMeal, GiChart, GiChefToque } from 'react-icons/gi';
-import { useDispatch,useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 export default function RevenueStats() {
-    const dispatch=useDispatch();
+
     const darkMode = useSelector((state) => state.theme.isDarkMode);
   return (
     <div
