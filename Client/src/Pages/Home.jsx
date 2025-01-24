@@ -9,15 +9,21 @@ import { useNavigate } from 'react-router-dom';
 import Loading from '../Components/Home/Loading';
 import Hero from '../Components/Home/Hero';
 import { Footer } from '../Components/Home/Footer';
+import { useDispatch,useSelector } from 'react-redux';
+import { toggleTheme } from '../Redux/Slices/themeSlice';
 
-function Home({ darkMode, setDarkMode }) {
+function Home() {
+    const dispatch=useDispatch();
+    const darkMode = useSelector((state) => state.theme.isDarkMode);
+
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showSignUpModal, setShowSignUpModal] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false);
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
-
+  console.log(success)
+  console.log("hello")
   useEffect(() => {
     if (success) {
       setTimeout(() => {
@@ -25,8 +31,6 @@ function Home({ darkMode, setDarkMode }) {
       }, 3000); 
     }
   }, [success, navigate]);
-
-  const toggleDarkMode = () => setDarkMode(!darkMode);
 
   return (
     <div className={`min-h-screen ${darkMode ? 'dark bg-gray-900' : 'bg-gray-50'}`}>
@@ -44,7 +48,7 @@ function Home({ darkMode, setDarkMode }) {
                 </div>
 
                 <div className="hidden md:flex items-center space-x-5">
-                  <button onClick={toggleDarkMode} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                  <button onClick={() => dispatch(toggleTheme())}className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
                     {darkMode ? <FaSun className="h-7 w-7 text-orange-500" /> : <FaMoon className="h-5 w-5 text-orange-500" />}
                   </button>
                   <button onClick={() => setShowLoginModal(true)} className="px-4 py-2 text-xl font-semibold text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
@@ -65,7 +69,7 @@ function Home({ darkMode, setDarkMode }) {
 
             <div className={`md:hidden transition-all duration-300 ease-in-out ${mobileMenuOpen ? 'max-h-48 opacity-100' : 'max-h-0 opacity-0'} overflow-hidden`}>
               <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                <button onClick={toggleDarkMode} className="w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                <button onClick={() => dispatch(toggleTheme())} className="w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                   {darkMode ? 'Light Mode' : 'Dark Mode'}
                 </button>
                 <button onClick={() => { setShowLoginModal(true); setMobileMenuOpen(false); }} className="w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
@@ -96,13 +100,13 @@ function Home({ darkMode, setDarkMode }) {
           </main>
 
           {showLoginModal && (
-            <LoginBox setSuccess={setSuccess} onforgetPass={() => { setShowForgotPasswordModal(true); setShowLoginModal(false); }} onClose={() => setShowLoginModal(false)} darkMode={darkMode} />
+            <LoginBox setSuccess={setSuccess} onforgetPass={() => { setShowForgotPasswordModal(true); setShowLoginModal(false); }} onClose={() => setShowLoginModal(false)}  />
           )}
           {showSignUpModal && (
-            <SignUpBox setSuccess={setSuccess} setShowLoginModal={setShowLoginModal} setShowSignUpModal={setShowSignUpModal} onClose={() => setShowSignUpModal(false)} darkMode={darkMode} />
+            <SignUpBox setSuccess={setSuccess} setShowLoginModal={setShowLoginModal} setShowSignUpModal={setShowSignUpModal} onClose={() => setShowSignUpModal(false)} />
           )}
           {showForgotPasswordModal && (
-            <ForgotPassword onClose={() => setShowForgotPasswordModal(false)} darkMode={darkMode} />
+            <ForgotPassword onClose={() => setShowForgotPasswordModal(false)}  />
           )}
         </>
       )}

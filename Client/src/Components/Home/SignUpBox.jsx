@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { FaEye, FaEyeSlash, FaGoogle, FaFacebook, FaLinkedin } from 'react-icons/fa';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
-export default function SignUpBox({ setSuccess, setShowLoginModal, setShowSignUpModal, onClose, darkMode }) {
+export default function SignUpBox({ setSuccess, setShowLoginModal, setShowSignUpModal, onClose }) {
+  const darkMode=useSelector((state)=> state.theme.isDarkMode)
   const {
     register,
     handleSubmit,

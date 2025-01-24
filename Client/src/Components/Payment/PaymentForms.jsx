@@ -2,8 +2,11 @@ import React, { useState } from 'react';
 import { FaInfoCircle, FaSpinner, FaChevronDown, FaWallet, FaQrcode } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import toast, { Toaster } from "react-hot-toast";
-
-export default function PaymentForms({ selectedMethod, total, darkMode, setCurrentPage }) {
+import { useDispatch,useSelector } from 'react-redux';
+import { toggleTheme } from '../../Redux/Slices/themeSlice';
+export default function PaymentForms({ selectedMethod, total, setCurrentPage }) {
+    const dispatch=useDispatch();
+    const darkMode = useSelector((state) => state.theme.isDarkMode);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 

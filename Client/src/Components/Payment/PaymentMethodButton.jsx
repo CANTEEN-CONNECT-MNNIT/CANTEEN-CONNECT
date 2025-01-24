@@ -1,6 +1,10 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 
-export default function PaymentMethodButton({ selected, onClick, icon: Icon, label, darkMode }) {
+export default function PaymentMethodButton({ selected, onClick, icon: Icon, label }) {
+    const dispatch=useDispatch();
+    const darkMode = useSelector((state) => state.theme.isDarkMode);
   return (
     <button
       onClick={onClick}

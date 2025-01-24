@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { IoFlameSharp } from "react-icons/io5";
+import { useDispatch,useSelector } from 'react-redux';
 
 const trendingItems = [
   {
@@ -39,7 +40,9 @@ const trendingItems = [
   }
 ];
 
-const TrendingFood = ({darkMode}) => {
+const TrendingFood = () => {
+    const dispatch=useDispatch();
+    const darkMode = useSelector((state) => state.theme.isDarkMode);
   const [currentIndex, setCurrentIndex] = useState(0);
 
   // Auto-slide effect

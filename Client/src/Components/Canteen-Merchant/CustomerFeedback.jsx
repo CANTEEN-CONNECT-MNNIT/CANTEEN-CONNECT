@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { useDispatch,useSelector } from 'react-redux';
 const reviews = [
   {
     id: 1,
@@ -19,7 +19,10 @@ const reviews = [
   }
 ];
 
-export default function CustomerFeedback({ darkMode }) {
+export default function CustomerFeedback() {
+    const dispatch=useDispatch();
+    const darkMode = useSelector((state) => state.theme.isDarkMode);
+
   return (
     <div
       className={`${

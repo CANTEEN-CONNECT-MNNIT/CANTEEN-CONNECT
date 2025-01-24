@@ -2,8 +2,13 @@ import React from 'react';
 import FoodItems from './FoodItems';
 import Cart from './Cart';
 import TrendingFood from './Trending';
+import { useDispatch,useSelector } from 'react-redux';
+import { setOpen,toggleOpen } from '../../Redux/Slices/pageSlice';
 
-const MainContent = ({isOpen, darkMode,onCheckout}) => {
+const MainContent = ({onCheckout}) => {
+  const isOpen=useSelector((state)=> state.page.isOpen);
+    const dispatch=useDispatch();
+    const darkMode = useSelector((state) => state.theme.isDarkMode);
   return (
     <div
       className={`transition-all duration-500 ease-in-out w-full h-full ${
@@ -20,15 +25,15 @@ const MainContent = ({isOpen, darkMode,onCheckout}) => {
       </div>
       <div className="relative flex flex-col gap-2">
         <div className={`relative  top-20 text-2xl font-bold mb-6`}>
-          <TrendingFood darkMode={darkMode} />
+          <TrendingFood  />
         </div>
         <div className="mt-12 mb-20">
           <h2 className="ml-16 text-2xl font-bold mb-6">Tirath Canteen</h2>
-          <FoodItems  darkMode={darkMode} />
+          <FoodItems />
         </div>
         <div className="mt-12 mb-20">
           <h2 className="ml-16 text-2xl font-bold mb-6">Ojha Canteen</h2>
-          <FoodItems darkMode={darkMode} />
+          <FoodItems  />
         </div>
       </div>
       <Cart onCheckout={onCheckout}/>

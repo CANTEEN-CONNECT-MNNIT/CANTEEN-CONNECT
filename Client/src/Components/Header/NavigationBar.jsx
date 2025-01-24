@@ -2,10 +2,16 @@
 import React from 'react';
 import { FiSun, FiMoon, FiBell, FiUser, FiMenu } from 'react-icons/fi';
 import { useLocation } from 'react-router-dom';
-
-const NavigationBar = ({ isOpen, setOpen, darkMode, setDarkMode, setprofileOpen }) => {
+import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { toggleTheme } from '../../Redux/Slices/themeSlice';
+import { setOpen } from '../../Redux/Slices/pageSlice';
+import { setProfileOpen } from '../../Redux/Slices/pageSlice';
+const NavigationBar = () => {
+  const isOpen=useSelector((state)=>state.page.isOpen);
   const location = useLocation();
-
+  const dispatch=useDispatch();
+  const darkMode = useSelector((state) => state.theme.isDarkMode);
   return (
     <div
       className={`absolute ${darkMode ? 'bg-transparent' : location.pathname === "/dashboard" ? '' : 'bg-stone-800 shadow-lg'} top-0 z-10 left-0 right-0 px-4`}
@@ -14,7 +20,7 @@ const NavigationBar = ({ isOpen, setOpen, darkMode, setDarkMode, setprofileOpen 
        
         <div className="flex items-center gap-4 ml-4">
           <button
-            onClick={() => setOpen(true)}
+            onClick={(state) => dispatch(setOpen(true))}
             className="text-white hover:text-orange-400 transition-colors"
           >
             <FiMenu className="bg-slate-800 rounded-2xl p-1" size={30} />
@@ -30,7 +36,7 @@ const NavigationBar = ({ isOpen, setOpen, darkMode, setDarkMode, setprofileOpen 
 
         <div className="flex items-center gap-4 md:gap-8 lg:gap-12 p-3 mr-4 md:mr-10 lg:mr-20">
           <button
-            onClick={() => setDarkMode(prev => !prev)}
+           onClick={() => dispatch(toggleTheme())}
             className={`p-2 rounded-full ${darkMode ? 'bg-yellow-500' : 'bg-slate-800'} text-white hover:bg-opacity-80 transition-colors`}
             aria-label="Toggle theme"
           >
@@ -45,7 +51,7 @@ const NavigationBar = ({ isOpen, setOpen, darkMode, setDarkMode, setprofileOpen 
           </button>
 
           <button 
-           onClick={() => setprofileOpen(true)}
+           onClick={ (state)=>dispatch( setProfileOpen(true))}
           className="text-white hover:text-orange-400 transition-colors">
             <FiUser size={20} />
           </button>

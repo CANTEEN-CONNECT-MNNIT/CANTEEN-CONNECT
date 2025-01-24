@@ -7,8 +7,14 @@ import Sidebar from '../Components/SideBar/Sidebar';
 import NavigationBar from '../Components/Header/NavigationBar';
 import Popup from '../Components/Order/Popup';
 import {  useNavigate } from 'react-router-dom';
+import { useDispatch,useSelector } from 'react-redux';
+import { toggleOpen } from '../Redux/Slices/pageSlice';
+import { setCurrentPage } from '../Redux/Slices/pageSlice';
 
-function Orderpage({ setCurrentPage,CurrentPage, darkMode, setDarkMode, isOpen, setOpen }) {
+function Orderpage() {
+  const isOpen=useSelector((state)=> state.page.isOpen)
+  const dispatch=useDispatch();
+  const darkMode = useSelector((state) => state.theme.isDarkMode);
   const [activeFilter, setActiveFilter] = useState('All Orders');
   const [selectedCanteen, setSelectedCanteen] = useState('All Canteens');
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -21,9 +27,9 @@ function Orderpage({ setCurrentPage,CurrentPage, darkMode, setDarkMode, isOpen, 
   const navigate=useNavigate();
   return (
     <div className={`flex min-h-screen ${darkMode ? 'bg-slate-900 text-white' : 'bg-slate-200 text-gray-900'}`}>
-      <Sidebar isOpen={isOpen} setOpen={setOpen} darkMode={darkMode} setCurrentPage={setCurrentPage} />
+      <Sidebar/>
       <div className={`transition-all duration-300 ${isOpen ? 'ml-64' : 'ml-20'} flex-1 px-4 md:px-8 lg:px-12 pb-8`}>
-        <NavigationBar CurrentPage={CurrentPage} isOpen={isOpen} setOpen={setOpen} darkMode={darkMode} setDarkMode={setDarkMode} />
+        <NavigationBar />
         <div className="pt-32 space-y-8">
           <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>

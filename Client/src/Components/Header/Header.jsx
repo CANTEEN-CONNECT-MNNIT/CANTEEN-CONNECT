@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { FiSearch} from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
-
-
-const Header = ({setCurrentPage, darkMode }) => { 
+import { useDispatch,useSelector } from 'react-redux';
+import { setCurrentPage } from '../../Redux/Slices/pageSlice';
+const Header = () => { 
+  
+    const dispatch=useDispatch();
+    const darkMode = useSelector((state) => state.theme.isDarkMode);
   const [searchQuery, setSearchQuery] = useState('');
   const navigate=useNavigate();
   return (
@@ -46,7 +49,7 @@ const Header = ({setCurrentPage, darkMode }) => {
               <button 
               className="px-8 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-full shadow-lg transition-all duration-300"
               onClick={() => {
-                setCurrentPage("OrderPage")
+                dispatch(setCurrentPage("OrderPage"))
                 navigate("/Orderpage")}}>
                 Order Now
               </button>

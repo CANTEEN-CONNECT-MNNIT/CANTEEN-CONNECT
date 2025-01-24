@@ -4,8 +4,12 @@ import { FaCreditCard, FaWallet, FaUniversity, FaQrcode } from 'react-icons/fa';
 import PaymentMethodButton from './PaymentMethodButton';
 import OrderSummary from './OrderSummary';
 import PaymentForms from './PaymentForms';
-
-function Payment({ showPayment, setShowPayment, darkMode ,setCurrentPage}) {
+import { useDispatch } from 'react-redux';
+import { toggleTheme } from '../../Redux/Slices/themeSlice';
+import { setCurrentPage } from '../../Redux/Slices/pageSlice';
+function Payment({ showPayment, setShowPayment }) {
+    const dispatch=useDispatch();
+    const darkMode = useSelector((state) => state.theme.isDarkMode);
   const [selectedMethod, setSelectedMethod] = useState('card');
   const [expanded, setExpanded] = useState(true);
 

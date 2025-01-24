@@ -9,108 +9,67 @@ import Canteen from "./Components/SideBar/Canteen";
 import Favorite from "./Components/SideBar/Favorite";
 import CanteenPage from "./Pages/CanteenPage";
 import Profile from "./Components/SideBar/Profile";
-
+import { useDispatch,useSelector } from "react-redux";
+import { navigateTo } from "./Redux/Slices/pageSlice";
+import { setCurrentPage } from "./Redux/Slices/pageSlice";
+import { setProfileOpen } from "./Redux/Slices/pageSlice";
 const App = () => {
-  const [darkMode, setDarkMode] = useState(false);
-  const [isOpen, setOpen] = useState(false);
-  const [CurrentPage, setCurrentPage] = useState("Home");
-  const [profileOpen, setprofileOpen] = useState(false);
-  const location = useLocation();
+  const dispatch=useDispatch();
+  const darkMode = useSelector((state) => state.theme.isDarkMode);
+  const isOpen = useSelector((state) => state.page.isOpen);
 
+  const CurrentPage=useSelector((state)=>state.page.currentPage);
+  const profileOpen=useSelector((state)=>state.page.profileOpen)
+
+  const location = useLocation();
   useEffect(() => {
-    if (location.pathname === "/") {
-      setCurrentPage("Home");
-    } else if (location.pathname === "/dashboard") {
-      setCurrentPage("Dashboard");
-    } else if (location.pathname === "/OrderPage") {
-      setCurrentPage("OrderPage");
-    } else if (location.pathname === "/canteen") {
-      setCurrentPage("CanteenPage");
-    }
-  }, [location]);
+    dispatch(navigateTo(location.pathname));
+  }, [location, dispatch]);
 
   const navigate = useNavigate();
-  useEffect(() => {
-    if (CurrentPage === 'Track Order') {
-      navigate('/OrderPage');
-    }
-    if (CurrentPage === 'Dashboard') {
-      navigate('/dashboard');
-    }
-  }, [CurrentPage, navigate]);
-
   const onClose = function() {
     const path = location.pathname;
     const pageMapping = {
       '/dashboard': 'Dashboard',
       '/canteen': 'Canteen',
-      '/Orderpage': 'Track Order',
+      '/OrderPage': 'Track Order',
     };
-    setCurrentPage(pageMapping[path] || 'Dashboard'); 
+    dispatch(setCurrentPage(pageMapping[path] || 'Dashboard')); 
   };
-
+console.log(profileOpen)
+  
   return (
     <div>
       {CurrentPage === 'Canteen' && <Canteen onClose={onClose} />}
       {CurrentPage === 'Favorites' && <Favorite onClose={onClose} />}
 
       {profileOpen && (
-        <Profile setprofileOpen={setprofileOpen} onClose={() => setprofileOpen(false)} />
+        <Profile onClose={(state) => dispatch(setProfileOpen(false))} />
       )}
 
       <Routes>
         <Route
           path="/"
           element={
-            <Home
-              CurrentPage={CurrentPage}
-              setCurrentPage={setCurrentPage}
-              darkMode={darkMode}
-              setDarkMode={setDarkMode}
-              isOpen={isOpen}
-              setOpen={setOpen}
-            />
+            <Home/>
           }
         />
         <Route
           path="/dashboard"
           element={
-            <Dashboard
-              CurrentPage={CurrentPage}
-              setCurrentPage={setCurrentPage}
-              darkMode={darkMode}
-              setDarkMode={setDarkMode}
-              isOpen={isOpen}
-              setOpen={setOpen}
-              setprofileOpen={setprofileOpen}
-            />
+            <Dashboard/>
           }
         />
         <Route
           path="/OrderPage"
           element={
-            <OrderPage
-              setCurrentPage={setCurrentPage}
-              CurrentPage={CurrentPage}
-              darkMode={darkMode}
-              setDarkMode={setDarkMode}
-              isOpen={isOpen}
-              setOpen={setOpen}
-              setprofileOpen={setprofileOpen}
-            />
+            <OrderPage />
           }
         />
         <Route
           path="/canteen"
           element={
-            <CanteenPage
-              CurrentPage={CurrentPage}
-              setCurrentPage={setCurrentPage}
-              darkMode={darkMode}
-              setDarkMode={setDarkMode}
-              isOpen={isOpen}
-              setOpen={setOpen}
-            />
+            <CanteenPage/>
           }
         />
         <Route path="/*" element={<Error />} />

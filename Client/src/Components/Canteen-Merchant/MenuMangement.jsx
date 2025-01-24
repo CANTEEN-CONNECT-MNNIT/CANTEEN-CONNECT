@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FaEdit, FaTrashAlt } from 'react-icons/fa';
-
+import { useSelector,useDispatch } from 'react-redux';
 const initialMenuItems = [
   { id: 1, name: 'Masala Dosa', price: 60, category: 'South Indian', stock: 'In Stock' },
   { id: 2, name: 'Veg Biryani', price: 120, category: 'Main Course', stock: 'Low Stock' },
@@ -8,7 +8,9 @@ const initialMenuItems = [
   { id: 4, name: 'Cold Coffee', price: 40, category: 'Beverages', stock: 'Out of Stock' },
 ];
 
-export default function MenuManagement({ darkMode }) {
+export default function MenuManagement() {
+  const dispatch=useDispatch();
+  const darkMode = useSelector((state) => state.theme.isDarkMode);
   const [menuItems, setMenuItems] = useState(initialMenuItems);
   const [isEditing, setIsEditing] = useState(false);
   const [editItem, setEditItem] = useState(null);

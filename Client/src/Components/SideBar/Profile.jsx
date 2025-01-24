@@ -1,13 +1,17 @@
 import React from 'react';
 import { FaWallet, FaClock, FaUtensils, FaTimes } from 'react-icons/fa';
+import { useDispatch, useSelector } from 'react-redux';
+import { setProfileOpen } from '../../Redux/Slices/pageSlice';
 
-const Profile = ({ setprofileOpen }) => {
+const Profile = () => {
+   const dispatch=useDispatch();
+  const profileOpen=useSelector((state)=> state.page.profileOpen)
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fadeIn">
       <div className="bg-white rounded-2xl w-full max-w-md p-6 relative shadow-xl animate-slideIn">
         {/* Close Button */}
         <button 
-          onClick={() => setprofileOpen(false)}
+          onClick={(state)=>dispatch(setProfileOpen(false))}
           className="absolute right-4 top-4 text-gray-400 hover:text-orange-500 transition-colors"
         >
           <FaTimes size={20} />

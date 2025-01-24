@@ -7,6 +7,10 @@ import { FaRegArrowAltCircleLeft, FaWallet, FaCoins } from "react-icons/fa";
 import { SlLocationPin } from "react-icons/sl";
 import { MdHeadphones,MdFavoriteBorder } from "react-icons/md";
 import { IoGiftOutline} from "react-icons/io5";
+import { useDispatch,useSelector } from 'react-redux';
+import { toggleOpen } from '../../Redux/Slices/pageSlice';
+import { setOpen } from '../../Redux/Slices/pageSlice';
+import { setCurrentPage } from '../../Redux/Slices/pageSlice';
 
 const menuItems = [
   { icon: LuLayoutDashboard, label: 'Dashboard' },
@@ -24,14 +28,20 @@ const scrollToFooter = () => {
   }
 };
 
-const Sidebar = ({ isOpen, setOpen, darkMode,setCurrentPage }) => {
+const Sidebar = () => {
+
+  const isOpen=useSelector((state)=>state.page.isOpen)
+
+
+  const dispatch=useDispatch();
+  const darkMode = useSelector((state) => state.theme.isDarkMode);
   return (
     <>
       {/* Overlay */}
       {isOpen && (
         <div 
           className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
-          onClick={() => setOpen(false)}
+          onClick={(state) => dispatch(setOpen(false))}
         />
       )}
 
@@ -39,7 +49,7 @@ const Sidebar = ({ isOpen, setOpen, darkMode,setCurrentPage }) => {
       <div className={`fixed top-0 left-0 h-full ${darkMode ? 'bg-slate-700' : 'bg-white'} shadow-lg z-50 transition-all duration-300 ease-in-out ${isOpen ? 'w-60' : 'w-0 overflow-hidden'}`}>
         <div className={`p-4 flex justify-between items-center border-b ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
           <h2 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Canteen Connect</h2>
-          <button onClick={() => setOpen(!isOpen)} className={`p-2 rounded-full ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
+          <button onClick={() => dispatch(toggleOpen())} className={`p-2 rounded-full ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
             <FaRegArrowAltCircleLeft className={`size-5 ${darkMode ? 'text-white' : 'text-gray-800'}`} /> 
           </button>
         </div>
@@ -86,7 +96,7 @@ const Sidebar = ({ isOpen, setOpen, darkMode,setCurrentPage }) => {
             onClick={() => {
               if(item.label=='Contact Us'){
                 scrollToFooter();}
-              setCurrentPage(item.label)}} 
+              dispatch(setCurrentPage(item.label))}} 
               key={index}
               className={`flex items-center space-x-3 p-3 rounded-lg mb-1 transition-colors justify-center w-full text-left ${darkMode ? 'hover:bg-gray-800 text-white' : 'hover:bg-gray-100 text-gray-800'}`}
             >

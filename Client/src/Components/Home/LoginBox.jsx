@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { FaEye, FaEyeSlash, FaGoogle, FaFacebook, FaLinkedin } from 'react-icons/fa';
 import { useForm } from 'react-hook-form';
+import { useSelector,useDispatch } from 'react-redux';
 
-export default function LoginBox({setSuccess, onforgetPass, onClose, darkMode }) {
+export default function LoginBox({setSuccess, onforgetPass, onClose,}) {
+  const darkMode=useSelector((state)=> state.theme.isDarkMode)
   const {
     register,
     handleSubmit,

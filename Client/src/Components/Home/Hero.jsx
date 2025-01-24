@@ -1,8 +1,10 @@
 import React from 'react';
 import { FaArrowRight, FaClock, FaUtensils, FaTruck, FaHamburger } from 'react-icons/fa';
-
-export default function Hero({ isDarkMode }) {
+import { useSelector,useDispatch } from 'react-redux';
+export default function Hero() {
+  const isDarkMode=useDispatch((state)=> state.theme.isDarkMode)
   return (
+    
     <div className={`relative min-h-[700px] overflow-hidden ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}>
       <div className="absolute inset-0">
         <img

@@ -1,6 +1,6 @@
 import React from 'react';
-
-const Popup = ({ isOpen, onClose, orderDetails }) => {
+import { useSelector,useDispatch } from 'react-redux';
+const Popup = ({ isOpen,onClose, orderDetails }) => {
   if (!isOpen) return null;
 
   return (

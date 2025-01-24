@@ -1,7 +1,12 @@
 import React from 'react';
 import { FaLock, FaPhoneAlt } from 'react-icons/fa';
+import { toggleTheme } from '../../Redux/Slices/themeSlice';
+import { useDispatch,useSelector } from 'react-redux';
 
-export default function OrderSummary({ items, subtotal, discount, total, expanded, onToggleExpand, darkMode }) {
+export default function OrderSummary({ items, subtotal, discount, total, expanded, onToggleExpand }) {
+    const dispatch=useDispatch();
+    const darkMode = useSelector((state) => state.theme.isDarkMode);
+
   return (
     <div className={`${darkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'} rounded-xl shadow-md p-6`}>
       <div className="flex justify-between items-center mb-4">

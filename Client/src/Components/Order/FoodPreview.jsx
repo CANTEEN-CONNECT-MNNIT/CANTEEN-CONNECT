@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { AiOutlineClose, AiOutlineClockCircle } from 'react-icons/ai';
+import { useSelector,useDispatch } from 'react-redux';
+function FoodPreview({isOpen,onClose, order }) {
 
-function FoodPreview({ isOpen, onClose, order }) {
+  
   if (!isOpen) return null;
 
   return (

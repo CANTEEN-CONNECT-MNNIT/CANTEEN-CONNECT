@@ -1,8 +1,9 @@
 import React from 'react';
 import { FaTimes, FaClock, FaUserAlt } from 'react-icons/fa';
-
-function OrderDetailsModal({ order, onClose, darkMode }) {
-
+import { useDispatch ,useSelector} from 'react-redux';
+function OrderDetailsModal({ order, onClose }) {
+    const dispatch=useDispatch();
+    const darkMode = useSelector((state) => state.theme.isDarkMode);
   return (
     <div className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 ${darkMode ? 'bg-opacity-80' : 'bg-opacity-50'}`}>
       <div className={`rounded-lg w-full max-w-md mx-4 ${darkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'}`}>

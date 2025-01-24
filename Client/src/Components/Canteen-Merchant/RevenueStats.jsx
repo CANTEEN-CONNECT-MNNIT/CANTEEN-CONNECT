@@ -1,7 +1,9 @@
 import React from 'react';
 import { GiCoffeeCup, GiMeal, GiChart, GiChefToque } from 'react-icons/gi';
-
-export default function RevenueStats({ darkMode }) {
+import { useDispatch,useSelector } from 'react-redux';
+export default function RevenueStats() {
+    const dispatch=useDispatch();
+    const darkMode = useSelector((state) => state.theme.isDarkMode);
   return (
     <div
       className={`mt-10 grid grid-cols-1 md:grid-cols-3 gap-5 p-6 ${
