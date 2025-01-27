@@ -65,7 +65,7 @@ const TrendingFood = () => {
 
   return (
     <div className="mb-14">
-      <div className="flex items-center relative ml-14 mb-6">
+      <div className="flex items-center relative p-2 ml-14 mb-6">
         <IoFlameSharp className="h-6 w-6 text-orange-500" />
         <h2 className={`${darkMode ? 'text-white' : 'text-slate-800'} text-2xl font-bold`}>Trending Now</h2>
       </div>

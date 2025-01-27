@@ -16,7 +16,7 @@ const CanteenPage = () => {
 
   return (
     <div className={`h-full font-serif transition-all ${darkMode ? "bg-slate-800 text-white" : "bg-slate-100 text-gray-800"}`}>
-      <Sidebar />
+    
       <NavigationBar/>
       <div className="relative top-24 ml-auto mr-auto flex flex-col gap-8 h-full w-full px-4  sm:px-6 lg:px-12">
           <div className={`mx-auto mt-10 p-0 text-5xl font-bold ${darkMode?" text-white":"text-orange-800"} `}>Welcome to Your Canteen!</div>

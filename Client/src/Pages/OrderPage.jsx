@@ -44,22 +44,23 @@ function Orderpage() {
           </header>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
-            {stats.map(({ name, value, icon: Icon, color }) => (
-              <div
-                key={name}
-                className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-lg border border-gray-100 dark:border-slate-700 flex items-center cursor-pointer"
-                onClick={() => setIsPopupOpen(true)} // Open popup on click
-              >
-                <div className={`p-3 rounded-full ${color} bg-opacity-10 mr-4`}>
-                  <Icon className={`h-6 w-6 ${color}`} />
-                </div>
-                <div>
-                  <p className="text-sm font-medium opacity-75">{name}</p>
-                  <p className="text-2xl font-semibold">{value}</p>
-                </div>
-              </div>
-            ))}
+          {stats.map(({ name, value, icon: Icon, color }) => (
+          <div
+            key={name}
+            className={`p-4 rounded-xl shadow-lg border flex items-center cursor-pointer 
+              ${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-100'}`}
+            onClick={() => setIsPopupOpen(true)} >
+            <div className={`p-3 rounded-full ${color} bg-opacity-10 mr-4`}>
+              <Icon className={`h-6 w-6 ${color}`} />
+            </div>
+            <div>
+              <p className={`text-sm font-medium opacity-75 ${darkMode ? 'text-gray-400' : 'text-gray-700'}`}>{name}</p>
+              <p className={`text-2xl font-semibold ${darkMode ? 'text-white' : 'text-gray-900'}`}>{value}</p>
+            </div>
           </div>
+          ))}
+          </div>
+
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <CanteenFilter selectedCanteen={selectedCanteen} setSelectedCanteen={setSelectedCanteen} />

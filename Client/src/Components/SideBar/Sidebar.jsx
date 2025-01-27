@@ -10,8 +10,9 @@ import { IoGiftOutline} from "react-icons/io5";
 import { useDispatch,useSelector } from 'react-redux';
 import { toggleOpen } from '../../Redux/Slices/pageSlice';
 import { setOpen } from '../../Redux/Slices/pageSlice';
-import { setCurrentPage } from '../../Redux/Slices/pageSlice';
 
+import { setCurrentPage } from '../../Redux/Slices/pageSlice';
+import { useNavigate } from 'react-router-dom';
 const menuItems = [
   { icon: LuLayoutDashboard, label: 'Dashboard' },
   { icon: LuUtensils, label: 'Canteen' },
@@ -29,10 +30,11 @@ const scrollToFooter = () => {
 };
 
 const Sidebar = () => {
-
+  
+  const navigate=useNavigate();
   const isOpen=useSelector((state)=>state.page.isOpen)
-
-
+  
+  
   const dispatch=useDispatch();
   const darkMode = useSelector((state) => state.theme.isDarkMode);
   return (
@@ -94,9 +96,22 @@ const Sidebar = () => {
           {menuItems.map((item, index) => (
             <button
             onClick={() => {
-              if(item.label=='Contact Us'){
+              if(item.label==='Contact Us'){
+                console.log(item)
                 scrollToFooter();}
-              dispatch(setCurrentPage(item.label))}} 
+              dispatch(setCurrentPage(item.label))
+              /* navigate to Orderpage,dashboard when clicked to there specific buttons */
+              
+              if(item.label==="Track Order"){
+                navigate("/OrderPage")
+                dispatch(setOpen(false))
+              }
+              else if(item.label=="Dashboard"){
+                navigate('/dashboard')
+                dispatch(false)
+              }
+           }} 
+              
               key={index}
               className={`flex items-center space-x-3 p-3 rounded-lg mb-1 transition-colors justify-center w-full text-left ${darkMode ? 'hover:bg-gray-800 text-white' : 'hover:bg-gray-100 text-gray-800'}`}
             >

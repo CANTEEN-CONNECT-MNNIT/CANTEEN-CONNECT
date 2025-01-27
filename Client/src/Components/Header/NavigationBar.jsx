@@ -12,6 +12,7 @@ const NavigationBar = () => {
   const location = useLocation();
   const dispatch=useDispatch();
   const darkMode = useSelector((state) => state.theme.isDarkMode);
+  console.log(location)
   return (
     <div
       className={`absolute ${darkMode ? 'bg-transparent' : location.pathname === "/dashboard" ? '' : 'bg-stone-800 shadow-lg'} top-0 z-10 left-0 right-0 px-4`}
@@ -19,15 +20,19 @@ const NavigationBar = () => {
       <div className="flex mt-0 items-center justify-between py-4">
        
         <div className="flex items-center gap-4 ml-4">
-          <button
-            onClick={(state) => dispatch(setOpen(true))}
-            className="text-white hover:text-orange-400 transition-colors"
-          >
-            <FiMenu className="bg-slate-800 rounded-2xl p-1" size={30} />
-          </button>
+          
+         { location.pathname !== "/canteen" && (
+      <button
+        onClick={() => dispatch(setOpen(true))}
+        className="text-white hover:text-orange-400 transition-colors"
+      >
+        <FiMenu className="bg-slate-800 rounded-2xl p-1" size={30} />
+      </button>
+    )
+  }
 
           <div
-            className={`flex items-center gap-2 text-2xl md:text-3xl font-bold text-white tracking-tight transition-transform duration-300 ${isOpen ? 'translate-x-48' : ''}`}
+            className={`flex items-center gap-2 text-2xl md:text-3xl font-bold text-white tracking-tight transition-transform duration-300 `}
           >
             <span>Canteen</span>
             <span className="text-orange-500 hover:text-orange-400 transition-colors"> Connect</span>

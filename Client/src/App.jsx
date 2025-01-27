@@ -13,14 +13,14 @@ import { useDispatch,useSelector } from "react-redux";
 import { navigateTo } from "./Redux/Slices/pageSlice";
 import { setCurrentPage } from "./Redux/Slices/pageSlice";
 import { setProfileOpen } from "./Redux/Slices/pageSlice";
+import { AppProvider } from "./Context/AppContext.jsx";
 const App = () => {
   const dispatch=useDispatch();
   const darkMode = useSelector((state) => state.theme.isDarkMode);
   const isOpen = useSelector((state) => state.page.isOpen);
-
   const CurrentPage=useSelector((state)=>state.page.currentPage);
   const profileOpen=useSelector((state)=>state.page.profileOpen)
-
+ 
   const location = useLocation();
   useEffect(() => {
     dispatch(navigateTo(location.pathname));
@@ -28,17 +28,18 @@ const App = () => {
 
   const navigate = useNavigate();
   const onClose = function() {
-    const path = location.pathname;
+    console.log(location)
     const pageMapping = {
       '/dashboard': 'Dashboard',
       '/canteen': 'Canteen',
       '/OrderPage': 'Track Order',
     };
-    dispatch(setCurrentPage(pageMapping[path] || 'Dashboard')); 
+    dispatch(navigateTo(location.pathname)); 
   };
   
   return (
-    <div>
+    <AppProvider> 
+      <div>
       {CurrentPage === 'Canteen' && <Canteen onClose={onClose} />}
       {CurrentPage === 'Favorites' && <Favorite onClose={onClose} />}
 
@@ -74,6 +75,8 @@ const App = () => {
         <Route path="/*" element={<Error />} />
       </Routes>
     </div>
+    </AppProvider>
+    
   );
 };
 

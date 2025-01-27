@@ -12,6 +12,7 @@ import { Footer } from '../Components/Home/Footer';
 import { useDispatch,useSelector } from 'react-redux';
 import { toggleTheme } from '../Redux/Slices/themeSlice';
 
+
 function Home() {
     const dispatch=useDispatch();
     const darkMode = useSelector((state) => state.theme.isDarkMode);
@@ -22,8 +23,6 @@ function Home() {
   const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false);
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
-  console.log(success)
-  console.log("hello")
   useEffect(() => {
     if (success) {
       setTimeout(() => {
@@ -83,9 +82,9 @@ function Home() {
           </nav>
 
           <main className="pt-20">
-            <Hero isDarkMode={darkMode}/>
+            <Hero/>
 
-            <div className="text-center mt-12 mb-6">
+            <div className="text-center mt-8 mb-6">
               <h2 className="text-4xl font-bold text-gray-700 dark:text-white">
                 Today's Special
               </h2>
@@ -100,7 +99,7 @@ function Home() {
           </main>
 
           {showLoginModal && (
-            <LoginBox setSuccess={setSuccess} onforgetPass={() => { setShowForgotPasswordModal(true); setShowLoginModal(false); }} onClose={() => setShowLoginModal(false)}  />
+            <LoginBox setSuccess={setSuccess} setShowLoginModal={setShowLoginModal} setShowSignUpModal={setShowSignUpModal} onforgetPass={() => { setShowForgotPasswordModal(true); setShowLoginModal(false); }} onClose={() => setShowLoginModal(false)}  />
           )}
           {showSignUpModal && (
             <SignUpBox setSuccess={setSuccess} setShowLoginModal={setShowLoginModal} setShowSignUpModal={setShowSignUpModal} onClose={() => setShowSignUpModal(false)} />

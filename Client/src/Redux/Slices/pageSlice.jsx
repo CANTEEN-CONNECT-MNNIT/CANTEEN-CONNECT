@@ -12,12 +12,15 @@ const PageSlice = createSlice({
     initialState,
     reducers: {
         setCurrentPage: (state, action) => {
+            console.log(action)
             state.currentPage = action.payload; 
         },
         setOpen: (state, action) => {
             state.isOpen = action.payload; 
         },
         toggleOpen: (state) => {
+            console.log(state)
+            console.log(state.isOpen)
             state.isOpen = !state.isOpen;
         },
         navigateTo:(state,action)=>{
@@ -26,10 +29,11 @@ const PageSlice = createSlice({
             const pageMapping={
                 "/":"Home",
                 "/dashboard":"Dashboard",
-                "/OrderPage":"Orderpage",
+                "/OrderPage":"Track Order",
                 "/canteen":"CanteenPage"
             }
             state.currentPage=pageMapping[location] || "Home";
+            
         },
         setProfileOpen:(state,action)=>{
          
