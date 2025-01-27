@@ -107,7 +107,7 @@ const Sidebar = () => {
               }
               else if(item.label=="Dashboard"){
                 navigate('/dashboard')
-                dispatch(false)
+                dispatch(setOpen(false))
               }
            }} 
               
