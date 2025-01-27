@@ -1,20 +1,17 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { persistStore, persistReducer } from 'redux-persist';
-import storage from 'redux-persist/lib/storage';  // defaults to localStorage
+import storage from 'redux-persist/lib/storage';  
 import CartSlice from "./Slices/cartSlice";
 import CategorySlice from "./Slices/CategorySlice";
 import SearchSlice from "./Slices/SearchSlice";
 import themeReducer from "./Slices/themeSlice";
 import PageReducer from "./Slices/pageSlice"
 
-
-// Configuration for redux-persist
 const persistConfig = {
-  key: 'root',  // Key for persistence
-  storage,  // Use localStorage by default
+  key: 'root',  
+  storage, 
 };
 
-// Wrap your rootReducer with redux-persist
 const rootReducer = combineReducers({
     cart: CartSlice,
     category: CategorySlice,

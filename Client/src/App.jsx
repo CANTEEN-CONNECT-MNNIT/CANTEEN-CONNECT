@@ -36,7 +36,6 @@ const App = () => {
     };
     dispatch(setCurrentPage(pageMapping[path] || 'Dashboard')); 
   };
-console.log(profileOpen)
   
   return (
     <div>

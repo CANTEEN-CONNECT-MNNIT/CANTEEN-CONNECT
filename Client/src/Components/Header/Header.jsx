@@ -5,8 +5,8 @@ import { useDispatch,useSelector } from 'react-redux';
 import { setCurrentPage } from '../../Redux/Slices/pageSlice';
 const Header = () => { 
   
-    const dispatch=useDispatch();
-    const darkMode = useSelector((state) => state.theme.isDarkMode);
+  const dispatch=useDispatch();
+  const darkMode = useSelector((state) => state.theme.isDarkMode);
   const [searchQuery, setSearchQuery] = useState('');
   const navigate=useNavigate();
   return (

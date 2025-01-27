@@ -32,7 +32,7 @@ const PageSlice = createSlice({
             state.currentPage=pageMapping[location] || "Home";
         },
         setProfileOpen:(state,action)=>{
-           console.log(action)
+         
             state.profileOpen=action.payload
         }
     },
