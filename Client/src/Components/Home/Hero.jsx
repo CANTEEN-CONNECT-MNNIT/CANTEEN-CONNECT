@@ -6,6 +6,7 @@ import toast,{ Toaster } from "react-hot-toast";
 export default function Hero() {
   const isDarkMode=useSelector((state)=> state.theme.isDarkMode)
 
+  //Handling View Menu ,through Sliding the page
   const handleViewMenuClick = () => {
     const targetArea = document.getElementById("menu");
     if (targetArea) {
@@ -43,7 +44,7 @@ export default function Hero() {
           Experience hassle-free campus dining with our smart ordering system. Pre-order meals, skip queues, and enjoy fresh food at your convenience.
         </p>
         <div className="flex flex-col sm:flex-row gap-4">
-          <button onClick={()=>toast('Please Login to Place!')}className="group bg-orange-500 text-white px-6 py-3 rounded-full text-lg font-semibold hover:bg-orange-600 transition-all duration-300 flex items-center justify-center space-x-2 shadow-lg shadow-orange-500/30 hover:scale-105">
+          <button onClick={()=>toast('Please Login to Place!')} className="group bg-orange-500 text-white px-6 py-3 rounded-full text-lg font-semibold hover:bg-orange-600 transition-all duration-300 flex items-center justify-center space-x-2 shadow-lg shadow-orange-500/30 hover:scale-105">
             <span>Order Now</span>
             <FaArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </button>

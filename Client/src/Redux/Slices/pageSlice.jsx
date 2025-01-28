@@ -1,48 +1,44 @@
 // PageSlice.js
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = {
-  currentPage: "Home", 
+const initialState = { 
   isOpen: false,   
-  profileOpen:false  
+  profileOpen:false ,
+  merchantprofileOpen:false,
+  activeMenu:"Dashboard"
 };
 
 const PageSlice = createSlice({
     name: "page",
     initialState,
     reducers: {
-        setCurrentPage: (state, action) => {
-            console.log(action)
-            state.currentPage = action.payload; 
+
+        // For Sidebar Menu
+        setactiveMenu:(state,action)=>{
+            state.activeMenu=action.payload;
         },
+
+        // For Sidebar
         setOpen: (state, action) => {
             state.isOpen = action.payload; 
         },
         toggleOpen: (state) => {
-            console.log(state)
-            console.log(state.isOpen)
             state.isOpen = !state.isOpen;
         },
-        navigateTo:(state,action)=>{
-            const location=action.payload;
-            console.log(location)
-            const pageMapping={
-                "/":"Home",
-                "/dashboard":"Dashboard",
-                "/OrderPage":"Track Order",
-                "/canteen":"CanteenPage"
-            }
-            state.currentPage=pageMapping[location] || "Home";
-            
-        },
+
+        // UserProfile
         setProfileOpen:(state,action)=>{
-         
             state.profileOpen=action.payload
+        },
+
+        // MerchantProfile
+        setMerchantProfileOpen:(state,action)=>{
+            state.merchantprofileOpen=action.payload
         }
     },
 });
 
 
-export const { setCurrentPage,setProfileOpen, setOpen,toggleOpen ,navigateTo } = PageSlice.actions;
+export const { setMerchantProfileOpen,setactiveMenu,setCurrentPage,setProfileOpen, setOpen,toggleOpen ,navigateTo } = PageSlice.actions;
 
 export default PageSlice.reducer;

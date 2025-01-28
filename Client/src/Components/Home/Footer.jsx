@@ -1,7 +1,10 @@
 import React from 'react';
 import { FaFacebook, FaTwitter, FaInstagram, FaMapMarkerAlt, FaPhoneAlt, FaEnvelope } from 'react-icons/fa';
+import { useDispatch } from 'react-redux';
+import { setactiveMenu } from '../../Redux/Slices/pageSlice';
 
 export const Footer = React.forwardRef((props, ref) => {
+  const dispatch=useDispatch();
   return (
     <footer ref={ref} className="bg-gray-900 text-gray-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -16,9 +19,9 @@ export const Footer = React.forwardRef((props, ref) => {
           <div>
             <h3 className="text-white text-xl font-semibold mb-4">Quick Links</h3>
             <ul className="space-y-2">
-              <li><a href="/menu" className="hover:text-orange-500 transition-colors duration-200">Menu</a></li>
-              <li><a href="/orders" className="hover:text-orange-500 transition-colors duration-200">Orders</a></li>
-              <li><a href="/contact" className="hover:text-orange-500 transition-colors duration-200">Contact</a></li>
+              <li><a href="/dashboard" onClick={()=>dispatch(setactiveMenu('Dashboard'))} className="hover:text-orange-500 transition-colors duration-200">Menu</a></li>
+              <li><a href="/Orderpage"  onClick={()=>dispatch(setactiveMenu('Track Order'))}  className="hover:text-orange-500 transition-colors duration-200">Orders</a></li>
+              <li><a href="" onClick={()=>dispatch(setactiveMenu(''))}  className="hover:text-orange-500 transition-colors duration-200">Contact</a></li>
             </ul>
           </div>
 

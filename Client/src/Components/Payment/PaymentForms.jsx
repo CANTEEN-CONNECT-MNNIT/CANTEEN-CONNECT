@@ -3,23 +3,23 @@ import { FaInfoCircle, FaSpinner, FaChevronDown, FaWallet, FaQrcode } from 'reac
 import { useNavigate } from 'react-router-dom';
 import toast, { Toaster } from "react-hot-toast";
 import { useDispatch,useSelector } from 'react-redux';
-import { toggleTheme } from '../../Redux/Slices/themeSlice';
-export default function PaymentForms({ selectedMethod, total, setCurrentPage }) {
-    const dispatch=useDispatch();
-    const darkMode = useSelector((state) => state.theme.isDarkMode);
+import { setactiveMenu } from '../../Redux/Slices/pageSlice';
+export default function PaymentForms({ selectedMethod, total }) {
+  const dispatch=useDispatch();
+  const darkMode = useSelector((state) => state.theme.isDarkMode);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
+  // Payment Handle Functionality here
   const handlePayment = () => {
     setIsLoading(true);
-
     setTimeout(() => {
       setIsLoading(false);
       toast.success('Payment Successful!', {
         duration: 1500,
       });
       setTimeout(() => {
-        setCurrentPage("OrderPage");
+        dispatch(setactiveMenu('Track Order'));
         navigate("/OrderPage");
       }, 1500);
     }, 1500);

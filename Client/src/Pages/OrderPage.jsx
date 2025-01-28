@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { FaPlus, FaCheckCircle } from 'react-icons/fa';
 import OrderTable from '../Components/Order/OrderTable';
 import CanteenFilter from '../Components/Order/CanteenFilter';
@@ -8,8 +8,8 @@ import NavigationBar from '../Components/Header/NavigationBar';
 import Popup from '../Components/Order/Popup';
 import {  useNavigate } from 'react-router-dom';
 import { useDispatch,useSelector } from 'react-redux';
-import { toggleOpen } from '../Redux/Slices/pageSlice';
-import { setCurrentPage } from '../Redux/Slices/pageSlice';
+import { setactiveMenu, setOpen, toggleOpen } from '../Redux/Slices/pageSlice';
+import { Footer } from '../Components/Home/Footer';
 
 function Orderpage() {
   const isOpen=useSelector((state)=> state.page.isOpen)
@@ -18,16 +18,21 @@ function Orderpage() {
   const [activeFilter, setActiveFilter] = useState('All Orders');
   const [selectedCanteen, setSelectedCanteen] = useState('All Canteens');
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const orderDetails = 'Your order is ready for pickup!';
 
+
+  //All Ready Orders data
+  const orderDetails = 'Your order is ready for pickup!';
   const stats = [
     { name: 'Ready for Pickup', value: '5', icon: FaCheckCircle, color: 'text-green-500' },
   ];
 
+  const footerRef = useRef(null);
   const navigate=useNavigate();
+
   return (
-    <div className={`flex min-h-screen ${darkMode ? 'bg-slate-900 text-white' : 'bg-slate-200 text-gray-900'}`}>
-      <Sidebar/>
+    <div className={`flex flex-col min-h-screen ${darkMode ? 'bg-slate-900 text-white' : 'bg-slate-200 text-gray-900'}`}>
+      <div className={`fixed top-0 left-0 h-full z-50 shadow-lg transition-all duration-300 ease-in-out ${
+    isOpen ? 'translate-x-0' : '-translate-x-full'}`}> <Sidebar /></div>
       <div className={`transition-all duration-300 ${isOpen ? 'ml-64' : 'ml-20'} flex-1 px-4 md:px-8 lg:px-12 pb-8`}>
         <NavigationBar />
         <div className="pt-32 space-y-8">
@@ -37,7 +42,11 @@ function Orderpage() {
               <p className="text-sm opacity-75">Track and manage your food orders</p>
             </div>
             <button 
-            onClick={()=>{navigate('/dashboard')}} className="w-full sm:w-auto bg-orange-500 hover:bg-orange-600 text-white px-6 py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors">
+            onClick={()=>{ 
+              navigate('/dashboard');
+              dispatch(setactiveMenu('Dashboard'));
+              dispatch(setOpen(false));}} 
+              className="w-full sm:w-auto bg-orange-500 hover:bg-orange-600 text-white px-6 py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors">
               <FaPlus className="h-5 w-5" />
               <span>Place New Order</span>
             </button>
@@ -71,8 +80,11 @@ function Orderpage() {
         </div>
       </div>
 
+        {/* Popup of Ready Orders */}
       <Popup isOpen={isPopupOpen} onClose={() => setIsPopupOpen(false)} orderDetails={orderDetails} />
+      <Footer ref={footerRef} />
     </div>
+    
   );
 }
 

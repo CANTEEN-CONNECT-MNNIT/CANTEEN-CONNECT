@@ -4,12 +4,9 @@ import { FaCreditCard, FaWallet, FaUniversity, FaQrcode } from 'react-icons/fa';
 import PaymentMethodButton from './PaymentMethodButton';
 import OrderSummary from './OrderSummary';
 import PaymentForms from './PaymentForms';
-import { useDispatch } from 'react-redux';
-import { toggleTheme } from '../../Redux/Slices/themeSlice';
-import { setCurrentPage } from '../../Redux/Slices/pageSlice';
 function Payment({ showPayment, setShowPayment }) {
-    const dispatch=useDispatch();
-    const darkMode = useSelector((state) => state.theme.isDarkMode);
+
+  const darkMode = useSelector((state) => state.theme.isDarkMode);
   const [selectedMethod, setSelectedMethod] = useState('card');
   const [expanded, setExpanded] = useState(true);
 
@@ -62,13 +59,9 @@ function Payment({ showPayment, setShowPayment }) {
                     ))}
                   </div>
                 </div>
-                <PaymentForms selectedMethod={selectedMethod} total={total} darkMode={darkMode} setCurrentPage={setCurrentPage} />
+                <PaymentForms selectedMethod={selectedMethod} total={total} darkMode={darkMode}  />
               </>
-            ) : (
-              <div className="text-center p-6">
-                <p className="text-lg font-semibold">Payment Cancelled</p>
-              </div>
-            )}
+            ) : ""}
           </div>
 
           <div className="lg:col-span-1">

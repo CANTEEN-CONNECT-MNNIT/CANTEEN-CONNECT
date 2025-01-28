@@ -11,6 +11,7 @@ import Hero from '../Components/Home/Hero';
 import { Footer } from '../Components/Home/Footer';
 import { useDispatch,useSelector } from 'react-redux';
 import { toggleTheme } from '../Redux/Slices/themeSlice';
+import { setactiveMenu, setOpen } from '../Redux/Slices/pageSlice';
 
 
 function Home() {
@@ -23,13 +24,18 @@ function Home() {
   const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false);
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
+
+
+  // success determines the login of user
   useEffect(() => {
     if (success) {
       setTimeout(() => {
         navigate('/dashboard');
-      }, 3000); 
+        dispatch(setactiveMenu('Dashboard'));
+        dispatch(setOpen(false));
+      }, 2000); 
     }
-  }, [success, navigate]);
+  }, [success]);
 
   return (
     <div className={`min-h-screen ${darkMode ? 'dark bg-gray-900' : 'bg-gray-50'}`}>

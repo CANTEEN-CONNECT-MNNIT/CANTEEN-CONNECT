@@ -1,30 +1,32 @@
+//Canteen Box opened through Sidebar
 import React, { useState } from 'react';
-import { FaStore, FaPhone, FaMapPin, FaUser, FaKey, FaChevronRight, FaTimes } from 'react-icons/fa'; 
+import { FaStore, FaPhone, FaMapPin, FaUser, FaKey, FaChevronRight, FaTimes, FaIdCard } from 'react-icons/fa'; 
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { navigateTo } from '../../Redux/Slices/pageSlice';
 
 export default function Canteen({ onClose }) {
   const [isLogin, setIsLogin] = useState(true);
   const darkMode = useSelector((state) => state.theme.isDarkMode);
-  const dispatch=useDispatch();
   const navigate = useNavigate();
+
+  //Handling login on Canteen Route
   const handleSubmit = (e) => {
     e.preventDefault(); 
     navigate('/canteen');
+    onClose();
   };
 
   return (
     <div className={`fixed inset-0 ${darkMode ? 'bg-black/70' : 'bg-black/50'} flex items-center justify-center p-4 z-50`}>
       <div className={`rounded-xl w-full max-w-md relative ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
         <button
-          onClick={()=>dispatch(navigateTo('/canteen'))}
+          onClick={onClose}
           className="absolute right-4 top-4 p-1"
         >
           <FaTimes className={`w-5 h-5 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`} />
         </button>
 
-        <div className="p-6">
+        <div className="p-3"> 
           <h2 className={`text-2xl font-bold text-center ${darkMode ? 'text-white' : 'text-black'}`}>
             {isLogin ? 'Welcome Back!' : 'Join Our Platform'}
           </h2>
@@ -32,10 +34,11 @@ export default function Canteen({ onClose }) {
             {isLogin ? 'Access your canteen dashboard' : 'Register your canteen with us'}
           </p>
 
-          <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+          <form onSubmit={handleSubmit} className="space-y-2 mt-4">
             {isLogin ? (
+              // Login Box
               <>
-                <div className="space-y-1">
+                <div >
                   <label className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Canteen ID</label>
                   <div className="relative">
                     <FaStore className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 ${darkMode ? 'text-gray-400' : 'text-gray-400'}`} />
@@ -62,6 +65,8 @@ export default function Canteen({ onClose }) {
                 </div>
               </>
             ) : (
+
+              // SignUp Box
               <>
                 <div className="space-y-1">
                   <label className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Canteen Name</label>
@@ -111,6 +116,32 @@ export default function Canteen({ onClose }) {
                       required
                       className={`w-full pl-10 py-2 border rounded-lg ${darkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300'}`}
                       placeholder="Enter location"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <label className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Government ID</label>
+                  <div className="relative">
+                    <FaIdCard className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 ${darkMode ? 'text-gray-400' : 'text-gray-400'}`} />
+                    <input
+                      type="text"
+                      required
+                      className={`w-full pl-10 py-2 border rounded-lg ${darkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300'}`}
+                      placeholder="Enter your 15-digit GSTIN"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <label className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Password</label>
+                  <div className="relative">
+                    <FaKey className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 ${darkMode ? 'text-gray-400' : 'text-gray-400'}`} />
+                    <input
+                      type="password"
+                      required
+                      className={`w-full pl-10 py-2 border rounded-lg ${darkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300'}`}
+                      placeholder="Enter a password"
                     />
                   </div>
                 </div>
