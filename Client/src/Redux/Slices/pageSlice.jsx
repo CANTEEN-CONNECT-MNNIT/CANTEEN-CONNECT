@@ -32,11 +32,9 @@ const PageSlice = createSlice({
                 "/OrderPage":"Track Order",
                 "/canteen":"CanteenPage"
             }
-            state.currentPage=pageMapping[location] || "Home";
-            
+            state.currentPage=pageMapping[location] || "Home"; 
         },
         setProfileOpen:(state,action)=>{
-         
             state.profileOpen=action.payload
         }
     },
