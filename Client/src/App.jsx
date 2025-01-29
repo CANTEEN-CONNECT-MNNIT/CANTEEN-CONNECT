@@ -1,50 +1,45 @@
-// App.jsx
-import React, { useState, useEffect } from "react";
-import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import React  from "react";
+import {  Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import OrderPage from "./Pages/OrderPage";
 import Error from "./Pages/Error";
-import Dashboard from "./Pages/Dashboard";
+import Dashboard from "./Pages/DashBoard.jsx";
 import Home from "./Pages/Home";
 import Canteen from "./Components/SideBar/Canteen";
 import Favorite from "./Components/SideBar/Favorite";
 import CanteenPage from "./Pages/CanteenPage";
 import Profile from "./Components/SideBar/Profile";
 import { useDispatch,useSelector } from "react-redux";
-import { navigateTo } from "./Redux/Slices/pageSlice";
-import { setCurrentPage } from "./Redux/Slices/pageSlice";
+import { setactiveMenu, setMerchantProfileOpen } from "./Redux/Slices/pageSlice";
 import { setProfileOpen } from "./Redux/Slices/pageSlice";
 import { AppProvider } from "./Context/AppContext.jsx";
+import MerchantProfile from "./Components/SideBar/MerchantProfile.jsx";
+
+
 const App = () => {
   const dispatch=useDispatch();
-  const darkMode = useSelector((state) => state.theme.isDarkMode);
-  const isOpen = useSelector((state) => state.page.isOpen);
-  const CurrentPage=useSelector((state)=>state.page.currentPage);
-  const profileOpen=useSelector((state)=>state.page.profileOpen)
- 
-  const location = useLocation();
-  useEffect(() => {
-    dispatch(navigateTo(location.pathname));
-  }, [location, dispatch]);
-
-  const navigate = useNavigate();
-  const onClose = function() {
-    console.log(location)
-    const pageMapping = {
-      '/dashboard': 'Dashboard',
-      '/canteen': 'Canteen',
-      '/OrderPage': 'Track Order',
-    };
-    dispatch(navigateTo(location.pathname)); 
-  };
+  const activeMenu = useSelector((state) => state.page.activeMenu);
+  const profileOpen=useSelector((state)=>state.page.profileOpen);
+  const merchantprofileOpen=useSelector((state)=>state.page.merchantprofileOpen);
+ const location=useLocation();
   
+  /*For All Pop up Box Close */
+  const onClose = function() {
+    if(location.pathname==='/dashboard'){dispatch(setactiveMenu("Dashboard"));}
+    else dispatch(setactiveMenu("Track Order"));
+  };
+
+  console.log(activeMenu)
   return (
     <AppProvider> 
       <div>
-      {CurrentPage === 'Canteen' && <Canteen onClose={onClose} />}
-      {CurrentPage === 'Favorites' && <Favorite onClose={onClose} />}
+      {activeMenu === 'Canteen' && <Canteen onClose={onClose} />} 
+      {activeMenu === 'Favorites' && <Favorite onClose={onClose} />}
 
       {profileOpen && (
         <Profile onClose={(state) => dispatch(setProfileOpen(false))} />
+      )}
+      {merchantprofileOpen && (
+        <MerchantProfile onClose={(state) => dispatch(setMerchantProfileOpen(false))} />
       )}
 
       <Routes>
