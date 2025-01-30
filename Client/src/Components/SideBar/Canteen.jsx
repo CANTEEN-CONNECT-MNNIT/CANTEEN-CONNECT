@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaStore, FaPhone, FaMapPin, FaUser, FaKey, FaChevronRight, FaTimes, FaIdCard } from 'react-icons/fa'; 
+import { FaStore,  FaKey, FaChevronRight, FaTimes, FaIdCard, FaUser } from 'react-icons/fa'; 
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
@@ -87,7 +87,73 @@ export default function Canteen({ onClose }) {
                   {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
                 </div>
               </>
-            ) : null}
+            ) : ( // SignUp Box
+              <>
+                <div className="space-y-1">
+                  <label className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Canteen Name</label>
+                  <div className="relative">
+                    <FaStore className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 ${darkMode ? 'text-gray-400' : 'text-gray-400'}`} />
+                    <input
+                      type="text"
+                      required
+                      className={`w-full pl-10 py-2 border rounded-lg ${darkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300'}`}
+                      placeholder="Enter canteen name"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <label className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Contact Person Name</label>
+                  <div className="relative">
+                    <FaUser className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 ${darkMode ? 'text-gray-400' : 'text-gray-400'}`} />
+                    <input
+                      type="text"
+                      required
+                      className={`w-full pl-10 py-2 border rounded-lg ${darkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300'}`}
+                      placeholder="Enter contact person name"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <label className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Government ID</label>
+                  <div className="relative">
+                    <FaIdCard className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 ${darkMode ? 'text-gray-400' : 'text-gray-400'}`} />
+                    <input
+                      type="text"
+                      required
+                      className={`w-full pl-10 py-2 border rounded-lg ${darkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300'}`}
+                      placeholder="Enter your 15-digit GSTIN"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <label className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Password</label>
+                  <div className="relative">
+                    <FaKey className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 ${darkMode ? 'text-gray-400' : 'text-gray-400'}`} />
+                    <input
+                      type="password"
+                      required
+                      className={`w-full pl-10 py-2 border rounded-lg ${darkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300'}`}
+                      placeholder="Enter a password"
+                    />
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    required
+                    className="w-4 h-4 text-orange-600"
+                  />
+                  <label className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                    I agree to the{' '}
+                    <a href="#" className="text-orange-600 hover:underline">
+                      Terms and Conditions
+                    </a>
+                  </label>
+                </div>
+              </>
+            )}
 
             <button
               type="submit"
