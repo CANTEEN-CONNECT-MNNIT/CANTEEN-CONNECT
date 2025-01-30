@@ -26,7 +26,6 @@ const Profile = () => {
           </div>
           <div className="text-center text-xl">
             <h2 className={`font-semibold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Jeevan</h2>
-            <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'} mb-1`}>Student ID: CS-12345</p>
             <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Email: johndoe@example.com</p>
           </div>
         </div>
@@ -44,11 +43,11 @@ const Profile = () => {
 
         {/* User Details */}
         <div className="space-y-3 mb-6">
-          {['Department', 'Role', 'Meal Plan', 'Dietary Preferences'].map((label, index) => (
+          {['Department', 'Role', 'Meal Preference'].map((label, index) => (
             <div key={index} className={`flex justify-between items-center py-2 border-b ${darkMode ? 'border-gray-600' : 'border-gray-200'}`}>
               <span className={`text-gray-600 ${darkMode ? 'text-gray-400' : ''}`}>{label}</span>
               <span className={`font-medium ${darkMode ? 'text-gray-300' : 'text-gray-800'}`}>
-                {label === 'Department' ? 'Computer Science' : label === 'Role' ? 'Student' : label === 'Meal Plan' ? 'Standard Plan' : 'Vegetarian'}
+                {label === 'Department' ? 'Computer Science' : label === 'Role' ? 'Student' : label === 'Meal Preference' ? 'Vegetarian' :''}
               </span>
             </div>
           ))}

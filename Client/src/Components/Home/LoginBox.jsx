@@ -102,9 +102,7 @@ export default function LoginBox({setSuccess,setShowLoginModal, setShowSignUpMod
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </button>
               </div>
-              {errors.password && (
-                <p className="text-red-500 text-sm">{errors.password.message}</p>
-              )}
+              {errors.password && (<p className="text-red-500 text-sm">{errors.password.message}</p> )}
             </div>
 
             {/* Submit Button */}

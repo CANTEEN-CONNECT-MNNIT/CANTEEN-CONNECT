@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-
+//Incomplete
 const CategorySlice = createSlice({
   name: "category",
   initialState: {
