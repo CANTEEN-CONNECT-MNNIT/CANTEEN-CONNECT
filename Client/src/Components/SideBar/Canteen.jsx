@@ -87,7 +87,9 @@ export default function Canteen({ onClose }) {
                   {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
                 </div>
               </>
-            ) : ( // SignUp Box
+            ) : ( 
+              
+              // SignUp Box
               <>
                 <div className="space-y-1">
                   <label className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Canteen Name</label>
