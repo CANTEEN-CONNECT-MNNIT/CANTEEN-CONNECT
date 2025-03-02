@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import { FaHeart, FaShoppingCart, FaStar, FaInfoCircle } from 'react-icons/fa'; // Import icons from react-icons
-import { useDispatch } from 'react-redux';
-import { addToCart } from '../../Redux/Slices/cartSlice';
+import { useSelector ,useDispatch } from 'react-redux';
+import { addToCart } from '../../Redux/Slices/CartSlice';
 
-const FoodCard = ({ id, name, price, desc, img, rating, nutrients, handleToast, darkMode }) => {
+
+const FoodCard = ({ id, name, price, desc, img, rating, nutrients, handleToast }) => {
+    const dispatch=useDispatch();
+    const darkMode = useSelector((state) => state.theme.isDarkMode);
+
   const [isLoved, setIsLoved] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [showInfo, setShowInfo] = useState(false); 
-  const dispatch = useDispatch();
 
   const handleAddToCart = () => {
     dispatch(addToCart({ id, name, price, rating, img, qty: 1 }));

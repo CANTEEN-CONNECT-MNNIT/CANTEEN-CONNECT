@@ -11,14 +11,15 @@ import { useNavigate } from 'react-router-dom';
 import authService from '../../ApiService/authApiService';
 import { useDispatch } from 'react-redux';
 import { login } from '../../Redux/Slices/UserSlice';
+import { useSelector } from 'react-redux';
 
 export default function SignUpBox({
   setSuccess,
   setShowLoginModal,
   setShowSignUpModal,
   onClose,
-  darkMode,
 }) {
+  const darkMode = useSelector((state) => state.theme.isDarkMode);
   const {
     register,
     handleSubmit,
@@ -184,26 +185,23 @@ export default function SignUpBox({
                       value: 6,
                       message: 'Password must be at least 6 characters',
                     },
-                    pattern: {
-                      value:
-                        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/,
-                      message:
-                        'Password must contain at least one uppercase letter, one lowercase letter, one number, one special character, and be at least 8 characters long.',
-                    },
                   })}
-                  className='w-full mt-1 px-3 py-2 border rounded-md'
+                  className={`w-full mt-1 px-3 py-2 border rounded-md ${
+                    darkMode
+                      ? 'bg-gray-700 text-white'
+                      : 'bg-white text-gray-900'
+                  }`}
                 />
                 <button
                   type='button'
                   onClick={() => setShowPassword(!showPassword)} // Toggle password visibility
                   className='absolute right-3 top-1/2 -translate-y-1/2 text-gray-400'
                 >
-                  {showPassword ? <FaEyeSlash /> : <FaEye />}{' '}
-                  {/* Show/Hide icon */}
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </button>
               </div>
               {errors.password && (
-                <p className='my-2 text-red-500 text-sm'>
+                <p className='text-red-500 text-sm'>
                   {errors.password.message}
                 </p>
               )}
@@ -229,7 +227,11 @@ export default function SignUpBox({
                     validate: (value) =>
                       value === password || 'Passwords do not match',
                   })}
-                  className='w-full mt-1 px-3 py-2 border rounded-md'
+                  className={`w-full mt-1 px-3 py-2 border rounded-md ${
+                    darkMode
+                      ? 'bg-gray-700 text-white'
+                      : 'bg-white text-gray-900'
+                  }`}
                 />
                 <button
                   type='button'
@@ -241,29 +243,20 @@ export default function SignUpBox({
                 </button>
               </div>
               {errors.confirmPassword && (
-                <p className='my-2 text-red-500 text-sm'>
+                <p className='text-red-500 text-sm'>
                   {errors.confirmPassword.message}
                 </p>
               )}
             </div>
-            <div>
-              <button
-                type='submit'
-                className='w-full rounded-md bg-orange-500 px-4 py-2 text-white hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-coral-500 focus:ring-offset-2'
-              >
-                Sign Up
-              </button>
-              {error && error.length > 0 && (
-                <p className='my-2 text-red-500 text-sm text-center'>{error}</p>
-              )}
-              {succ && (
-                <p className=' my-2 text-center text-md font-bold text-green-600 '>
-                  Successfull!{' '}
-                </p>
-              )}
-            </div>
 
-            <div className='text-center text-gray-600 mt-4'>
+            <button
+              type='submit'
+              className='w-full rounded-md bg-orange-500 px-4 py-2 text-white hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-coral-500 focus:ring-offset-2'
+            >
+              Sign Up
+            </button>
+
+            <div className='text-center text-gray-600 mt-4 flex flex-row gap-2 justify-center'>
               Already have an account?
               <button
                 className='hover:text-orange-800 text-orange-500 ml-2'

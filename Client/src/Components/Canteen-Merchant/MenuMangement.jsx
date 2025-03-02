@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { FaEdit, FaTrashAlt } from 'react-icons/fa';
+import { useSelector} from 'react-redux';
 
 const initialMenuItems = [
   { id: 1, name: 'Masala Dosa', price: 60, category: 'South Indian', stock: 'In Stock' },
@@ -8,7 +9,9 @@ const initialMenuItems = [
   { id: 4, name: 'Cold Coffee', price: 40, category: 'Beverages', stock: 'Out of Stock' },
 ];
 
-export default function MenuManagement({ darkMode }) {
+export default function MenuManagement() {
+
+  const darkMode = useSelector((state) => state.theme.isDarkMode);
   const [menuItems, setMenuItems] = useState(initialMenuItems);
   const [isEditing, setIsEditing] = useState(false);
   const [editItem, setEditItem] = useState(null);
@@ -57,75 +60,79 @@ export default function MenuManagement({ darkMode }) {
       </div>
 
       {isEditing && editItem && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <div className="flex justify-between items-center mb-4">
-              <h4 className="text-lg font-semibold">
-                {editItem.id === Date.now() ? 'Add New Item' : 'Edit Item'}
-              </h4>
-              <button onClick={() => setIsEditing(false)} className="text-gray-500 hover:text-gray-700">
-                X
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+        <div className={`rounded-lg p-6 w-full max-w-md ${darkMode ? 'bg-slate-800' : 'bg-white'}`}>
+          <div className="flex justify-between items-center mb-4">
+            <h4 className={`text-lg font-semibold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
+              {editItem.id === Date.now() ? 'Add New Item' : 'Edit Item'}
+            </h4>
+            <button onClick={() => setIsEditing(false)} className={`text-gray-500 hover:text-gray-700 ${darkMode ? 'text-gray-400 hover:text-gray-300' : ''}`}>
+              X
+            </button>
+          </div>
+          <form onSubmit={handleSave} className="space-y-4">
+            <div>
+              <label className={`block text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Name</label>
+              <input
+                type="text"
+                value={editItem.name}
+                onChange={(e) => setEditItem({ ...editItem, name: e.target.value })}
+                className={`mt-1 block w-full rounded-md border ${darkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300'} px-3 py-2 focus:border-orange-500 focus:ring-orange-500`}
+                required
+              />
+            </div>
+            <div>
+              <label className={`block text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Price</label>
+              <input
+                type="text"
+                value={editItem.price}
+                onChange={(e) => setEditItem({ ...editItem, price: e.target.value })}
+                className={`mt-1 block w-full rounded-md border ${darkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300'} px-3 py-2 focus:border-orange-500 focus:ring-orange-500`}
+                required
+              />
+            </div>
+            <div>
+              <label className={`block text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Category</label>
+              <input
+                type="text"
+                value={editItem.category}
+                onChange={(e) => setEditItem({ ...editItem, category: e.target.value })}
+                className={`mt-1 block w-full rounded-md border ${darkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300'} px-3 py-2`}
+                required
+              />
+            </div>
+            <div>
+              <label className={`block text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Stock Status</label>
+              <select
+                value={editItem.stock}
+                onChange={(e) => setEditItem({ ...editItem, stock: e.target.value })}
+                className={`mt-1 block w-full rounded-md border ${darkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300'} px-3 py-2`}
+              >
+                <option value="In Stock">In Stock</option>
+                <option value="Low Stock">Low Stock</option>
+                <option value="Out of Stock">Out of Stock</option>
+              </select>
+            </div>
+            <div className="flex justify-end space-x-3">
+              <button
+                type="button"
+                onClick={() => setIsEditing(false)}
+                className={`px-4 py-2 border rounded-lg ${darkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : 'border-gray-300 text-gray-700 hover:bg-gray-50'}`}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className={`px-4 py-2 ${darkMode ? 'bg-orange-600 hover:bg-orange-700' : 'bg-orange-500 hover:bg-orange-600'} text-white rounded-lg`}
+              >
+                Save
               </button>
             </div>
-            <form onSubmit={handleSave} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Name</label>
-                <input
-                  type="text"
-                  value={editItem.name}
-                  onChange={(e) => setEditItem({ ...editItem, name: e.target.value })}
-                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-orange-500 focus:ring-orange-500"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Price</label>
-                <input
-                  type="text"
-                  value={editItem.price}
-                  onChange={(e) => setEditItem({ ...editItem, price: e.target.value })}
-                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-orange-500 focus:ring-orange-500"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Category</label>
-                <input
-                  type="text"
-                  value={editItem.category}
-                  onChange={(e) => setEditItem({ ...editItem, category: e.target.value })}
-                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Stock Status</label>
-                <select
-                  value={editItem.stock}
-                  onChange={(e) => setEditItem({ ...editItem, stock: e.target.value })}
-                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
-                >
-                  <option value="In Stock">In Stock</option>
-                  <option value="Low Stock">Low Stock</option>
-                  <option value="Out of Stock">Out of Stock</option>
-                </select>
-              </div>
-              <div className="flex justify-end space-x-3">
-                <button
-                  type="button"
-                  onClick={() => setIsEditing(false)}
-                  className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
-                >
-                  Cancel
-                </button>
-                <button type="submit" className={`px-4 py-2 ${darkMode ? 'bg-orange-600' : 'bg-orange-500'} text-white rounded-lg hover:${darkMode ? 'bg-orange-700' : 'bg-orange-600'}`}>
-                  Save
-                </button>
-              </div>
-            </form>
-          </div>
+          </form>
         </div>
-      )}
+      </div>
+    )}
+
 
       <div className="overflow-x-auto">
         <table className="w-full table-auto">

@@ -1,122 +1,92 @@
-import React, { useState, useEffect } from "react";
-import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
-import OrderPage from "./Pages/OrderPage";
-import Error from "./Pages/Error";
-import Dashboard from "./Pages/DashBoard";
-import Home from "./Pages/Home";
-import Canteen from "./Components/SideBar/Canteen";
-import Favorite from "./Components/SideBar/Favorite";
-import CanteenPage from "./Pages/CanteenPage";
-import Auth from "./components/Authenticate";
-
+import React from 'react';
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import OrderPage from './Pages/OrderPage';
+import Error from './Pages/Error';
+import Dashboard from './Pages/DashBoard.jsx';
+import Home from './Pages/Home';
+import Canteen from './Components/SideBar/Canteen';
+import Favorite from './Components/SideBar/Favorite';
+import CanteenPage from './Pages/CanteenPage';
+import Auth from './Components/Authenticate';
+import Profile from './Components/SideBar/Profile';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  setactiveMenu,
+  setMerchantProfileOpen,
+} from './Redux/Slices/pageSlice';
+import { setProfileOpen } from './Redux/Slices/pageSlice';
+import { AppProvider } from './Context/AppContext.jsx';
+import MerchantProfile from './Components/SideBar/MerchantProfile.jsx';
 
 const App = () => {
-  const [darkMode, setDarkMode] = useState(false);
-  const [isOpen, setOpen] = useState(false);
-  const [CurrentPage, setCurrentPage] = useState("Home");
+  const dispatch = useDispatch();
+  const activeMenu = useSelector((state) => state.page.activeMenu);
+  const profileOpen = useSelector((state) => state.page.profileOpen);
+  const merchantprofileOpen = useSelector(
+    (state) => state.page.merchantprofileOpen
+  );
   const location = useLocation();
 
-  useEffect(() => {
-    if (location.pathname === "/") {
-      setCurrentPage("Home");
-    } else if (location.pathname === "/Dashboard") {
-      setCurrentPage("Dashboard");
-    } else if (location.pathname === "/OrderPage") {
-      setCurrentPage("OrderPage");
-    }
-    else if (location.pathname === "/canteen") {
-      setCurrentPage("CanteenPage");
-    }
-  }, [location]);
-
-  const navigate=useNavigate();
-  useEffect(() => {
-    if (CurrentPage === 'Track Order') {
-      navigate('/OrderPage');
-    }
-    if (CurrentPage === 'Dashboard') {
-      navigate('/dashboard');
-    }
-  }, [CurrentPage, navigate]);  
-
-  const onClose=function() {
-    const path = location.pathname;
-    const pageMapping = {
-      '/dashboard': 'Dashboard',
-      '/canteen': 'Canteen',
-      '/Orderpage': 'Track Order',
-    };
-    setCurrentPage(pageMapping[path] || 'Dashboard'); 
+  /*For All Pop up Box Close */
+  const onClose = function () {
+    if (location.pathname === '/dashboard') {
+      dispatch(setactiveMenu('Dashboard'));
+    } else dispatch(setactiveMenu('Track Order'));
   };
 
+  console.log(activeMenu);
   return (
-    <div>
-      {CurrentPage === 'Canteen' && <Canteen onClose={onClose}/>}
-      {CurrentPage === 'Favorites' && <Favorite onClose={onClose}/>}
-      <Routes>
-      <Route
-        path="/"
-        element={<Auth authentication={false}>
-          <Home
-            CurrentPage={CurrentPage}
-            setCurrentPage={setCurrentPage}
-            darkMode={darkMode}
-            setDarkMode={setDarkMode}
-            isOpen={isOpen}
-            setOpen={setOpen}
+    <AppProvider>
+      <div>
+        {activeMenu === 'Canteen' && <Canteen onClose={onClose} />}
+        {activeMenu === 'Favorites' && <Favorite onClose={onClose} />}
+
+        {profileOpen && (
+          <Profile onClose={(state) => dispatch(setProfileOpen(false))} />
+        )}
+        {merchantprofileOpen && (
+          <MerchantProfile
+            onClose={(state) => dispatch(setMerchantProfileOpen(false))}
           />
-          </Auth>
-        }
-      />
-      <Route
-        path="/dashboard"
-        element={
-          <Auth authentication={true}>
-          <Dashboard
-            CurrentPage={CurrentPage}
-            setCurrentPage={setCurrentPage}
-            darkMode={darkMode}
-            setDarkMode={setDarkMode}
-            isOpen={isOpen}
-            setOpen={setOpen}
+        )}
+
+        <Routes>
+          <Route
+            path='/'
+            element={
+              <Auth authentication={false}>
+                <Home />
+              </Auth>
+            }
           />
-          </Auth>
-        }
-      />
-      <Route
-        path="/OrderPage"
-        element={
-          <Auth authentication={true}>
-          <OrderPage
-          setCurrentPage={setCurrentPage}
-            CurrentPage={CurrentPage}
-            darkMode={darkMode}
-            setDarkMode={setDarkMode}
-            isOpen={isOpen}
-            setOpen={setOpen}
+          <Route
+            path='/dashboard'
+            element={
+              <Auth authentication={true}>
+                <Dashboard />
+              </Auth>
+            }
           />
-          </Auth>
-        }
-      />
-      <Route
-        path="/canteen"
-        element={
-          <Auth authentication={true}>
-          <CanteenPage
-            CurrentPage={CurrentPage}
-            setCurrentPage={setCurrentPage}
-            darkMode={darkMode}
-            setDarkMode={setDarkMode}
-            isOpen={isOpen}
-            setOpen={setOpen}
+          <Route
+            path='/OrderPage'
+            element={
+              <Auth authentication={true}>
+                <OrderPage />
+              </Auth>
+            }
           />
-          </Auth>
-        }
-      />
-      <Route path="/*" element={<Error />} />
-    </Routes>
-    </div>
-    
+          <Route
+            path='/canteen'
+            element={
+              <Auth authentication={true}>
+                <CanteenPage />
+              </Auth>
+            }
+          />
+          <Route path='/*' element={<Error />} />
+        </Routes>
+      </div>
+    </AppProvider>
   );
 };
 

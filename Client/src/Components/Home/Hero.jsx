@@ -1,9 +1,23 @@
 import React from 'react';
-import { FaArrowRight, FaClock, FaUtensils, FaTruck, FaHamburger } from 'react-icons/fa';
+import { FaArrowRight, FaClock, FaUtensils,  FaHamburger } from 'react-icons/fa';
+import { useSelector} from 'react-redux';
+import toast,{ Toaster } from "react-hot-toast";
 
-export default function Hero({ isDarkMode }) {
+export default function Hero() {
+  const isDarkMode=useSelector((state)=> state.theme.isDarkMode)
+
+  //Handling View Menu ,through Sliding the page
+  const handleViewMenuClick = () => {
+    const targetArea = document.getElementById("menu");
+    if (targetArea) {
+      targetArea.scrollIntoView({ behavior: "smooth" }); 
+    }
+  }
+
   return (
+    
     <div className={`relative min-h-[700px] overflow-hidden ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}>
+      <Toaster position="top-center" reverseOrder={false} />
       <div className="absolute inset-0">
         <img
           src="../../src/assets/bg.jpg" 
@@ -30,11 +44,11 @@ export default function Hero({ isDarkMode }) {
           Experience hassle-free campus dining with our smart ordering system. Pre-order meals, skip queues, and enjoy fresh food at your convenience.
         </p>
         <div className="flex flex-col sm:flex-row gap-4">
-          <button className="group bg-orange-500 text-white px-6 py-3 rounded-full text-lg font-semibold hover:bg-orange-600 transition-all duration-300 flex items-center justify-center space-x-2 shadow-lg shadow-orange-500/30 hover:scale-105">
+          <button onClick={()=>toast('Please Login to Place!')} className="group bg-orange-500 text-white px-6 py-3 rounded-full text-lg font-semibold hover:bg-orange-600 transition-all duration-300 flex items-center justify-center space-x-2 shadow-lg shadow-orange-500/30 hover:scale-105">
             <span>Order Now</span>
             <FaArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </button>
-          <button className={`relative overflow-hidden ${isDarkMode ? 'bg-white/10 text-white border-white/30' : 'bg-orange-100 text-gray-800 border-gray-300'} px-6 py-3 rounded-full text-lg font-semibold hover:bg-orange-200 transition-all duration-300 flex items-center justify-center space-x-2 border-2`}>
+          <button onClick={handleViewMenuClick} className={`relative overflow-hidden ${isDarkMode ? 'bg-white/10 text-white border-white/30' : 'bg-orange-100 text-gray-800 border-gray-300'} px-6 py-3 rounded-full text-lg font-semibold hover:bg-orange-200 transition-all duration-300 flex items-center justify-center space-x-2 border-2`}>
             <span>View Menu</span>
           </button>
         </div>
@@ -63,7 +77,7 @@ export default function Hero({ isDarkMode }) {
           <div className="w-10 h-10 bg-orange-500/20 rounded-full flex items-center justify-center">
             <FaHamburger className="w-6 h-6 text-orange-500" />
           </div>
-          <div>
+          <div id="menu" > 
             <p className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>Daily Specials</p>
             <p className="text-sm text-gray-400">Fresh Meals</p>
           </div>
@@ -72,8 +86,6 @@ export default function Hero({ isDarkMode }) {
     </div>
   </div>
 </div>
-
-
 
     </div>
   );

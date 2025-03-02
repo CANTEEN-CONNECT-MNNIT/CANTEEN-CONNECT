@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { FaSearch, FaCoffee } from 'react-icons/fa';
 import OrderCard from './OrderCard';
 import OrderDetailsModal from './OrderDetailsModal';
+import { useSelector } from 'react-redux';
 
-function OrdersTable({ darkMode }) {
+function OrdersTable() {
   const [orders, setOrders] = useState([
     {
       id: 'CNT001',
@@ -34,6 +35,7 @@ function OrdersTable({ darkMode }) {
     }
   ]);
 
+  const darkMode = useSelector((state) => state.theme.isDarkMode);
   const [selectedStatus, setSelectedStatus] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedOrder, setSelectedOrder] = useState(null);
@@ -70,17 +72,17 @@ function OrdersTable({ darkMode }) {
             <h2 className="text-xl font-semibold">Today's Orders</h2>
           </div>
           <select
-            className={`bg-white border border-gray-200 rounded-lg pl-3 pr-10 py-2 text-sm text-gray-700 ${
-              darkMode ? 'bg-gray-700 text-white' : ''
-            }`}
-            value={selectedStatus}
-            onChange={(e) => setSelectedStatus(e.target.value)}
-          >
-            <option>All</option>
-            <option>Pending</option>
-            <option>Preparing</option>
-            <option>Ready</option>
-          </select>
+          className={`border border-gray-200 rounded-lg pl-3 pr-10 py-2 text-sm 
+            ${darkMode ? 'bg-gray-700 text-white border-gray-600' : 'bg-white text-gray-700 border-gray-200'} `}
+          value={selectedStatus}
+          onChange={(e) => setSelectedStatus(e.target.value)}
+        >
+          <option className={`${darkMode ? 'bg-gray-700 text-white' : 'bg-white text-gray-700'}`}>All</option>
+          <option className={`${darkMode ? 'bg-gray-700 text-white' : 'bg-white text-gray-700'}`}>Pending</option>
+          <option className={`${darkMode ? 'bg-gray-700 text-white' : 'bg-white text-gray-700'}`}>Preparing</option>
+          <option className={`${darkMode ? 'bg-gray-700 text-white' : 'bg-white text-gray-700'}`}>Ready</option>
+        </select>
+
         </div>
 
         <div className="relative">

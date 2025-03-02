@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { useSelector} from 'react-redux';
 
-export default function ForgotPassword({ onClose, darkMode }) {
+export default function ForgotPassword({ onClose }) {
+  const darkMode=useSelector((state)=> state.theme.isDarkMode)
   const [error, setError] = useState("");
   const [emailfind, setEmailFind] = useState(false);
   const [showPassword, setShowPassword] = useState(false);

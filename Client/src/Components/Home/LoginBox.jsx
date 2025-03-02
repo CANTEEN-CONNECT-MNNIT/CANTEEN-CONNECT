@@ -11,13 +11,17 @@ import authService from '../../ApiService/authApiService';
 import { useDispatch } from 'react-redux';
 import { login } from '../../Redux/Slices/UserSlice';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 export default function LoginBox({
   setSuccess,
+  setShowLoginModal,
+  setShowSignUpModal,
   onforgetPass,
   onClose,
-  darkMode,
 }) {
+  const darkMode = useSelector((state) => state.theme.isDarkMode);
+
   const {
     register,
     handleSubmit,
@@ -159,8 +163,9 @@ export default function LoginBox({
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </button>
               </div>
-              {errors && errors?.password && (
-                <p className='my-2 text-red-500 text-sm'>
+
+              {errors.password && (
+                <p className='text-red-500 text-sm'>
                   {errors.password.message}
                 </p>
               )}
@@ -213,6 +218,18 @@ export default function LoginBox({
                 <FaLinkedin size={20} />
               </button>
             </div>
+          </div>
+          <div className='text-center text-gray-600 mt-4 flex-row flex justify-center gap-2'>
+            New User?
+            <button
+              className='hover:text-orange-800 text-orange-500'
+              onClick={() => {
+                setShowLoginModal(false);
+                setShowSignUpModal(true);
+              }}
+            >
+              Register
+            </button>
           </div>
         </div>
       </div>

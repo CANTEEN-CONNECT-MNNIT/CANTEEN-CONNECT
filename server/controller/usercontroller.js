@@ -2,14 +2,10 @@ import User from '../models/usermodel.js';
 import ApiError from '../utils/apierror.js';
 import asynchandler from '../utils/asynchandler.js';
 
-const deletetheuser = asynchandler(async (id) => {
-  await User.findByIdAndDelete(id);
-});
-
 export const logout = asynchandler(async (req, res, next) => {
   res.clearCookie('acesstoken');
-    res.clearCookie('refreshtoken');
-    res.status(200).json({ message: 'Logged out successfully' });
+  res.clearCookie('refreshtoken');
+  res.status(200).json({ message: 'Logged out successfully' });
 });
 
 export const update = asynchandler(async (req, res, next) => {
@@ -47,19 +43,4 @@ export const getme = asynchandler(async (req, res, next) => {
       getuser,
     },
   });
-});
-
-export const deleteme = asynchandler(async (req, res, next) => {
-  const id = req.user._id;
-  const finduser = await User.findByIdAndDelete(id);
-  if (!finduser) {
-    return next(new ApiError('Can,t deleted', 403));
-  }
-  finduser.active = false;
-  logout();
-  deletetheuser(finduser._id);
- 
-  res.status(201).json({
-    message:"User ddeleted sucessfully"
-  })
 });

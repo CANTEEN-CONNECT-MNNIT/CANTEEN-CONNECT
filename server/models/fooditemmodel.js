@@ -27,10 +27,19 @@ const fooditemSchema = new mongoose.Schema(
       ref: 'Canteen',
       required: true,
     },
-    quantity: {
-      type: Number,
-      default: 1,
-    },
+    quantityOptions: [
+      {
+        label: {
+          type: String,
+          required: true,
+        },
+        multiplier: {
+          type: Number,
+          required: true,
+          min: 0.5, // For half plate
+        },
+      },
+    ],
   },
   { timestamps: true }
 );

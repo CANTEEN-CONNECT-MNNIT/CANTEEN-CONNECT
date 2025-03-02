@@ -3,21 +3,22 @@ import { IoMdClose } from "react-icons/io";
 import ItemCard from './ItemCard';
 import { useSelector } from "react-redux";
 import { FaShoppingCart } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import toast,{ Toaster } from "react-hot-toast";
 
-const Cart = () => {
+const Cart = ({onCheckout}) => {
   const [activeCart, setActiveCart] = useState(false);
-
+  
   const cartItems = useSelector((state) => state.cart.cart);
   const totalQty = cartItems.reduce((totalQty, item) => totalQty + item.qty, 0);
   const totalPrice = cartItems
     .reduce((total, item) => total + item.qty * item.price, 0)
     .toFixed(2);
 
-  const navigate = useNavigate();
+  const handleLessToast = () => toast.error(`Cart is Empty `);
 
   return (
     <>
+      <Toaster position="top-center" reverseOrder={false} />
       <div
         className={`fixed right-0 top-0 w-full h-full sm:w-[46vh] p-2 shadow-2xl bg-slate-100 text-gray-800 ${
           activeCart ? 'translate-x-0' : 'translate-x-full'
@@ -35,7 +36,7 @@ const Cart = () => {
         {/* Cart Items */}
         <div
           className="mt-4 overflow-y-auto"
-          style={{ maxHeight: 'calc(100vh - 250px)' }} // To make the items scrollable within a fixed height
+          style={{ maxHeight: 'calc(100vh - 250px)' }} 
         >
           {cartItems.length > 0 ? (
             cartItems.map((food) => (
@@ -67,7 +68,7 @@ const Cart = () => {
           </div>
           <hr className="my-2 border-gray-300" />
           <button
-            onClick={() => navigate('/OrderPage')}
+            onClick={()=>(totalQty>0?onCheckout():handleLessToast())}
             className="font-bold px-4 py-2 rounded-lg w-full bg-green-500 text-white hover:bg-green-600 transition-all duration-200"
           >
             Checkout

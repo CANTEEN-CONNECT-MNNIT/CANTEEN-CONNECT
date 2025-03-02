@@ -2,9 +2,11 @@ import React from 'react';
 import FoodCard from './FoodCard';
 import FoodData from '../../Data/FoodData.js';
 import toast, { Toaster } from "react-hot-toast";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
-const FoodItems = ({darkMode}) => {
+const FoodItems = () => {
+     const dispatch=useDispatch();
+    const darkMode = useSelector((state) => state.theme.isDarkMode);
   const category = useSelector((state) => state.category.category);
   const search = useSelector((state) => state.search.search);
   const handleToast = (name) => toast.success(`Added ${name} `);
@@ -24,7 +26,6 @@ const FoodItems = ({darkMode}) => {
           img={food.img}
           nutrients={food.nutrients}  
           handleToast={handleToast} 
-          darkMode={darkMode}
           />
         ))}
       </div>
