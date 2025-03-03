@@ -8,16 +8,16 @@ dotenv.config({ path: './.env' });
 const port = process.env.PORT || 8000;
 
 // console.log(process.env.CONN_STR);
-
-mongoose
-  .connect(process.env.CONN_STR)
-  .then(() => {
-    console.log('Created database succesfully');
-  })
-  .catch((error) => {
-    console.log(`DB Cconnection failed due to ${error}`);
-  });
-
+if (mongoose.connection.readyState < 1) {
+  mongoose
+    .connect(process.env.CONN_STR)
+    .then(() => {
+      console.log('Created database succesfully');
+    })
+    .catch((error) => {
+      console.log(`DB Cconnection failed due to ${error}`);
+    });
+}
 app.get('/', (req, res) => {
   res.send('WELCOME TO MY CANTEEN CONNNECT SITE');
 });

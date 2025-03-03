@@ -37,3 +37,34 @@ export const getme = asynchandler(async (req, res, next) => {
     },
   });
 });
+
+export const addfavourite = asynchandler(async (req, res, next) => {
+  const id = req.user._id;
+  const { _id } = req.body;
+  const newuser = await User.findByIdAndUpdate(
+    id,
+    {
+      $addToSet: { favourite: _id },
+    },
+    { new: true }
+  ).populate('favourite');
+  res.status(201).json({
+    message: 'favourites updated successfully',
+    data: newuser,
+  });
+});
+
+export const removefavourite = asynchandler(async (req, res, next) => {
+  const id = req.user._id;
+  const { _id } = req.body;
+  const newuser = await User.findByIdAndUpdate(
+    id,
+    { $pull: { favourite: _id } },
+    { new: true }
+  );
+  await newuser.populate('favourite');
+  res.status(201).json({
+    message: 'favourites updated successfully',
+    data: newuser,
+  });
+});

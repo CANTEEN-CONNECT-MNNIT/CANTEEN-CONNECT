@@ -10,15 +10,23 @@ const canteenSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    college: {
+    phone: {
       type: String,
-      // required: true,
     },
-    canteenId:{
+    image: {
+      type: String,
+    },
+    canteenId: {
       type: String,
       required: true,
     },
-    fooditem: [
+    address: {
+      type: String,
+      required: true,
+    },
+    openTime: { type: String, required: true },
+    closeTime: { type: String, required: true },
+    fooditems: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Fooditem',

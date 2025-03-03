@@ -24,21 +24,17 @@ export const addincart = asynchandler(async (req, res, next) => {
   if (!reqitem) {
     return next(new ApiError('Item not found', 403));
   }
-
-  let requser = await User.findById(id);
-
-  if (!requser) {
-    return next(new ApiError('User Not found', 403));
-  }
-
-  console.log(requser);
-
-  requser.cart.push(f_id);
-  requser.save();
+  const requser = await User.findByIdAndUpdate(
+    id,
+    {
+      $addToSet: { cart: f_id },
+    },
+    { new: true }
+  );
 
   res.status(201).json({
     message: 'Iten Add in cart succesfully',
-    data: requser.cart,
+    data: requser,
   });
 });
 
@@ -60,12 +56,8 @@ export const deleteincart = asynchandler(async (req, res, next) => {
     return next(new ApiError('User not found', 404));
   }
 
-  if (updatedUser.cart.length === (await User.findById(user_id)).cart.length) {
-    return next(new ApiError('Food item was not in the cart', 404));
-  }
-
   res.status(200).json({
     message: 'Item removed from cart successfully',
-    data: { cart: updatedUser.cart },
+    data: updatedUser,
   });
 });

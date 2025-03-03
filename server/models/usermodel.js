@@ -57,6 +57,12 @@ const userSchema = new mongoose.Schema({
       ref: 'Fooditem',
     },
   ],
+  favourite: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Fooditem',
+    },
+  ],
 });
 
 userSchema.pre('save', async function (next) {

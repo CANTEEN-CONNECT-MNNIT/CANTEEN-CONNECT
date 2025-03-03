@@ -6,8 +6,7 @@ import asynchandler from '../utils/asynchandler.js';
 import { uploadOnCloudinary } from '../utils/cloudinary.js';
 
 export const additem = asynchandler(async (req, res, next) => {
-  const canteen_id =
-    req.params.c_id || (await Canteen.findOne({ owner: req.user._id }));
+  const canteen_id = req.params.c_id;
   const reqcanteen = await Canteen.findById(canteen_id);
   if (!reqcanteen) {
     return next(new ApiError('Canteen Not found', 401));
@@ -30,6 +29,7 @@ export const additem = asynchandler(async (req, res, next) => {
 
   let newitem = null;
 
+  let updatedcanteen;
   if (olditem) {
     return next(new ApiError('Item are already exist in your canten'));
   } else {
@@ -41,15 +41,23 @@ export const additem = asynchandler(async (req, res, next) => {
       available,
       canteen: reqcanteen._id,
     });
-
     if (!newitem) {
       return next(new ApiError('Cannot add new item', 402));
     }
+
+    updatedcanteen = await Canteen.findByIdAndUpdate(
+      reqcanteen._id,
+      {
+        $addToSet: { fooditems: newitem._id },
+      },
+      { new: true }
+    ).populate('fooditems');
   }
   res.status(201).json({
     message: 'Add item sucessfully',
     data: {
       newitem,
+      updatedcanteen,
     },
   });
 });
@@ -101,6 +109,8 @@ export const getitem = asynchandler(async (req, res, next) => {
 export const deleteitem = asynchandler(async (req, res, next) => {
   const id = req.params.id;
 
+  const reqcanteen = await Canteen.findOne({ owner: req.user._id });
+
   if (!id) {
     return next(new ApiError('Item Not found ', 403));
   }
@@ -110,11 +120,16 @@ export const deleteitem = asynchandler(async (req, res, next) => {
   if (!reqitem) {
     return next(new ApiError('Item Not found ', 403));
   }
-
+  let updatedcanteen;
   await Fooditem.findByIdAndDelete(id);
-
+  updatedcanteen = await Canteen.findByIdAndUpdate(
+    reqcanteen._id,
+    { $pull: { fooditems: reqitem._id } },
+    { new: true }
+  );
   res.status(201).json({
     message: 'Item delete sucessfully',
+    data: updatedcanteen,
   });
 });
 
@@ -132,16 +147,23 @@ export const updateitem = asynchandler(async (req, res, next) => {
   if (!reqitem) {
     return next(new ApiError('Item Not found ', 403));
   }
+  let uploadedfile;
+  if (req.file) {
+    uploadedfile = await uploadOnCloudinary(req.file.path);
 
-  const uploadedfile = await uploadOnCloudinary(req.file.path);
-
-  if (!uploadedfile.url) {
-    return next(new ApiError('Error in image uploaing', 444));
+    if (!uploadedfile.url) {
+      return next(new ApiError('Error in image uploaing', 444));
+    }
   }
-
   const updateditem = await Fooditem.findByIdAndUpdate(
     id,
-    { name, description, price, image: uploadedfile.url, available },
+    {
+      name,
+      description,
+      price,
+      image: uploadedfile?.url || reqitem.image,
+      available,
+    },
     { new: true, runValidators: true }
   );
 
