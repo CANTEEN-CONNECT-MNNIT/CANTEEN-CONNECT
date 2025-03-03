@@ -3,6 +3,8 @@ import asynchandler from '../utils/asynchandler.js';
 import User from '../models/usermodel.js';
 import jwt from 'jsonwebtoken';
 import { promisify } from 'util';
+import Email from '../utils/emailhandler.js';
+import * as crypto from 'crypto';
 
 const createrefreshandacesstoken = (id) => {
   const acesstoken = jwt.sign({ id: id }, process.env.ACESS_TOKEN_STRING, {
@@ -257,4 +259,52 @@ export const resetpassword = asynchandler(async (req, res, next) => {
       user: requser,
     },
   });
+});
+
+export const updatepassword = asynchandler(async (req, res, next) => {
+  const requser = await User.findById(req.user._id).select('+password');
+
+  const { current_password, new_password, confirmpassword } = req.body;
+
+  if (!new_password || !confirmpassword || !current_password) {
+    return next(new ApiError('All field are required', 400));
+  }
+  if (!(await requser.comparedbpassword(current_password))) {
+    return next(new ApiError('Current Password is incorrect', 400));
+  }
+
+  requser.password = new_password;
+  requser.confirmpassword = confirmpassword;
+  await requser.save();
+
+  const [acesstoken, refreshtoken] = createacessandrefreshtoken(requser._id);
+
+  //check the acess and refreshtoken is generated or not
+  if (!refreshtoken || !acesstoken) {
+    return next(new ApiError('token cannot generated', 400));
+  }
+
+  //send the cookie
+  const options = {
+    httpOnly: true,
+    secure: false,
+    sameSite: 'Lax',
+  };
+
+  res
+    .cookie('acesstoken', acesstoken, options)
+    .cookie('refreshtoken', refreshtoken, options);
+  //return success message
+  res.status(201).json({
+    message: 'Password updated Successfully',
+    data: {
+      acesstoken,
+      refreshtoken,
+      user: requser,
+    },
+  });
+});
+export const logout = asynchandler(async (req, res, next) => {
+  res.clearCookie('acesstoken').clearCookie('refreshtoken');
+  res.status(200).json({ status: 'success' });
 });
