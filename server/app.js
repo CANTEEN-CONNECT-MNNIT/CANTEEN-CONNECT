@@ -35,7 +35,7 @@ app.use('/api/user', userroute);
 app.use('/api/item', itemroute);
 app.use('/api/cart', cartrouter);
 app.use('/api/order', orderroute);
-
+app.use('/api/payment', paymentroute);
 app.use('/api/canteen', canteenroute);
 app.use(globalerrorhandler);
 

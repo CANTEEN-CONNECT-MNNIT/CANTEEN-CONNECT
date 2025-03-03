@@ -17,11 +17,13 @@ import {
 import { setProfileOpen } from './Redux/Slices/pageSlice';
 import { AppProvider } from './Context/AppContext.jsx';
 import MerchantProfile from './Components/SideBar/MerchantProfile.jsx';
+import Payment from './Components/Payment/Payment.jsx';
 
 const App = () => {
   const dispatch = useDispatch();
   const activeMenu = useSelector((state) => state.page.activeMenu);
   const profileOpen = useSelector((state) => state.page.profileOpen);
+  const { user } = useSelector(state.user);
   const merchantprofileOpen = useSelector(
     (state) => state.page.merchantprofileOpen
   );
@@ -83,6 +85,16 @@ const App = () => {
               </Auth>
             }
           />
+          {user?.role !== 'Canteen' && (
+            <Route
+              path='/paymentGateway'
+              element={
+                <Auth authentication={true}>
+                  <Payment />
+                </Auth>
+              }
+            />
+          )}
           <Route path='/*' element={<Error />} />
         </Routes>
       </div>

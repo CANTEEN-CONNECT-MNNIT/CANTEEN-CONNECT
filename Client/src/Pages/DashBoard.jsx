@@ -4,19 +4,13 @@ import NavigationBar from '../Components/Header/NavigationBar';
 import Header from '../Components/Header/Header';
 import MainContent from '../Components/Main/MainContent';
 import { Footer } from '../Components/Home/Footer';
-import Payment from '../Components/Payment/Payment';
 import { useSelector } from 'react-redux';
+import Cart from '../Components/Main/Cart';
 
 const Dashboard = () => {
   const isOpen = useSelector((state) => state.page.isOpen);
   const darkMode = useSelector((state) => state.theme.isDarkMode);
   const footerRef = useRef(null);
-  const [showPayment, setShowPayment] = useState(false);
-
-  // handleCheckout of Cart
-  const handleCheckout = () => {
-    setShowPayment(true);
-  };
 
   return (
     <div
@@ -34,15 +28,12 @@ const Dashboard = () => {
       </div>
       <NavigationBar />
       <div className='flex flex-col -z-10  h-full w-full'>
-        {showPayment ? (
-          <Payment showPayment={showPayment} setShowPayment={setShowPayment} />
-        ) : (
-          <div className='flex flex-col h-full w-full'>
-            <Header onCheckout={handleCheckout} />
-            <MainContent onCheckout={handleCheckout} />
-          </div>
-        )}
+        <div className='flex flex-col h-full w-full'>
+          <Header />
+          <MainContent />
+        </div>
       </div>
+      <Cart />
       <Footer ref={footerRef} />
     </div>
   );
