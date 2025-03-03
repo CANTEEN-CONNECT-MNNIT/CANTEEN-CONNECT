@@ -6,21 +6,26 @@ import asynchandler from '../utils/asynchandler.js';
 export const addcanteen = asynchandler(async (req, res, next) => {
   console.log(req.user);
   const owner = req.user.id;
-  const requser = await User.findById(owner);
-  if (!requser) {
+  const updateduser = await User.findByIdAndUpdate(
+    owner,
+    { role: 'Canteen' },
+    { new: true, runValidators: true }
+  );
+  if (!updateduser) {
     return next(new ApiError('User is Not found', 401));
   }
 
-  const { name, description, college } = req.body;
+  const { name, description, gstin, phone } = req.body;
 
-  if (!name || !college) {
+  if (!name || !gstin || !phone) {
     return next(new ApiError('Eneter required field', 402));
   }
 
   const newcanteen = await Canteen.create({
     name,
     description,
-    college,
+    gstin,
+    phone,
     owner,
   });
 
@@ -37,7 +42,7 @@ export const addcanteen = asynchandler(async (req, res, next) => {
 });
 
 export const updatecanteen = asynchandler(async (req, res, next) => {
-  const { name, description, college } = req.body;
+  const { name, description, gstin, phone } = req.body;
 
   const id = req.params.id;
 
@@ -49,7 +54,7 @@ export const updatecanteen = asynchandler(async (req, res, next) => {
 
   const updatedcanteen = await Canteen.findByIdAndUpdate(
     id,
-    { name, description, college },
+    { name, description, gstin, phone, owner },
     { new: true, runValidators: true }
   );
 

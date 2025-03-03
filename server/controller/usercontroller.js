@@ -2,14 +2,8 @@ import User from '../models/usermodel.js';
 import ApiError from '../utils/apierror.js';
 import asynchandler from '../utils/asynchandler.js';
 
-export const logout = asynchandler(async (req, res, next) => {
-  res.clearCookie('acesstoken');
-  res.clearCookie('refreshtoken');
-  res.status(200).json({ message: 'Logged out successfully' });
-});
-
 export const update = asynchandler(async (req, res, next) => {
-  const { name, email, password, username } = req.body;
+  const { name, email, username } = req.body;
   const id = req.user._id;
   const finduser = await User.findById(id);
   if (!finduser) {
@@ -19,8 +13,7 @@ export const update = asynchandler(async (req, res, next) => {
     id,
     {
       name,
-      email,
-      password,
+      email: email.trim(),
       username,
     },
     { new: true, runValidators: true }
