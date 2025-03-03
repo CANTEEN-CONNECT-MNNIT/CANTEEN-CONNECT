@@ -6,10 +6,11 @@ import {
   getitem,
   deleteitem,
 } from '../controller/fooditemcontroller.js';
+import { upload } from '../controller/filecontrollers.js';
 
 const router = express.Router();
 
-router.post('/create/:c_id', additem);
+router.post('/create/:c_id', upload.single('image'), additem);
 router.patch('/update/:id', updateitem);
 router.get('/getall', getall);
 router.get('/get/:id', getitem);

@@ -1,5 +1,9 @@
 import { v2 as cloudinary } from 'cloudinary';
+import dotenv from 'dotenv';
 import fs from 'fs';
+import ApiError from './apierror.js';
+
+dotenv.config({ path: './variable.env' });
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -7,42 +11,44 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const uploadOnCloudinary = async (localFilePath) => {
+const extractPublicId = (fileUrl) => {
+  if (!fileUrl) return null;
+  const parts = fileUrl.split('/');
+  const fileNameWithVersion = parts[parts.length - 1];
+  const fileName = fileNameWithVersion.split('.')[0];
+  return fileName;
+};
+
+export const uploadOnCloudinary = async (localFilePath) => {
   try {
     if (!localFilePath) return null;
+
     const uploadResult = await cloudinary.uploader.upload(localFilePath, {
-      resource_type: 'auto',
+      resource_type: 'image',
     });
 
-    console.log('file is uploaded succesfully to cloud', uploadResult.url);
-    console.log(uploadResult);
-    fs.unlinkSync(localFilePath);
+    if (uploadResult?.secure_url) {
+      fs.unlinkSync(localFilePath);
+    }
+
     return uploadResult;
   } catch (error) {
+    return next(new ApiError('Error in uploading file', 422));
     fs.unlinkSync(localFilePath);
-
-    console.log(error);
-
     return null;
   }
 };
 
-const deleteOnCloudinary = async (fileUrl) => {
+export const deleteOnCloudinary = async (fileUrl) => {
   try {
     if (!fileUrl) return null;
-    // delete an image
+    const public_id = extractPublicId(fileUrl);
     const deleteResult = await cloudinary.uploader.destroy(fileUrl, {
-      resource_type: 'auto',
+      resource_type: 'image',
       invalidate: true,
     });
-
-    console.log('file is deleted succesfully from cloud', deleteResult.url);
     return deleteResult;
   } catch (error) {
-    console.log(error);
-
-    return null;
+    return next(new ApiError('Error in deleting previous file', 422));
   }
 };
-
-export { uploadOnCloudinary, deleteOnCloudinary };

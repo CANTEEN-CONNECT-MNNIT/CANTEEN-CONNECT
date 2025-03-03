@@ -3,6 +3,7 @@ import Fooditem from '../models/fooditemmodel.js';
 import ApiError from '../utils/apierror.js';
 import Apifeature from '../utils/apifeature.js';
 import asynchandler from '../utils/asynchandler.js';
+import { uploadOnCloudinary } from '../utils/cloudinary.js';
 
 export const additem = asynchandler(async (req, res, next) => {
   const canteen_id = req.params.c_id;
@@ -12,6 +13,12 @@ export const additem = asynchandler(async (req, res, next) => {
   }
 
   const { name, description, price, image, available, quantity } = req.body;
+
+  const uploadedfile = await uploadOnCloudinary(req.file.path);
+
+  if (!uploadedfile.url) {
+    return next(new ApiError('Error in image uploaing', 444));
+  }
 
   const olditem = await Fooditem.findOne({
     name,
