@@ -10,9 +10,9 @@ class CanteenService{
     });
     }
 
-    async addCanteen(data) {
+    addCanteen=async (data)=> {
         try {
-            const response=await this.api.post("addCanteen",data);
+            const response=await this.api.post("create",data);
             console.log("canteenApi/addCanteen: ",response);
             if(response){
                 return response?.data?.data;
@@ -23,7 +23,7 @@ class CanteenService{
         }
     }
 
-    async updateCanteen(data){
+    updateCanteen=async (data)=>{
         try {
             const response=await this.api.patch(`update/${data?._id}`,data);
             console.log("canteenApi/updateCanteen: ",response);
@@ -37,7 +37,7 @@ class CanteenService{
         }
     }
 
-    async getAll(){
+    getAll=async ()=>{
         try {
             const response=await this.api.get("getall");
             console.log("canteenApi/getAll: ",response);
@@ -50,7 +50,7 @@ class CanteenService{
         }
     }
 
-    async get(_id){
+    get=async (_id)=>{
         try {
             const response=await this.api.get(`get/${_id}`);
             console.log("canteenApi/get: ",response);
@@ -63,7 +63,7 @@ class CanteenService{
         }
     }
 
-    async deleteCanteen(data){
+    deleteCanteen=async (data)=>{
         try {
             const response=await this.api.delete(`delete/${data?._id}`);
             console.log("canteenApi/deleteCanteen: ",response);

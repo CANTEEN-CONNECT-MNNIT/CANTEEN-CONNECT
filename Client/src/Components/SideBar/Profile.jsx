@@ -5,7 +5,6 @@ import { setProfileOpen } from '../../Redux/Slices/pageSlice';
 
 const Profile = () => {
   const dispatch = useDispatch();
-  const profileOpen = useSelector((state) => state.page.profileOpen);
   const darkMode = useSelector((state) => state.theme.isDarkMode); 
 
   return (

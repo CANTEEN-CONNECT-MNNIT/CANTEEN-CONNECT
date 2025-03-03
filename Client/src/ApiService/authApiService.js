@@ -10,7 +10,7 @@ class ApiService{
     });
     }
 
-    async login(data) {
+    login=async (data)=> {
         try {
             const response=await this.api.post("login",data);
             console.log("authApi/login: ",response);
@@ -21,7 +21,7 @@ class ApiService{
         }
     }
 
-    async signup(data) {
+    signup=async (data)=> {
         try {
             const response=await this.api.post("signup",data);
             console.log("authApi/signup: ",response);

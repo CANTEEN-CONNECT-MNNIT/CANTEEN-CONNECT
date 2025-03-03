@@ -10,7 +10,7 @@ class CartService{
     });
     }
 
-    async updateCart(data){
+    updateCart=async (data)=>{
         try {
             const response=await this.api.patch(`update/${data?._id}`,data);
             console.log("cartApi/updateCart: ",response);
@@ -24,7 +24,7 @@ class CartService{
         }
     }
 
-    async get(){
+    get=async ()=>{
         try {
             const response=await this.api.get(`get`);
             console.log("cartApi/get: ",response);
@@ -37,7 +37,7 @@ class CartService{
         }
     }
 
-    async deleteCart(data){
+    deleteCart=async (data)=>{
         try {
             const response=await this.api.delete(`delete/${data?._id}`);
             console.log("cartApi/deleteCart: ",response);
@@ -51,7 +51,7 @@ class CartService{
         }
     }
 
-    async createOrder(){
+    createOrder=async ()=>{
         try {
             const response=await this.api.get(`order`);
             console.log("cartApi/createOrder: ",response);

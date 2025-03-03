@@ -10,7 +10,7 @@ import PageReducer from './Slices/pageSlice';
 import UserSlice from './Slices/UserSlice';
 
 const persistConfig = {
-  key: 'root',
+  key: 'CCroot',
   storage,
 };
 

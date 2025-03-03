@@ -1,21 +1,18 @@
 import React from 'react';
 import FoodCard from './FoodCard';
-import FoodData from '../../Data/FoodData.js';
 import toast, { Toaster } from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 
-const FoodItems = () => {
+const FoodItems = ({FoodData}) => {
      const dispatch=useDispatch();
     const darkMode = useSelector((state) => state.theme.isDarkMode);
-  const category = useSelector((state) => state.category.category);
-  const search = useSelector((state) => state.search.search);
   const handleToast = (name) => toast.success(`Added ${name} `);
 
   return (
     <>
       <Toaster position="top-center" reverseOrder={false} />
       <div className={`${darkMode ? 'bg-slate-800 text-white' : 'bg-slate-100 text-slate-800'} flex w-full flex-wrap gap-4 justify-center relative top-3`}>
-        {FoodData.slice(0,8).map((food) => (
+        {FoodData?.map((food) => (
           <FoodCard 
           key={food.id}
           id={food.id}

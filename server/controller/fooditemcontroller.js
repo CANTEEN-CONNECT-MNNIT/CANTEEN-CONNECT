@@ -1,4 +1,3 @@
-import { query } from 'express';
 import Canteen from '../models/canteenmodel.js';
 import Fooditem from '../models/fooditemmodel.js';
 import ApiError from '../utils/apierror.js';

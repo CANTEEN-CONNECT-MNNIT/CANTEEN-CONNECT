@@ -10,7 +10,7 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import authService from '../../ApiService/authApiService';
 import { useDispatch } from 'react-redux';
-import { login } from '../../Redux/Slices/UserSlice';
+import { loginFailure, loginStart, loginSuccess } from '../../Redux/Slices/UserSlice';
 import { useSelector } from 'react-redux';
 
 export default function SignUpBox({
@@ -44,13 +44,14 @@ export default function SignUpBox({
 
   const handleSignUp = async (data) => {
     console.log('SignUpBox:', data);
+    dispatch(loginStart());
     setSuccess(false);
     setError('');
     setSucc(false);
     try {
       const res = await authService.signup(data);
       if (res) {
-        dispatch(login(res));
+        dispatch(loginSuccess(res));
         setTimeout(() => {
           setSuccess(true);
         }, 500);
@@ -60,6 +61,7 @@ export default function SignUpBox({
     } catch (error) {
       console.log(error);
       setError(error.response?.data?.message);
+      dispatch(loginFailure(error.response?.data?.message));
     }
   };
 

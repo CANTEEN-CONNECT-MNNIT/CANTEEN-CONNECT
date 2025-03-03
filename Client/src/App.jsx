@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import OrderPage from './Pages/OrderPage';
 import Error from './Pages/Error';
@@ -14,9 +14,10 @@ import {
   setactiveMenu,
   setMerchantProfileOpen,
 } from './Redux/Slices/pageSlice';
-import { setProfileOpen } from './Redux/Slices/pageSlice';
 import { AppProvider } from './Context/AppContext.jsx';
 import MerchantProfile from './Components/SideBar/MerchantProfile.jsx';
+import { toast, Toaster } from 'react-hot-toast';
+import { clearError, clearSuccess } from './Redux/Slices/UserSlice.jsx';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -27,6 +28,8 @@ const App = () => {
   );
   const location = useLocation();
 
+  const { user, error, success }= useSelector((state)=>state.user);
+
   /*For All Pop up Box Close */
   const onClose = function () {
     if (location.pathname === '/dashboard') {
@@ -34,15 +37,36 @@ const App = () => {
     } else dispatch(setactiveMenu('Track Order'));
   };
 
+  useEffect(()=>{
+    if(location.pathname === '/OrderPage'){
+      dispatch(setactiveMenu('Track Order'));
+    }
+    else{
+      dispatch(setactiveMenu('Dashboard'));
+    }
+  },[location]);
+
+  useEffect(()=>{
+    if(error?.length>0){
+      toast.error(error);
+      setTimeout(() => dispatch(clearError()), 3000);
+    }
+    if(success?.length>0){
+      toast.success(success);
+      setTimeout(() => dispatch(clearSuccess()), 3000);
+    }
+  },[error,success,dispatch]);
+
   console.log(activeMenu);
   return (
     <AppProvider>
+      <Toaster/>
       <div>
         {activeMenu === 'Canteen' && <Canteen onClose={onClose} />}
         {activeMenu === 'Favorites' && <Favorite onClose={onClose} />}
 
         {profileOpen && (
-          <Profile onClose={(state) => dispatch(setProfileOpen(false))} />
+          <Profile />
         )}
         {merchantprofileOpen && (
           <MerchantProfile
@@ -63,26 +87,18 @@ const App = () => {
             path='/dashboard'
             element={
               <Auth authentication={true}>
-                <Dashboard />
+                {user?.role==='Canteen'?<CanteenPage />:<Dashboard />}
               </Auth>
             }
           />
-          <Route
+          {user?.role==='Student' && <Route
             path='/OrderPage'
             element={
               <Auth authentication={true}>
                 <OrderPage />
               </Auth>
             }
-          />
-          <Route
-            path='/canteen'
-            element={
-              <Auth authentication={true}>
-                <CanteenPage />
-              </Auth>
-            }
-          />
+          />}
           <Route path='/*' element={<Error />} />
         </Routes>
       </div>

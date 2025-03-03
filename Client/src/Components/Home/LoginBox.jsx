@@ -9,7 +9,7 @@ import {
 import { useForm } from 'react-hook-form';
 import authService from '../../ApiService/authApiService';
 import { useDispatch } from 'react-redux';
-import { login } from '../../Redux/Slices/UserSlice';
+import { loginFailure, loginStart, loginSuccess } from '../../Redux/Slices/UserSlice';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
@@ -43,16 +43,18 @@ export default function LoginBox({
     console.log('loginBox:', data);
     setSuccess(false);
     setError('');
+    dispatch(loginStart());
     try {
       const res = await authService.login(data);
       if (res) {
-        dispatch(login(res));
+        dispatch(loginSuccess(res));
         navigate('/dashboard');
         setTimeout(setSuccess(true), 400);
       }
     } catch (error) {
       console.log('loginBox/Error:', error);
       setError(error?.response?.data?.message);
+      dispatch(loginFailure(error?.response?.data?.message));
     }
   };
 
