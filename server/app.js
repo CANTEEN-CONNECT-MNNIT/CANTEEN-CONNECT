@@ -11,6 +11,7 @@ import userroute from './router/userrouter.js';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import orderroute from './router/orderroute.js';
+import paymentroute from './router/paymentrouter.js';
 
 const app = express();
 app.use(express.json());

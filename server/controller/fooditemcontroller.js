@@ -6,13 +6,14 @@ import asynchandler from '../utils/asynchandler.js';
 import { uploadOnCloudinary } from '../utils/cloudinary.js';
 
 export const additem = asynchandler(async (req, res, next) => {
-  const canteen_id = req.params.c_id;
+  const canteen_id =
+    req.params.c_id || (await Canteen.findOne({ owner: req.user._id }));
   const reqcanteen = await Canteen.findById(canteen_id);
   if (!reqcanteen) {
     return next(new ApiError('Canteen Not found', 401));
   }
 
-  const { name, description, price, image, available, quantity } = req.body;
+  const { name, description, price, image, available } = req.body;
 
   const uploadedfile = await uploadOnCloudinary(req.file.path);
 
@@ -25,24 +26,20 @@ export const additem = asynchandler(async (req, res, next) => {
     description,
     canteen: reqcanteen._id,
     price,
-    image,
   });
 
   let newitem = null;
 
   if (olditem) {
-    olditem.quantity = olditem.quantity + (quantity || 1);
-    newitem = olditem;
-    olditem.save();
+    return next(new ApiError('Item are already exist in your canten'));
   } else {
     newitem = await Fooditem.create({
       name,
       description,
       price,
-      image: imagepath,
+      image: uploadedfile.url,
       available,
       canteen: reqcanteen._id,
-      quantity,
     });
 
     if (!newitem) {
@@ -58,14 +55,20 @@ export const additem = asynchandler(async (req, res, next) => {
 });
 
 export const getall = asynchandler(async (req, res, next) => {
-  const queryobj = req.query;
-
+  let queryobj = req.query;
+  let allitems = [];
   console.log(queryobj);
+  if (req.user.role === 'Canteen') {
+    const reqcanteen = await Canteen.findOne({ owner: req.user._id });
+    if (!reqcanteen) {
+      return next(new ApiError('Canteen Not found', 404));
+    }
+    allitems = await Fooditem.find({ canteen: reqcanteen._id });
+  } else {
+    const applyfilter = new Apifeature(Fooditem.find(), queryobj).filter();
 
-  const applyfilter = new Apifeature(Fooditem.find(), queryobj).filter();
-
-  const allitems = await applyfilter.models;
-
+    allitems = await applyfilter.models;
+  }
   res.status(201).json({
     message: 'sucess',
     data: {
@@ -122,7 +125,7 @@ export const updateitem = asynchandler(async (req, res, next) => {
     return next(new ApiError('Item Not found ', 403));
   }
 
-  const { name, description, price, image, available, quantity } = req.body;
+  const { name, description, price, image, available } = req.body;
 
   const reqitem = await Fooditem.findById(id);
 
@@ -130,14 +133,20 @@ export const updateitem = asynchandler(async (req, res, next) => {
     return next(new ApiError('Item Not found ', 403));
   }
 
+  const uploadedfile = await uploadOnCloudinary(req.file.path);
+
+  if (!uploadedfile.url) {
+    return next(new ApiError('Error in image uploaing', 444));
+  }
+
   const updateditem = await Fooditem.findByIdAndUpdate(
     id,
-    { name, description, price, image, available, quantity },
+    { name, description, price, image: uploadedfile.url, available },
     { new: true, runValidators: true }
   );
 
   res.status(201).json({
-    message: 'Task updataed Sucessfully',
+    message: 'FoodItem updataed Sucessfully',
     data: {
       updateditem,
     },

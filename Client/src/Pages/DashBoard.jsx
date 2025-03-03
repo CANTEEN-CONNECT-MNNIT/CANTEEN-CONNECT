@@ -1,16 +1,33 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Sidebar from '../Components/SideBar/Sidebar';
 import NavigationBar from '../Components/Header/NavigationBar';
 import Header from '../Components/Header/Header';
 import MainContent from '../Components/Main/MainContent';
 import { Footer } from '../Components/Home/Footer';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Cart from '../Components/Main/Cart';
+import cartService from '../ApiService/cartService';
+import { setCart } from '../Redux/Slices/CartSlice';
 
 const Dashboard = () => {
   const isOpen = useSelector((state) => state.page.isOpen);
   const darkMode = useSelector((state) => state.theme.isDarkMode);
   const footerRef = useRef(null);
+  const dispatch = useDispatch();
+
+  const fetchCart = async () => {
+    try {
+      const res = await cartService.get();
+      if (res) {
+        dispatch(setCart(res));
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    fetchCart();
+  }, []);
 
   return (
     <div

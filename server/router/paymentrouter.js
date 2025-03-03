@@ -1,5 +1,8 @@
 import express from 'express';
-import { generatetoken, processpayment } from './paymentcontroller.js';
+import {
+  generatetoken,
+  processpayment,
+} from '../controller/paymentcontrollers.js';
 const router = express.Router();
 
 router.get('/generate/token', generatetoken);

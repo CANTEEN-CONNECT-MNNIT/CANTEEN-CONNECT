@@ -10,7 +10,7 @@ class UserService{
     });
     }
 
-    async logout(data) {
+    logout=async (data)=> {
         try {
             const response=await this.api.get("logout",data);
             console.log("userApi/logout: ",response);
@@ -24,7 +24,7 @@ class UserService{
         }
     }
 
-    async update(data){
+    update=async (data)=>{
         try {
             const response=await this.api.patch("update",data);
             console.log("userApi/update: ",response);
@@ -38,7 +38,7 @@ class UserService{
         }
     }
 
-    async getMe(){
+    getMe=async ()=>{
         try {
             const response=await this.api.get("me");
             console.log("userApi/getMe: ",response);
@@ -52,7 +52,7 @@ class UserService{
     }
 
 
-    async deleteUser(data){
+    deleteUser=async (data)=>{
         try {
             const response=await this.api.delete(`delete/${data?._id}`);
             console.log("userApi/deleteUser: ",response);

@@ -19,27 +19,15 @@ const fooditemSchema = new mongoose.Schema(
       type: String,
     },
     available: {
-      type: Boolean,
-      default: true,
+      type: String,
+      enum: ['out_of_stock', 'limited_stock', 'in_stock'],
+      default: 'in_stock',
     },
     canteen: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Canteen',
       required: true,
     },
-    quantityOptions: [
-      {
-        label: {
-          type: String,
-          required: true,
-        },
-        multiplier: {
-          type: Number,
-          required: true,
-          min: 0.5, // For half plate
-        },
-      },
-    ],
   },
   { timestamps: true }
 );

@@ -10,7 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@babel/runtime": "^7.26.9",
     "@reduxjs/toolkit": "^2.3.0",
+    "@tanstack/react-query": "^5.66.11",
     "axios": "^1.7.7",
     "braintree-web-drop-in-react": "^1.2.1",
     "react": "^18.3.1",

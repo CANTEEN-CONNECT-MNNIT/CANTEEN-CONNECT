@@ -8,6 +8,8 @@ import { toggleTheme } from '../../Redux/Slices/themeSlice';
 import { setMerchantProfileOpen, setOpen } from '../../Redux/Slices/pageSlice';
 import { setProfileOpen } from '../../Redux/Slices/pageSlice';
 import SignoutButton from './SignoutButton';
+import { logout, setError } from '../../Redux/Slices/UserSlice';
+import userService from '../../ApiService/userApiService';
 const NavigationBar = () => {
   const isOpen = useSelector((state) => state.page.isOpen);
   const location = useLocation();
@@ -15,29 +17,40 @@ const NavigationBar = () => {
   const darkMode = useSelector((state) => state.theme.isDarkMode);
   console.log(location);
   const navigate = useNavigate();
+  const { user }= useSelector((state)=>state.user);
 
   //This is Signout from Canteen Route
-  const onSignOut = () => {
+  const onSignOut = async() => {
     /* Logic for Sign Out */
-    navigate('/dashboard');
-    dispatch(setOpen(false));
+    try {
+      dispatch(setError(''));
+      const res=await userService.logout();
+      if(res){
+        dispatch(logout());
+        dispatch(setOpen(false));
+      }
+    } catch (error) {
+      dispatch(setError(error?.response?.data?.message));
+      console.log(error);
+      
+    }
   };
 
   return (
     <div
       className={`absolute ${
-        darkMode
-          ? location.pathname === '/canteen'
+        darkMode &&location.pathname === '/dashboard'
+          ? user?.role==='Canteen'
             ? 'bg-slate-100/20'
             : 'bg-transparent'
-          : location.pathname === '/dashboard'
+          : user?.role==='Student'
           ? ''
           : 'bg-stone-800 shadow-lg'
       } top-0 z-10 left-0 right-0 px-4`}
     >
       <div className='flex mt-0 items-center justify-between py-4 '>
         <div className={` flex items-center gap-4 ml-4`}>
-          {location.pathname !== '/canteen' && (
+          {(location.pathname !== '/dashboard' || user?.role!=='Canteen') && (
             <button
               onClick={() => dispatch(setOpen(true))}
               className='text-white hover:text-orange-400 hover:bg-gray-800 hover:rounded-3xl transition-colors'
@@ -45,7 +58,7 @@ const NavigationBar = () => {
               <FiMenu className='rounded-2xl p-1' size={30} />
             </button>
           )}
-          {(!isOpen || location.pathname === '/canteen') && (
+          {(!isOpen || (location.pathname === '/dashboard' && user?.role==='Canteen')) && (
             <div
               className={`flex items-center gap-2 text-2xl md:text-3xl font-bold text-white tracking-tight transition-transform duration-300`}
             >
@@ -70,7 +83,7 @@ const NavigationBar = () => {
 
           <button
             onClick={(state) => {
-              if (location.pathname === '/canteen')
+              if (location.pathname === '/dashboard' && user?.role==='Canteen')
                 dispatch(setMerchantProfileOpen(true));
               else dispatch(setProfileOpen(true));
             }}
@@ -79,7 +92,7 @@ const NavigationBar = () => {
             <FiUser size={20} />
           </button>
 
-          {location.pathname === '/canteen' && (
+          {(location.pathname === '/dashboard' && user?.role==='Canteen') && (
             <SignoutButton onSignOut={onSignOut} />
           )}
         </div>

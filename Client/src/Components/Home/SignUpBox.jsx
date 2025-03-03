@@ -10,7 +10,11 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import authService from '../../ApiService/authApiService';
 import { useDispatch } from 'react-redux';
-import { login } from '../../Redux/Slices/UserSlice';
+import {
+  loginFailure,
+  loginStart,
+  loginSuccess,
+} from '../../Redux/Slices/UserSlice';
 import { useSelector } from 'react-redux';
 
 export default function SignUpBox({
@@ -30,7 +34,7 @@ export default function SignUpBox({
       name: '',
       email: '',
       password: '',
-      confirmPassword: '',
+      confirmpassword: '',
     },
   });
 
@@ -44,13 +48,14 @@ export default function SignUpBox({
 
   const handleSignUp = async (data) => {
     console.log('SignUpBox:', data);
+    dispatch(loginStart());
     setSuccess(false);
     setError('');
     setSucc(false);
     try {
       const res = await authService.signup(data);
       if (res) {
-        dispatch(login(res));
+        dispatch(loginSuccess(res));
         setTimeout(() => {
           setSuccess(true);
         }, 500);
@@ -60,6 +65,7 @@ export default function SignUpBox({
     } catch (error) {
       console.log(error);
       setError(error.response?.data?.message);
+      dispatch(loginFailure(error.response?.data?.message));
     }
   };
 
@@ -210,7 +216,7 @@ export default function SignUpBox({
             {/* Confirm Password Input */}
             <div>
               <label
-                htmlFor='confirmPassword'
+                htmlFor='confirmpassword'
                 className={`block text-sm font-medium ${
                   darkMode ? 'text-gray-200' : 'text-gray-700'
                 }`}
@@ -220,9 +226,9 @@ export default function SignUpBox({
               <div className='relative'>
                 <input
                   type={showConfirmPassword ? 'text' : 'password'} // Toggle between text and password
-                  id='confirmPassword'
+                  id='confirmpassword'
                   placeholder='Confirm your password...'
-                  {...register('confirmPassword', {
+                  {...register('confirmpassword', {
                     required: 'Please confirm your password',
                     validate: (value) =>
                       value === password || 'Passwords do not match',
@@ -242,9 +248,9 @@ export default function SignUpBox({
                   {/* Show/Hide icon */}
                 </button>
               </div>
-              {errors.confirmPassword && (
+              {errors.confirmpassword && (
                 <p className='text-red-500 text-sm'>
-                  {errors.confirmPassword.message}
+                  {errors.confirmpassword.message}
                 </p>
               )}
             </div>

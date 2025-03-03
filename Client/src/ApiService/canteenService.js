@@ -10,20 +10,22 @@ class CanteenService{
     });
     }
 
-    async addCanteen(data) {
+    addCanteen=async (data)=> {// name, description, canteenId, phone
         try {
-            const response=await this.api.post("addCanteen",data);
+            const response=await this.api.post("create",data);
             console.log("canteenApi/addCanteen: ",response);
             if(response){
                 return response?.data?.data;
+                // newcanteen, updateduser
             }
+            return false;
         } catch (error) {
             console.log("canteenApi/addCanteen: ",error);
             throw error;
         }
     }
 
-    async updateCanteen(data){
+    updateCanteen=async (data)=>{//name, description, gstin, phone, _id:canteen
         try {
             const response=await this.api.patch(`update/${data?._id}`,data);
             console.log("canteenApi/updateCanteen: ",response);
@@ -37,12 +39,14 @@ class CanteenService{
         }
     }
 
-    async getAll(){
+    //get current user canteen data
+    getCanteen=async ()=>{
         try {
             const response=await this.api.get("getall");
             console.log("canteenApi/getAll: ",response);
             if(response){
-                return response?.data;
+                return response?.data?.data?.allcanteen[0];
+                //user canteen
             }
         } catch (error) {
             console.log("canteenApi/getAll: ",error);
@@ -50,12 +54,13 @@ class CanteenService{
         }
     }
 
-    async get(_id){
+    get=async (_id)=>{//_id: canteenid
         try {
             const response=await this.api.get(`get/${_id}`);
             console.log("canteenApi/get: ",response);
             if(response){
-                return response?.data?.data;
+                return response?.data?.data?.reqcanteen;
+                //getting current user canteen
             }
         } catch (error) {
             console.log("canteenApi/get: ",error);
@@ -63,7 +68,7 @@ class CanteenService{
         }
     }
 
-    async deleteCanteen(data){
+    deleteCanteen=async (data)=>{//c_id: canteen id
         try {
             const response=await this.api.delete(`delete/${data?._id}`);
             console.log("canteenApi/deleteCanteen: ",response);

@@ -5,7 +5,7 @@ import asynchandler from '../utils/asynchandler.js';
 
 export const addcanteen = asynchandler(async (req, res, next) => {
   console.log(req.user);
-  const owner = req.user.id;
+  const owner = req.user._id;
   const updateduser = await User.findByIdAndUpdate(
     owner,
     { role: 'Canteen' },
@@ -15,16 +15,16 @@ export const addcanteen = asynchandler(async (req, res, next) => {
     return next(new ApiError('User is Not found', 401));
   }
 
-  const { name, description, gstin, phone } = req.body;
+  const { name, description, canteenId, phone } = req.body;
 
-  if (!name || !gstin || !phone) {
-    return next(new ApiError('Eneter required field', 402));
+  if (!name || !canteenId || !phone) {
+    return next(new ApiError('Enter required field', 402));
   }
 
   const newcanteen = await Canteen.create({
     name,
     description,
-    gstin,
+    canteenId,
     phone,
     owner,
   });
@@ -37,6 +37,7 @@ export const addcanteen = asynchandler(async (req, res, next) => {
     message: 'Add Canteen Sucessfully',
     data: {
       newcanteen,
+      updateduser,
     },
   });
 });

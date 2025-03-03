@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import fs from 'fs';
 import ApiError from './apierror.js';
 
-dotenv.config({ path: './variable.env' });
+dotenv.config({ path: './.env' });
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -33,7 +33,8 @@ export const uploadOnCloudinary = async (localFilePath) => {
 
     return uploadResult;
   } catch (error) {
-    return next(new ApiError('Error in uploading file', 422));
+    console.log(error);
+    throw new Error('Error in uploading file');
     fs.unlinkSync(localFilePath);
     return null;
   }
@@ -49,6 +50,6 @@ export const deleteOnCloudinary = async (fileUrl) => {
     });
     return deleteResult;
   } catch (error) {
-    return next(new ApiError('Error in deleting previous file', 422));
+    throw new Error('Error in deleting file');
   }
 };

@@ -4,15 +4,13 @@ import ApiError from '../utils/apierror.js';
 import asynchandler from '../utils/asynchandler.js';
 
 export const getcart = asynchandler(async (req, res, next) => {
-  const id = req.user;
+  const id = req.user._id;
 
   const carts = await User.findById(id).populate('cart');
-
+  const allitem = carts?.cart || [];
   res.status(201).json({
-    message: 'fetch cart Suceefully',
-    data: {
-      carts,
-    },
+    message: 'fetch cart Successfully',
+    data: allitem,
   });
 });
 

@@ -13,7 +13,7 @@ const multerstorage = multer.diskStorage({
 });
 
 const multerfilter = (req, file, cb) => {
-  if (file.mimetype.startsWith('application')) {
+  if (file.mimetype.startsWith('image')) {
     cb(null, true);
   } else cb(new ApiError('File Type must be pdf'));
 };

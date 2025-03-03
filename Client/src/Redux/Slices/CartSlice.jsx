@@ -18,6 +18,9 @@ const CartSlice = createSlice({
         item._id === action.payload._id ? action.payload : item
       );
     },
+    setCart: (state, action) => {
+      state.cart = action.payload;
+    },
     toggleOpen: (state) => {
       state.isOpen = !state.isOpen;
     },
@@ -27,6 +30,12 @@ const CartSlice = createSlice({
   },
 });
 
-export const { addToCart, removeFromCart, updateCart, toggleOpen, setOpen } =
-  CartSlice.actions;
+export const {
+  addToCart,
+  removeFromCart,
+  updateCart,
+  toggleOpen,
+  setOpen,
+  setCart,
+} = CartSlice.actions;
 export default CartSlice.reducer;

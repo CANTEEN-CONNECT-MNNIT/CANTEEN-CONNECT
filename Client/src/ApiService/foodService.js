@@ -10,7 +10,7 @@ class FoodService{
     });
     }
 
-    async additem(data,canteenId) {
+    additem=async (data,canteenId)=> {
         try {
             const response=await this.api.post(`create/${canteenId}`,data);
             console.log("itemApi/additem: ",response);
@@ -23,7 +23,7 @@ class FoodService{
         }
     }
 
-    async updateitem(data){
+    updateitem=async (data)=>{
         try {
             const response=await this.api.patch(`update/${data?._id}`,data);
             console.log("itemApi/updateitem: ",response);
@@ -36,12 +36,18 @@ class FoodService{
         }
     }
 
-    async getAll(){
+    getAll=async (data)=>{
         try {
-            const response=await this.api.get("getall");
+            
+            const query=Object.fromEntries(
+                Object.entries(data).filter(([_, v]) => v !== "")
+              );
+            console.log(query);
+            
+            const response=await this.api.get("getall",{ params: query });
             console.log("itemApi/getAll: ",response);
             if(response){
-                return response?.data?.allitems;
+                return response?.data?.data?.allitems;
             }
         } catch (error) {
             console.log("itemApi/getAll: ",error);
@@ -49,7 +55,7 @@ class FoodService{
         }
     }
 
-    async get(_id){
+    get=async (_id)=>{
         try {
             const response=await this.api.get(`get/${_id}`);
             console.log("itemApi/get: ",response);
@@ -62,7 +68,7 @@ class FoodService{
         }
     }
 
-    async deleteitem(data){
+    deleteitem=async (data)=>{
         try {
             const response=await this.api.delete(`delete/${data?._id}`);
             console.log("itemApi/deleteitem: ",response);

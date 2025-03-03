@@ -9,9 +9,10 @@ import {
 import { useForm } from 'react-hook-form';
 import authService from '../../ApiService/authApiService';
 import { useDispatch } from 'react-redux';
-import { login } from '../../Redux/Slices/UserSlice';
+import { loginFailure, loginStart, loginSuccess, setCanteen } from '../../Redux/Slices/UserSlice';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import canteenService from '../../ApiService/canteenService';
 
 export default function LoginBox({
   setSuccess,
@@ -43,16 +44,22 @@ export default function LoginBox({
     console.log('loginBox:', data);
     setSuccess(false);
     setError('');
+    dispatch(loginStart());
     try {
       const res = await authService.login(data);
       if (res) {
-        dispatch(login(res));
+        if(res.role==='Canteen'){
+          const canteenData=await canteenService.getCanteen();
+          dispatch(setCanteen(canteenData));
+        }
+        dispatch(loginSuccess(res));
         navigate('/dashboard');
         setTimeout(setSuccess(true), 400);
       }
     } catch (error) {
       console.log('loginBox/Error:', error);
       setError(error?.response?.data?.message);
+      dispatch(loginFailure(error?.response?.data?.message));
     }
   };
 

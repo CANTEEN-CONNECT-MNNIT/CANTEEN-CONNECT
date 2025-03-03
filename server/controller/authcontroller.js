@@ -308,3 +308,16 @@ export const logout = asynchandler(async (req, res, next) => {
   res.clearCookie('acesstoken').clearCookie('refreshtoken');
   res.status(200).json({ status: 'success' });
 });
+
+export const restrict_to = (role) =>
+  asynchandler(async (req, res, next) => {
+    //get the role of the user
+    const user_role = req.user.role;
+    //check the user is quthorised to perform action
+    if (role !== user_role) {
+      return next(new ApiError('You Cannot perform that action', 403));
+    }
+
+    //if authorised give permission
+    next();
+  });

@@ -14,8 +14,12 @@ const Cart = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const totalQty = cartItems.reduce((totalQty, item) => totalQty + item.qty, 0);
-  const totalPrice = cartItems
+  const totalQty = (Array.isArray(cartItems) ? cartItems : []).reduce(
+    (totalQty, item) => totalQty + (item.qty || 0),
+    0
+  );
+
+  const totalPrice = (Array.isArray(cartItems) ? cartItems : [])
     .reduce((total, item) => total + item.qty * item.price, 0)
     .toFixed(2);
 

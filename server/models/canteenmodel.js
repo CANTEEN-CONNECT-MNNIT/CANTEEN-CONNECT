@@ -12,6 +12,10 @@ const canteenSchema = new mongoose.Schema(
     },
     college: {
       type: String,
+      // required: true,
+    },
+    canteenId:{
+      type: String,
       required: true,
     },
     fooditem: [
