@@ -1,11 +1,8 @@
-import { query } from 'express';
 import Canteen from '../models/canteenmodel.js';
 import Fooditem from '../models/fooditemmodel.js';
 import ApiError from '../utils/apierror.js';
 import Apifeature from '../utils/apifeature.js';
 import asynchandler from '../utils/asynchandler.js';
-import { upload } from './apimiddleware.js';
-import { uploadOnCloudinary } from '../utils/cloudinary.js';
 
 export const additem = asynchandler(async (req, res, next) => {
   const canteen_id = req.params.c_id;
@@ -15,20 +12,6 @@ export const additem = asynchandler(async (req, res, next) => {
   }
 
   const { name, description, price, image, available, quantity } = req.body;
-
-  let imagepath = null;
-
-  if (image) {
-    upload.single('image');
-
-    const path = req.files.image.path;
-    console.log(path);
-    if (path) imagepath = await uploadOnCloudinary(path);
-  }
-
-  if (!name || !price) {
-    return next(new ApiError('Please enter the required field'));
-  }
 
   const olditem = await Fooditem.findOne({
     name,

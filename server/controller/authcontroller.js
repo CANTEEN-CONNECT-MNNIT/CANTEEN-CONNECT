@@ -18,19 +18,24 @@ const createrefreshandacesstoken = (id) => {
 
 export const signup = asynchandler(async (req, res, next) => {
   console.log('invoke');
-  const { name, email, password } = req.body;
+  let { name, email, password, confirmpassword } = req.body;
+  email = email.trim().toLowerCase();
+  password = password.trim();
+  confirmpassword = confirmpassword.trim();
+  //check email password and confiem password are not missing
+  if (!email || !password || !confirmpassword) {
+    return next(new ApiError('All field are required', 400));
+  }
   const user = await User.findOne({ email });
   if (user) {
     return next(new ApiError('User are already exist', 404));
-  }
-  if (!email || !password) {
-    return next(new ApiError('Please Enter all the detail', 404));
   }
 
   const newuser = await User.create({
     name,
     email,
     password,
+    confirmpassword,
   });
 
   console.log(newuser);
@@ -62,8 +67,9 @@ export const signup = asynchandler(async (req, res, next) => {
 });
 
 export const login = asynchandler(async (req, res, next) => {
-  const { email, password } = req.body;
-
+  let { email, password } = req.body;
+  email = email.trim().toLowerCase();
+  password = password.trim();
   if (!email) {
     return next(new ApiError('Please enter email', 400));
   }
@@ -129,8 +135,8 @@ export const protect = asynchandler(async (req, res, next) => {
 
   console.log(acesstoken);
 
-  if (!acesstoken || !refreshtoken) {
-    return next(new ApiError('You have to login again or sign up', 400));
+  if (!refreshtoken) {
+    return next(new ApiError('Unauthorised user', 401));
   }
 
   let decodedtoken = await promisify(jwt.verify)(
@@ -166,6 +172,89 @@ export const protect = asynchandler(async (req, res, next) => {
   next();
 });
 
-export const rolevalidation = asynchandler(async (req, res, next) => {
-  const id = req.user._id;
+export const forgotpassword = asynchandler(async (req, res, next) => {
+  //get the email to forgot password
+  let { email } = req.body;
+  email = email.trim().toLowerCase();
+  //check the user is exist or not
+  const requser = await User.findOne({ email });
+  //if not exist give error
+  if (!requser) {
+    return next(new ApiError('User not found', 404));
+  }
+
+  const resetToken = requser.createResettoken();
+  await requser.save({ validateBeforeSave: false });
+
+  try {
+    const resetURL = `${process.env.FRONTEND_URL}/${resetToken}`;
+    await new Email(requser, resetURL).sendPasswordReset();
+
+    res.status(200).json({
+      status: 'success',
+      message: 'Token sent to email!',
+    });
+  } catch (err) {
+    requser.passwordResetToken = undefined;
+    requser.passwordResetExpires = undefined;
+    await requser.save({ validateBeforeSave: false });
+    return next(
+      new ApiError('There was an error sending the email. Try again later!'),
+      500
+    );
+  }
+});
+
+export const resetpassword = asynchandler(async (req, res, next) => {
+  const { resetToken, password, confirmpassword } = req.body;
+
+  if (!resetToken || !password || !confirmpassword) {
+    return next(new ApiError('Please fill all required field', 400));
+  }
+
+  const hashedToken = crypto
+    .createHash('sha256')
+    .update(resetToken)
+    .digest('hex');
+
+  const requser = await User.findOne({
+    passwordResetToken: hashedToken,
+    passwordResetExpires: { $gte: Date.now() },
+  });
+
+  if (!requser) {
+    return next(new ApiError('Token is invalid or expired', 401));
+  }
+
+  requser.password = password;
+  requser.confirmpassword = confirmpassword;
+  requser.passwordResetToken = undefined;
+  requser.passwordResetExpires = undefined;
+  await requser.save();
+  const [acesstoken, refreshtoken] = createacessandrefreshtoken(requser._id);
+
+  //check the acess and refreshtoken is generated or not
+  if (!refreshtoken || !acesstoken) {
+    return next(new ApiError('token cannot generated', 400));
+  }
+
+  //send the cookie
+  const options = {
+    httpOnly: true,
+    secure: false,
+    sameSite: 'Lax',
+  };
+
+  res
+    .cookie('acesstoken', acesstoken, options)
+    .cookie('refreshtoken', refreshtoken, options);
+  //return success message
+  res.status(201).json({
+    message: 'Password reset Succesfully',
+    data: {
+      acesstoken,
+      refreshtoken,
+      user: requser,
+    },
+  });
 });
