@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   user: null,
+  canteen:null,
   status: false,
   loading: false,
   error: '',
@@ -27,6 +28,9 @@ const userSlice = createSlice({
       state.error = action.payload;
     },
     logout: () => initialState,
+    setCanteen:(state,action)=>{
+      state.canteen=action.payload;
+    },
     setError: (state, action) => {
       state.error = action.payload;
     },
@@ -50,6 +54,7 @@ export const {
   setError,
   clearError,
   setSuccess,
+  setCanteen,
   clearSuccess,
 } = userSlice.actions;
 

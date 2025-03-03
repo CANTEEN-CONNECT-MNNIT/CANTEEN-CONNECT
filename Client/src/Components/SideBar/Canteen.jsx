@@ -1,21 +1,23 @@
 import React, { useState } from 'react';
-import { FaStore, FaChevronRight, FaTimes, FaIdCard, FaPhone } from 'react-icons/fa';
-import { useSelector } from 'react-redux';
+import { FaStore, FaChevronRight, FaTimes, FaIdCard, FaPhone, FaEdit } from 'react-icons/fa';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import canteenService from '../../ApiService/canteenService';
+import { loginFailure, loginStart, loginSuccess, setCanteen, setError } from '../../Redux/Slices/UserSlice';
 
 export default function Canteen({ onClose }) {
-  const [formData, setFormData] = useState({
-    canteenID: '',
-    password: '',
-    canteenName: '',
-    contactPerson: '',
-    gstID: '',
-    phone: ''
-  });
+  const initialState={
+    canteenId: '',
+    name: '',
+    phone: '',
+    description: '',
+  };
+  const [formData, setFormData] = useState(initialState);
   const [errors, setErrors] = useState({});
 
   const darkMode = useSelector((state) => state.theme.isDarkMode);
   const navigate = useNavigate();
+  const dispatch=useDispatch();
 
   // Handle Input Change
   const handleChange = (e) => {
@@ -25,35 +27,52 @@ export default function Canteen({ onClose }) {
   // Validate Inputs
   const validate = () => {
     let newErrors = {};
-
+  
+    if (formData.canteenName?.trim()==='') {
+      newErrors.canteenName = 'Canteen Name is required';
+    }
+  
+    if (formData.canteenId?.trim()==='') { // Fixed the key to match formData
+      newErrors.canteenId = 'Canteen Id is required!';
+    }
+  
+    if (formData.phone?.trim()==='') {
+      newErrors.phone = 'Phone number is required';
+    } else if (!/^\d{10}$/.test(formData.phone)) {
+      newErrors.phone = 'Phone number must be 10 digits';
+    }
+  
+    if (formData.description?.trim()==='') {
+      newErrors.description = 'Description is required';
+    }
+  
     setErrors(newErrors);
-
-      if (!formData.canteenName.trim()) {
-        newErrors.canteenName = 'Canteen Name is required';
-      }
-
-      if (!formData.gstID.trim()) {
-        newErrors.gstID = 'GSTIN is required';
-      } else if (!/^[0-9A-Z]{10}$/.test(formData.gstID)) {
-        newErrors.gstID = 'GSTIN must be 15 characters (letters & numbers)';
-      }
-
-      if (!formData.phone.trim()) {
-        newErrors.phone = 'Phone number is required';
-      } else if (!/^\d{10}$/.test(formData.phone)) {
-        newErrors.phone = 'Phone number must be 10 digits';
-      }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return Object.keys(newErrors).length === 0; // Returns true if no errors
   };
+  
 
   // Handling Form Submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(formData);
+    
     if (validate()) {
-      navigate('/dashboard');
-      onClose();
+      try {
+          dispatch(loginStart());
+          console.log("here",formData);
+          
+          const res=await canteenService.addCanteen(formData);
+          if(res){
+            dispatch(setCanteen(res?.newcanteen));
+            dispatch(loginSuccess(res?.updateduser));      
+            navigate('/dashboard');
+            onClose();
+            setFormData(initialState);
+          }
+      } catch (error) {
+        console.log("Canteen:",error);
+        dispatch(loginFailure(error?.response?.data?.message));
+      }
     }
   };
 
@@ -70,17 +89,27 @@ export default function Canteen({ onClose }) {
           </h2>
 
           <form onSubmit={handleSubmit} className="space-y-2 mt-4">
-              {/* //Canteen SignUp Box */}
-              <>
-                {[
-                  { label: 'Canteen Name', icon: FaStore, name: 'canteenName', placeholder: 'Enter canteen name' },
-                  { label: 'GSTIN', icon: FaIdCard, name: 'gstID', placeholder: 'Enter 10-digit GSTIN' },
-                  { label: 'Phone Number', icon: FaPhone, name: 'phone', placeholder: 'Enter phone number' },
-                ].map(({ label, icon: Icon, name, placeholder, type = 'text' }) => (
-                  <div key={name}>
-                    <label className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>{label}</label>
-                    <div className="relative">
-                      <Icon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+            {/* //Canteen SignUp Box */}
+            <>
+              {[
+                { label: 'Canteen Name', icon: FaStore, name: 'name', placeholder: 'Enter canteen name' },
+                { label: 'Canteen Id', icon: FaIdCard, name: 'canteenId', placeholder: 'Enter Canteen Id' },
+                { label: 'Phone Number', icon: FaPhone, name: 'phone', placeholder: 'Enter phone number' },
+                { label: 'Description', icon: FaEdit, name: 'description', placeholder: 'Enter canteen description', type: 'textarea' },
+              ].map(({ label, icon: Icon, name, placeholder, type = 'text' }) => (
+                <div key={name}>
+                  <label className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>{label}</label>
+                  <div className="relative">
+                    <Icon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    {type === 'textarea' ? (
+                      <textarea
+                        name={name}
+                        value={formData[name]}
+                        onChange={handleChange}
+                        className={`w-full pl-10 py-2 border rounded-lg resize-none ${darkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300'}`}
+                        placeholder={placeholder}
+                      />
+                    ) : (
                       <input
                         type={type}
                         name={name}
@@ -89,11 +118,13 @@ export default function Canteen({ onClose }) {
                         className={`w-full pl-10 py-2 border rounded-lg ${darkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300'}`}
                         placeholder={placeholder}
                       />
-                    </div>
-                    {errors[name] && <p className="text-red-500 text-sm">{errors[name]}</p>}
+                    )}
                   </div>
-                ))}
-              </>
+                  {errors[name] && <p className="text-red-500 text-sm">{errors[name]}</p>}
+                </div>
+              ))}
+            </>
+
 
             <button
               type="submit"
