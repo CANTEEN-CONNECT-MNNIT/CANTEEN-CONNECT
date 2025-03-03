@@ -54,7 +54,7 @@ const userSchema = new mongoose.Schema({
   cart: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'FoodItem', // reference to the 'FoodItem' model
+      ref: 'FoodItem',
     },
   ],
 });

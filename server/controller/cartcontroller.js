@@ -1,5 +1,4 @@
 import Fooditem from '../models/fooditemmodel.js';
-import Order from '../models/ordermodel.js';
 import User from '../models/usermodel.js';
 import ApiError from '../utils/apierror.js';
 import asynchandler from '../utils/asynchandler.js';
@@ -46,74 +45,29 @@ export const addincart = asynchandler(async (req, res, next) => {
 });
 
 export const deleteincart = asynchandler(async (req, res, next) => {
-  const id = req.param.id;
+  const id = req.params.id;
   const user_id = req.user._id;
   const reqitem = await Fooditem.findById(id);
   if (!reqitem) {
-    return next(new ApiError('Food Item is not available', 403));
+    return next(new ApiError('Food Item is not available', 404));
   }
 
-  const requser = await User.findById(user_id);
-
-  if (!requser) {
-    return next(new ApiError('User is not available', 403));
-  }
-
-  const newcart = requser.cart.filter((f_id) => f_id !== id);
-
-  if (newcart?.length === requser.cart?.length) {
-    return next(new ApiError('food item is not available', 403));
-  }
-
-  requser.cart = newcart;
-
-  requser.save();
-
-  res.status(201).json({
-    message: 'Remove cart Sucessfully',
-    data: {
-      newcart,
-    },
-  });
-});
-
-export const createorder = asynchandler(async (req, res, next) => {
-  const user_id = req.user._id;
-
-  const requser = await User.findById(user_id);
-
-  if (!requser) {
-    return next(new ApiError('User not found', 403));
-  }
-
-  // Resolving all promises within the map
-  requser.orders = await Promise.all(
-    requser.cart.map(async (f_id) => {
-      const reqitem = await Fooditem.findOne(f_id);
-      if (!reqitem) {
-        throw new ApiError('Some Food Item not found', 401);
-      }
-
-      const neworder = await Order.create({
-        user: user_id,
-        fooditems: f_id,
-      });
-
-      return neworder._id; // Return the ObjectId of the newly created order
-    })
+  const updatedUser = await User.findByIdAndUpdate(
+    user_id,
+    { $pull: { cart: id } },
+    { new: true }
   );
 
-  console.log(requser.orders);
-  requser.cart = [];
-  // Save the user with updated orders if necessary
-  await requser.save();
+  if (!updatedUser) {
+    return next(new ApiError('User not found', 404));
+  }
 
-  ///add a middleware which tell us order is sucess or not
+  if (updatedUser.cart.length === (await User.findById(user_id)).cart.length) {
+    return next(new ApiError('Food item was not in the cart', 404));
+  }
 
-  requser.save();
-
-  res.status(201).json({
-    message: 'Create order Sucessfully',
-    data: requser.orders,
+  res.status(200).json({
+    message: 'Item removed from cart successfully',
+    data: { cart: updatedUser.cart },
   });
 });
