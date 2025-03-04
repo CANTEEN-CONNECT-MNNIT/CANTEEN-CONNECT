@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken';
 import { promisify } from 'util';
 import Email from '../utils/emailhandler.js';
 import * as crypto from 'crypto';
+import { uploadOnCloudinary } from '../utils/cloudinary.js';
 
 const createrefreshandacesstoken = (id) => {
   const acesstoken = jwt.sign({ id: id }, process.env.ACESS_TOKEN_STRING, {
@@ -32,10 +33,15 @@ export const signup = asynchandler(async (req, res, next) => {
   if (user) {
     return next(new ApiError('User are already exist', 404));
   }
+  const uploadedfile = await uploadOnCloudinary(req.file.path);
 
+  if (!uploadedfile.url) {
+    return next(new ApiError('Error in image uploaing', 444));
+  }
   const newuser = await User.create({
     name,
     email,
+    image: uploadedfile.url,
     password,
     confirmpassword,
   });

@@ -7,6 +7,11 @@ const orderSchema = new mongoose.Schema(
       ref: 'User',
       required: true,
     },
+    canteen: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Canteen',
+      required: true,
+    },
     status: {
       type: String,
       enum: [
@@ -28,10 +33,6 @@ const orderSchema = new mongoose.Schema(
         selectedQuantity: {
           type: Number,
           min: 1,
-          required: true,
-        },
-        quantityType: {
-          type: String,
           required: true,
         },
       },

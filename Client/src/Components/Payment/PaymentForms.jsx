@@ -37,7 +37,11 @@ export default function PaymentForms({ selectedMethod, total }) {
   // };
   const getToken = async () => {
     try {
-      await paymentService.getClientToken();
+      const res = await paymentService.getClientToken();
+      const token = res?.clientToken;
+      console.log(res);
+      setClientToken(token);
+      console.log(clientToken);
     } catch (error) {
       console.log('gettoken:', error);
     }
@@ -269,26 +273,28 @@ export default function PaymentForms({ selectedMethod, total }) {
     >
       <Toaster position='top-center' reverseOrder={false} />
       {clientToken && (
-        <DropIn
-          options={{ authorization: clientToken }}
-          onInstance={(inst) => setInstance(inst)} // Store instance
-        />
+        <>
+          <DropIn
+            options={{ authorization: clientToken }}
+            onInstance={(inst) => setInstance(inst)} // Store instance
+          />
+          <button
+            onClick={handlePayment}
+            className={`w-full mt-8 py-3 px-4 rounded-lg font-medium ${
+              darkMode
+                ? 'bg-orange-600 text-white hover:bg-orange-700'
+                : 'bg-orange-500 text-white hover:bg-orange-700'
+            }`}
+          >
+            Pay ₹{total}
+            {isLoading && (
+              <span className='flex justify-center items-center'>
+                <FaSpinner className='animate-spin text-4xl text-gray-600' />
+              </span>
+            )}
+          </button>
+        </>
       )}
-      <button
-        onClick={handlePayment}
-        className={`w-full mt-8 py-3 px-4 rounded-lg font-medium ${
-          darkMode
-            ? 'bg-orange-600 text-white hover:bg-orange-700'
-            : 'bg-orange-500 text-white hover:bg-orange-700'
-        }`}
-      >
-        Pay ₹{total}
-        {isLoading && (
-          <span className='flex justify-center items-center'>
-            <FaSpinner className='animate-spin text-4xl text-gray-600' />
-          </span>
-        )}
-      </button>
     </div>
   );
 }

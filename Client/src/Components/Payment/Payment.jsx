@@ -92,7 +92,7 @@ function Payment() {
           </div>
         </div>
 
-        {showPayment && (
+        {
           <div className='text-center mt-6'>
             <button
               onClick={() => navigate('/dashboard')}
@@ -105,7 +105,7 @@ function Payment() {
               Cancel Payment
             </button>
           </div>
-        )}
+        }
       </main>
     </div>
   );

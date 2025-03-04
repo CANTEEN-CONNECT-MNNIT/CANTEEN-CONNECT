@@ -15,7 +15,7 @@ class PaymentService {
       const response = await this.api.get('generate/token');
       console.log('paymentapi/generatetoken', response);
       if (response) {
-        return response?.data?.response;
+        return response?.data?.data?.response;
       }
     } catch (error) {
       console.log('payment/generatetoken', error);

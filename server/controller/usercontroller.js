@@ -1,20 +1,28 @@
 import User from '../models/usermodel.js';
 import ApiError from '../utils/apierror.js';
 import asynchandler from '../utils/asynchandler.js';
+import { uploadOnCloudinary } from '../utils/cloudinary.js';
 
 export const update = asynchandler(async (req, res, next) => {
-  const { name, email, username } = req.body;
+  const { name } = req.body;
   const id = req.user._id;
   const finduser = await User.findById(id);
   if (!finduser) {
     return next(new ApiError('User not found', 403));
   }
+  let uploadedfile;
+  if (req.file) {
+    uploadedfile = await uploadOnCloudinary(req.file.path);
+
+    if (!uploadedfile.url) {
+      return next(new ApiError('Error in image uploaing', 444));
+    }
+  }
   const updateduser = await User.findByIdAndUpdate(
     id,
     {
       name,
-      email: email.trim(),
-      username,
+      image: uploadedfile?.url || finduser.image,
     },
     { new: true, runValidators: true }
   );
@@ -66,5 +74,14 @@ export const removefavourite = asynchandler(async (req, res, next) => {
   res.status(201).json({
     message: 'favourites updated successfully',
     data: newuser,
+  });
+});
+
+export const getfavourite = asynchandler(async (req, res, next) => {
+  const favouriteitem = await User.findById(req.user._id).populate('favourite')
+    .favourite;
+  res.status(201).json({
+    message: 'favourite fetched sucessfully',
+    data: favouriteitem,
   });
 });

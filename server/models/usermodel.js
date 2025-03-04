@@ -35,6 +35,9 @@ const userSchema = new mongoose.Schema({
     default: true,
     select: false,
   },
+  image: {
+    type: String,
+  },
   passwordchangedat: Date,
   rewardpoint: {
     type: Number,
@@ -81,6 +84,17 @@ userSchema.methods.ispasswordchanged = async function (jwttimestamp) {
   // console.log(this.passwordchangedat.getTime());
   // console.log(jwttimestamp * 1000);
   return parseInt(this.passwordchangedat.getTime() / 1000) > jwttimestamp;
+};
+
+userSchema.methods.createResettoken = function () {
+  const resetToken = crypto.randomBytes(32).toString('hex');
+  this.passwordResetToken = crypto
+    .createHash('sha256')
+    .update(resetToken)
+    .digest('hex');
+  this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+
+  return resetToken;
 };
 
 const User = mongoose.model('User', userSchema);
