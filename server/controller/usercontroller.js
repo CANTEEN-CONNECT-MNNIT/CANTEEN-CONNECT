@@ -55,7 +55,7 @@ export const addfavourite = asynchandler(async (req, res, next) => {
       $addToSet: { favourite: _id },
     },
     { new: true }
-  ).populate('favourite');
+  );
   res.status(201).json({
     message: 'favourites updated successfully',
     data: newuser,
@@ -70,7 +70,6 @@ export const removefavourite = asynchandler(async (req, res, next) => {
     { $pull: { favourite: _id } },
     { new: true }
   );
-  await newuser.populate('favourite');
   res.status(201).json({
     message: 'favourites updated successfully',
     data: newuser,
@@ -78,10 +77,12 @@ export const removefavourite = asynchandler(async (req, res, next) => {
 });
 
 export const getfavourite = asynchandler(async (req, res, next) => {
-  const favouriteitem = await User.findById(req.user._id).populate('favourite')
-    .favourite;
+  const favouriteitem = await User.findById(req.user._id).populate('favourite');
+  const allitems = favouriteitem.favourite;
+  console.log(favouriteitem);
+
   res.status(201).json({
     message: 'favourite fetched sucessfully',
-    data: favouriteitem,
+    data: allitems,
   });
 });

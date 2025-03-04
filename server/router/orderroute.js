@@ -8,5 +8,5 @@ import { restrict_to } from '../controller/authcontroller.js';
 const router = express.Router();
 router.get('/all', getall);
 router.post('/create', createorder);
-router.patch('/update', restrict_to('Canteen'), updateorder);
+router.patch('/update/:id', restrict_to('Canteen'), updateorder);
 export default router;

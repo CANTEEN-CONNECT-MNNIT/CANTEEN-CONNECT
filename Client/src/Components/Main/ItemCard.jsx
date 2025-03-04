@@ -2,25 +2,29 @@ import React, { useEffect, useState } from 'react';
 import { MdDelete } from 'react-icons/md';
 import { CiSquarePlus, CiSquareMinus } from 'react-icons/ci';
 import { useDispatch } from 'react-redux';
-import { removeFromCart, updateCart } from '../../Redux/Slices/CartSlice';
-import { toast } from 'react-hot-toast';
-import { setError } from '../../Redux/Slices/UserSlice';
+import { setCart } from '../../Redux/Slices/CartSlice';
+import { setError, setSuccess } from '../../Redux/Slices/UserSlice';
 import cartService from '../../ApiService/cartService';
 
-const ItemCard = (item) => {
+const ItemCard = ({ _id, name, price, img, updateQuantity, canteen }) => {
   const dispatch = useDispatch();
-  const { _id, name, qty, price, img } = item;
-  const [requiredQty, setRequiredQty] = useState(qty ? qty : 0);
+  const [requiredQty, setRequiredQty] = useState(1);
 
   useEffect(() => {
-    dispatch(updateCart({ ...item, qty: requiredQty }));
+    console.log(requiredQty);
+
+    updateQuantity(canteen, _id, requiredQty, price, name);
   }, [requiredQty]);
 
   const deleteItem = async () => {
     try {
-      if (await cartService.deleteCart(item)) {
-        dispatch(removeFromCart({ _id, img, name, price, qty }));
-        toast(`${name} Removed!`, { icon: '👋' });
+      const res = await cartService.deleteCart({ _id });
+      console.log(res);
+
+      if (res) {
+        updateQuantity(canteen, _id, 0, price);
+        dispatch(setSuccess('Item Removed 👋'));
+        dispatch(setCart(res));
       }
     } catch (error) {
       dispatch(setError(error.response?.data?.message));
@@ -47,16 +51,16 @@ const ItemCard = (item) => {
           <span className='text-slate-900 font-bold'>₹{price}</span>
           <div className='flex items-center gap-2'>
             {/* Decrement Button */}
-            <CiSquareMinus
-              onClick={() =>
-                requiredQty > 0 && setRequiredQty((prev) => prev - 1)
-              }
-              className='cursor-pointer text-xl p-1 size-8 rounded-md  text-black hover:bg-slate-200 transition-all duration-200'
-            />
-            <span className='text-gray-800 font-medium'>{qty}</span>
+            {requiredQty > 1 && (
+              <CiSquareMinus
+                onClick={() => setRequiredQty((prev) => prev - 1)}
+                className='cursor-pointer text-xl p-1 size-8 rounded-md  text-black hover:bg-slate-200 transition-all duration-200'
+              />
+            )}
+            <span className='text-gray-800 font-medium'>{requiredQty}</span>
             {/* Increment Button */}
             <CiSquarePlus
-              onClick={requiredQty < qty && setRequiredQty((prev) => prev + 1)}
+              onClick={() => setRequiredQty((prev) => prev + 1)}
               className='cursor-pointer text-xl p-1 size-8 rounded-md  text-black hover:bg-green-200 transition-all duration-200'
             />
           </div>

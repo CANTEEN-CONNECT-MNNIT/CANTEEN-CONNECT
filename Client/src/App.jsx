@@ -29,7 +29,11 @@ const App = () => {
   );
   const location = useLocation();
 
-  const { user, error, success } = useSelector((state) => state.user);
+  const { user, error, success, canteen, status } = useSelector(
+    (state) => state.user
+  );
+
+  console.log(user);
 
   /*For All Pop up Box Close */
   const onClose = function () {
@@ -65,8 +69,8 @@ const App = () => {
         {activeMenu === 'Canteen' && <Canteen onClose={onClose} />}
         {activeMenu === 'Favorites' && <Favorite onClose={onClose} />}
 
-        {profileOpen && <Profile />}
-        {merchantprofileOpen && (
+        {status && profileOpen && <Profile />}
+        {canteen && merchantprofileOpen && (
           <MerchantProfile
             onClose={(state) => dispatch(setMerchantProfileOpen(false))}
           />

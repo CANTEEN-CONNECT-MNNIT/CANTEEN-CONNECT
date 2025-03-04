@@ -13,7 +13,7 @@ import { setactiveMenu } from '../../Redux/Slices/pageSlice';
 export const Footer = React.forwardRef((props, ref) => {
   const dispatch = useDispatch();
   return (
-    <footer ref={ref} className='bg-gray-900 text-gray-300'>
+    <footer ref={ref} className='bg-gray-900 text-gray-300 mt-10'>
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10'>
         <div className='grid grid-cols-1 md:grid-cols-4 gap-8'>
           {/* Canteen Connect Description */}

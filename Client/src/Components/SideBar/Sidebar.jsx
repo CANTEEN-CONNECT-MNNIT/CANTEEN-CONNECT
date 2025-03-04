@@ -5,8 +5,14 @@ import { SlLocationPin } from 'react-icons/sl';
 import { MdHeadphones, MdFavoriteBorder } from 'react-icons/md';
 import { IoGiftOutline } from 'react-icons/io5';
 import { useDispatch, useSelector } from 'react-redux';
-import { setactiveMenu, toggleOpen } from '../../Redux/Slices/pageSlice';
+import {
+  setactiveMenu,
+  setOpen,
+  toggleOpen,
+} from '../../Redux/Slices/pageSlice';
 import { useNavigate } from 'react-router-dom';
+import userService from '../../ApiService/userApiService.js';
+import { logout, setError } from '../../Redux/Slices/UserSlice';
 
 const menuItems = [
   { icon: LuLayoutDashboard, label: 'Dashboard' },
@@ -27,16 +33,27 @@ const scrollToFooter = () => {
 const Sidebar = () => {
   const navigate = useNavigate();
 
-  /*Handle SignOut */
-  const handleSignOut = () => {
-    navigate('/');
-  };
-
   // isOpen status of Sidebar,while activeMenu will tell the MenuItems which is active in the sidebar
   const isOpen = useSelector((state) => state.page.isOpen);
   const activeMenu = useSelector((state) => state.page.activeMenu);
   const dispatch = useDispatch();
   const darkMode = useSelector((state) => state.theme.isDarkMode);
+  const user = useSelector((state) => state.user.user);
+
+  /*Handle SignOut */
+  const handleSignOut = async () => {
+    try {
+      dispatch(setError(''));
+      const res = await userService.logout();
+      if (res) {
+        dispatch(logout());
+        dispatch(setOpen(false));
+      }
+    } catch (error) {
+      dispatch(setError(error?.response?.data?.message));
+      console.log(error);
+    }
+  };
 
   return (
     <>
@@ -90,7 +107,10 @@ const Sidebar = () => {
         >
           <div className='flex flex-col items-center'>
             <img
-              src='https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=150'
+              src={
+                user?.image ||
+                'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=150'
+              }
               alt='Profile'
               className='w-20 h-20 rounded-full object-cover border-2 border-orange-500'
             />
@@ -99,13 +119,13 @@ const Sidebar = () => {
                 darkMode ? 'text-white' : 'text-gray-800 '
               }`}
             >
-              User
+              {user?.name}
             </h3>
           </div>
         </div>
 
         {/* Wallet Section */}
-        <div
+        {/* <div
           className={`p-2 border-b ${
             darkMode
               ? 'bg-gray-500 border-gray-700'
@@ -139,7 +159,7 @@ const Sidebar = () => {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Sidebar Menu Items*/}
         <nav className='p-4 flex flex-col items-center'>

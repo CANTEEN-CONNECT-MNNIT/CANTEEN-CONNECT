@@ -14,6 +14,7 @@ import {
   loginFailure,
   loginStart,
   loginSuccess,
+  setCanteen,
 } from '../../Redux/Slices/UserSlice';
 import { useSelector } from 'react-redux';
 
@@ -55,6 +56,11 @@ export default function SignUpBox({
     try {
       const res = await authService.signup(data);
       if (res) {
+        if (res.role === 'Canteen') {
+          const canteenData = await canteenService.getCanteen();
+          dispatch(setCanteen(canteenData));
+          console.log(canteenData);
+        }
         dispatch(loginSuccess(res));
         setTimeout(() => {
           setSuccess(true);

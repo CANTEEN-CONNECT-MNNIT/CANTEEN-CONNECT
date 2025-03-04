@@ -30,7 +30,7 @@ export const addincart = asynchandler(async (req, res, next) => {
       $addToSet: { cart: f_id },
     },
     { new: true }
-  );
+  ).populate('cart');
 
   res.status(201).json({
     message: 'Iten Add in cart succesfully',
@@ -50,7 +50,7 @@ export const deleteincart = asynchandler(async (req, res, next) => {
     user_id,
     { $pull: { cart: id } },
     { new: true }
-  );
+  ).populate('cart');
 
   if (!updatedUser) {
     return next(new ApiError('User not found', 404));

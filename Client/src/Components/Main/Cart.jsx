@@ -11,17 +11,38 @@ const Cart = () => {
   const { cart: cartItems, isOpen: activeCart } = useSelector(
     (state) => state.cart
   );
+
+  const [canteenOrders, setCanteenOrders] = useState(new Map());
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [totalPrice, setTotalPrice] = useState(0);
+  const [totalItems, setTotalItems] = useState(0);
 
-  const totalQty = (Array.isArray(cartItems) ? cartItems : []).reduce(
-    (totalQty, item) => totalQty + (item.qty || 0),
-    0
-  );
+  // Function to add or update an item in a canteen order
+  const addOrUpdateItem = (canteenId, itemId, quantity, price, name) => {
+    setCanteenOrders((prevOrders) => {
+      const updatedOrders = new Map(prevOrders); // Clone the Map
+      const items = updatedOrders.get(canteenId) || []; // Get existing or create new array
 
-  const totalPrice = (Array.isArray(cartItems) ? cartItems : [])
-    .reduce((total, item) => total + item.qty * item.price, 0)
-    .toFixed(2);
+      const existingItem = items.find((item) => item._id === itemId);
+
+      if (existingItem) {
+        const quantityDiff = quantity - existingItem.quantity;
+        setTotalPrice((prev) => prev + quantityDiff * price);
+        setTotalItems((prev) => prev + quantityDiff);
+        existingItem.quantity = quantity; // Update quantity
+      } else {
+        items.push({ _id: itemId, quantity, price, name }); // Add new item
+        setTotalItems((prev) => prev + quantity);
+        setTotalPrice((prev) => prev + quantity * price);
+      }
+
+      updatedOrders.set(canteenId, items);
+      return updatedOrders; // React state update
+    });
+  };
+
+  console.log(canteenOrders);
 
   const handleLessToast = () => toast.error(`Cart is Empty `);
 
@@ -50,12 +71,14 @@ const Cart = () => {
           {cartItems.length > 0 ? (
             cartItems.map((food) => (
               <ItemCard
-                key={food.id}
-                id={food.id}
+                key={food._id}
+                _id={food._id}
                 name={food.name}
                 price={food.price}
-                img={food.img}
-                qty={food.qty}
+                img={food.image}
+                // qty={food.qty}
+                canteen={food.canteen}
+                updateQuantity={addOrUpdateItem}
               />
             ))
           ) : (
@@ -69,7 +92,9 @@ const Cart = () => {
         <div className='absolute bottom-0 w-full p-4 right-0 bg-white shadow-md border-t border-gray-200'>
           <div className='flex justify-between items-center mb-2'>
             <h3 className='text-gray-700 text-lg font-semibold'>Items:</h3>
-            <span className='text-gray-800 font-bold text-xl'>{totalQty}</span>
+            <span className='text-gray-800 font-bold text-xl'>
+              {totalItems}
+            </span>
           </div>
           <div className='flex justify-between items-center mb-2'>
             <h3 className='text-gray-700 text-lg font-semibold'>
@@ -81,16 +106,14 @@ const Cart = () => {
           </div>
           <hr className='my-2 border-gray-300' />
           <button
-            onClick={
-              totalQty > 0
-                ? () => {
-                    dispatch(setOpen(false));
-                    navigate('/paymentGateway');
-                  }
-                : () => handleLessToast()
-            }
+            onClick={() => {
+              dispatch(setOpen(false));
+              navigate('/paymentGateway', {
+                state: { totalItems, totalPrice, canteenOrders },
+              });
+            }}
             className='font-bold px-4 py-2 rounded-lg w-full bg-green-500 text-white hover:bg-green-600 transition-all duration-200'
-            disabled={totalQty === 0}
+            disabled={totalItems === 0}
           >
             Checkout
           </button>
@@ -101,7 +124,7 @@ const Cart = () => {
       <FaShoppingCart
         onClick={() => dispatch(toggleOpen())}
         className={`rounded-full size-14 cursor-pointer bg-white shadow-md text-5xl text-slate-700 p-3 fixed bottom-4 right-4 ${
-          totalQty > 0 && 'animate-bounce delay-500 transition-all'
+          cartItems?.length > 0 && 'animate-bounce delay-500 transition-all'
         }`}
       />
     </>

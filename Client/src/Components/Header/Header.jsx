@@ -35,10 +35,6 @@ const Header = () => {
       : [];
   /*For Order Now Button on the Dashboard*/
   const { cart: cartItems, isOpen } = useSelector((state) => state.cart);
-  const totalQty = (Array.isArray(cartItems) ? cartItems : []).reduce(
-    (totalQty, item) => totalQty + (item.qty || 0),
-    0
-  );
   const handleLessToast = (text) => toast.error(text || `Cart is Empty `);
 
   const setSearchText = (txt) => {
@@ -129,7 +125,9 @@ const Header = () => {
               <button
                 className='px-8 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-full shadow-lg transition-all duration-300'
                 onClick={() => {
-                  totalQty > 0 ? dispatch(setOpen(true)) : handleLessToast();
+                  cartItems?.length > 0
+                    ? dispatch(setOpen(true))
+                    : handleLessToast();
                 }}
                 disabled={isOpen}
               >

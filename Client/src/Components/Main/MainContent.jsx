@@ -8,9 +8,11 @@ import CanteenData from '../../Data/canteenData';
 import FoodData from '../../Data/FoodData.js';
 import foodService from '../../ApiService/foodService';
 import { setSearch } from '../../Redux/Slices/SearchSlice.jsx';
+import canteenService from '../../ApiService/canteenService.js';
 
 const MainContent = () => {
   const [selectedCanteen, setSelectedCanteen] = useState(null);
+  const [allCanteen, setAllCanteen] = useState([]);
 
   const [foodList, setFoodList] = useState(null);
 
@@ -51,13 +53,27 @@ const MainContent = () => {
     }
   };
 
-  console.log(foodList);
+  const getAllCanteens = async () => {
+    try {
+      const res = await canteenService.getCanteen();
+      if (res) {
+        setAllCanteen(res);
+      }
+    } catch (error) {
+      // Toaster(error?.response?.data?.message);
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     if (searchText?.trim()) {
       getAllList({ name: searchText });
     }
   }, [searchText, dispatch]);
+
+  useEffect(() => {
+    getAllCanteens();
+  }, []);
 
   return (
     <div
@@ -99,46 +115,36 @@ const MainContent = () => {
         <div className={`relative top-24 text-2xl font-bold mb-6`}>
           <TrendingFood />
         </div>
-        <div className='mt-12 mb-20'>
-          <div className='ml-24 flex flex-row justify-between mr-24 gap-4 mb-6'>
-            <h2 className='text-2xl font-bold'>Tirath Canteen</h2>
-            <button
-              onClick={() => setSelectedCanteen('tirath')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
-                darkMode
-                  ? 'bg-orange-700 hover:bg-orange-600'
-                  : 'bg-orange-600/60 hover:bg-orange-600'
-              } text-white transition-colors duration-200`}
-            >
-              View Details
-            </button>
-          </div>
-          <FoodItems FoodData={FoodData} />
-        </div>
-        <div className='mt-12 mb-20'>
-          <div className='ml-24 flex flex-row justify-between mr-24 gap-4 mb-6'>
-            <h2 className='text-2xl font-bold'>Ojha Canteen</h2>
-            <button
-              onClick={() => setSelectedCanteen('ojha')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
-                darkMode
-                  ? 'bg-orange-700 hover:bg-orange-600'
-                  : 'bg-orange-600/60 hover:bg-orange-600'
-              } text-white transition-colors duration-200`}
-            >
-              View Details
-            </button>
-          </div>
-          <FoodItems FoodData={FoodData} />
-        </div>
+
+        {allCanteen?.length > 0 &&
+          allCanteen.map(
+            (canteen) =>
+              canteen?.fooditems?.length > 0 && (
+                <div key={canteen?._id} className='mt-12 mb-20'>
+                  <div className='ml-24 flex flex-row justify-between mr-24 gap-4 mb-6'>
+                    <h2 className='text-2xl font-bold'>{canteen?.name}</h2>
+                    <button
+                      onClick={() => setSelectedCanteen(canteen)}
+                      className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
+                        darkMode
+                          ? 'bg-orange-700 hover:bg-orange-600'
+                          : 'bg-orange-600/60 hover:bg-orange-600'
+                      } text-white transition-colors duration-200`}
+                    >
+                      View Details
+                    </button>
+                  </div>
+                  <FoodItems FoodData={canteen?.fooditems} />
+                </div>
+              )
+          )}
       </div>
 
       {/* //Canteen Info */}
       {selectedCanteen && (
         <CanteenModal
-          isOpen={true}
           onClose={() => setSelectedCanteen(null)}
-          canteen={CanteenData[selectedCanteen]}
+          canteen={selectedCanteen}
         />
       )}
     </div>

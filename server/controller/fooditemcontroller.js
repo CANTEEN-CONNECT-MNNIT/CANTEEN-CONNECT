@@ -12,7 +12,9 @@ export const additem = asynchandler(async (req, res, next) => {
     return next(new ApiError('Canteen Not found', 401));
   }
 
-  const { name, description, price, image, available } = req.body;
+  const { name, description, price, available, image } = req.body;
+
+  console.log(req);
 
   const uploadedfile = await uploadOnCloudinary(req.file.path);
 

@@ -55,11 +55,18 @@ export const addcanteen = asynchandler(async (req, res, next) => {
 });
 
 export const updatecanteen = asynchandler(async (req, res, next) => {
-  const { name, description, canteenId, phone, address, openTime, closeTime } =
-    req.body;
+  const {
+    name,
+    description,
+    canteenId,
+    phone,
+    address,
+    openingtime: openTime,
+    closingtime: closeTime,
+  } = req.body;
 
   const id = req.params.id;
-
+  console.log(id);
   const reqcanteen = await Canteen.findById(id);
 
   if (!reqcanteen) {

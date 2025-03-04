@@ -12,10 +12,11 @@ class CartService {
 
   updateCart = async (data) => {
     try {
-      const response = await this.api.patch(`update/${data?._id}`, data);
+      const response = await this.api.patch(`update/${data?._id}`);
       console.log('cartApi/updateCart: ', response);
       if (response) {
-        return response?.data?.carts;
+        return response?.data?.data;
+        //updated cart,
       } else return false;
     } catch (error) {
       console.log('cartApi/updateCart: ', error);
@@ -41,7 +42,7 @@ class CartService {
       const response = await this.api.delete(`delete/${data?._id}`);
       console.log('cartApi/deleteCart: ', response);
       if (response) {
-        return response?.data?.newcart; //updated cart
+        return response?.data?.data?.cart; //updated cart
       }
       return false;
     } catch (error) {

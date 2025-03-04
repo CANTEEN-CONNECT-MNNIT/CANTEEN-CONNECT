@@ -47,7 +47,7 @@ export const processpayment = (req, res, next) => {
         })
         .catch((error) => {
           res.status(404).json({
-            message: unsucessful,
+            message: 'unsuccessful',
             error: {
               error,
             },

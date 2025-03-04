@@ -12,8 +12,14 @@ import { setactiveMenu } from '../../Redux/Slices/pageSlice';
 import React, { useState, useEffect } from 'react';
 import DropIn from 'braintree-web-drop-in-react';
 import paymentService from '../../ApiService/paymentApiService';
+import { setError, setSuccess } from '../../Redux/Slices/UserSlice';
+import { paymentDone } from '../../Redux/Slices/CartSlice';
 
-export default function PaymentForms({ selectedMethod, total }) {
+export default function PaymentForms({
+  // selectedMethod,
+  total,
+  allitemsbycanteen,
+}) {
   const dispatch = useDispatch();
   const darkMode = useSelector((state) => state.theme.isDarkMode);
   const [isLoading, setIsLoading] = useState(false);
@@ -57,13 +63,17 @@ export default function PaymentForms({ selectedMethod, total }) {
       const data = {
         nonce,
         total_amount: total,
+        allitemsbycanteen,
       };
-      await paymentService.processpayment(data);
+      const res = await paymentService.processpayment(data);
       ///on sucess payment empty the cart and redirect to another page change status of order etc
-
-      alert('Payment successful!');
+      if (res) {
+        dispatch(setSuccess('Payment successfull!'));
+        dispatch(paymentDone());
+        navigate('/dashboard');
+      }
     } catch (error) {
-      alert('Payment failed.');
+      dispatch(setError('Payment failed.'));
     }
   };
 

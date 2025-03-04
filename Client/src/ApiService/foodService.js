@@ -1,87 +1,102 @@
-import axios from "axios";
-import { baseUrl } from './baseUrl'
+import axios from 'axios';
+import { baseUrl } from './baseUrl';
 
-class FoodService{
-    constructor(baseUrl) {
-        this.api = axios.create({
-          baseURL: baseUrl+"item/",
-          timeout: 5000,
-          withCredentials: true,
+class FoodService {
+  constructor(baseUrl) {
+    this.api = axios.create({
+      baseURL: baseUrl + 'item/',
+      timeout: 5000,
+      withCredentials: true,
     });
-    }
+  }
 
-    additem=async (data,canteenId)=> {
-        try {
-            const response=await this.api.post(`create/${canteenId}`,data);
-            console.log("itemApi/additem: ",response);
-            if(response){
-                return response?.data?.data?.newitem;
-            }
-        } catch (error) {
-            console.log("itemApi/additem: ",error);
-            throw error;
-        }
+  additem = async (data, canteenId) => {
+    try {
+      const formData = new FormData();
+      Object.entries(data).forEach(([key, value]) => {
+        formData.append(key, value);
+      });
+      const response = await this.api.post(`create/${canteenId}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        timeout: 60000,
+      });
+      console.log('itemApi/additem: ', response);
+      if (response) {
+        return response?.data?.data?.newitem;
+      }
+    } catch (error) {
+      console.log('itemApi/additem: ', error);
+      throw error;
     }
+  };
 
-    updateitem=async (data)=>{
-        try {
-            const response=await this.api.patch(`update/${data?._id}`,data);
-            console.log("itemApi/updateitem: ",response);
-            if(response){
-                return response?.data?.data?.updateditem;
-            }
-        } catch (error) {
-            console.log("itemApi/updateitem: ",error);
-            throw error;
-        }
+  updateitem = async (data) => {
+    try {
+      const formData = new FormData();
+      Object.entries(data).forEach(([key, value]) => {
+        formData.append(key, value);
+      });
+      const response = await this.api.patch(`update/${data?._id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        timeout: 60000,
+      });
+      console.log('itemApi/updateitem: ', response);
+      if (response) {
+        return response?.data?.data?.updateditem;
+      }
+    } catch (error) {
+      console.log('itemApi/updateitem: ', error);
+      throw error;
     }
+  };
 
-    getAll=async (data)=>{
-        try {
-            
-            const query=Object.fromEntries(
-                Object.entries(data).filter(([_, v]) => v !== "")
-              );
-            console.log(query);
-            
-            const response=await this.api.get("getall",{ params: query });
-            console.log("itemApi/getAll: ",response);
-            if(response){
-                return response?.data?.data?.allitems;
-            }
-        } catch (error) {
-            console.log("itemApi/getAll: ",error);
-            throw error;
-        }
+  getAll = async (data) => {
+    try {
+      const query = Object.fromEntries(
+        Object.entries(data).filter(([_, v]) => v !== '')
+      );
+      console.log(query);
+
+      const response = await this.api.get('getall', { params: query });
+      console.log('itemApi/getAll: ', response);
+      if (response) {
+        return response?.data?.data?.allitems;
+      }
+    } catch (error) {
+      console.log('itemApi/getAll: ', error);
+      throw error;
     }
+  };
 
-    get=async (_id)=>{
-        try {
-            const response=await this.api.get(`get/${_id}`);
-            console.log("itemApi/get: ",response);
-            if(response){
-                return response?.data?.data?.reqitem;
-            }
-        } catch (error) {
-            console.log("itemApi/get: ",error);
-            throw error;
-        }
+  get = async (_id) => {
+    try {
+      const response = await this.api.get(`get/${_id}`);
+      console.log('itemApi/get: ', response);
+      if (response) {
+        return response?.data?.data?.reqitem;
+      }
+    } catch (error) {
+      console.log('itemApi/get: ', error);
+      throw error;
     }
+  };
 
-    deleteitem=async (data)=>{
-        try {
-            const response=await this.api.delete(`delete/${data?._id}`);
-            console.log("itemApi/deleteitem: ",response);
-            return response?.status===201;
-        } catch (error) {
-            console.log("itemApi/deleteitem: ",error);
-            throw error;
-        }
+  deleteitem = async (data) => {
+    try {
+      const response = await this.api.delete(`delete/${data?._id}`);
+      console.log('itemApi/deleteitem: ', response);
+      return response?.status === 201;
+    } catch (error) {
+      console.log('itemApi/deleteitem: ', error);
+      throw error;
     }
-    
-
+  };
 }
 
-const foodService=new FoodService(baseUrl);
+const foodService = new FoodService(baseUrl);
 
 export default foodService;

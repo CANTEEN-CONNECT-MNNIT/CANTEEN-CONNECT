@@ -4,28 +4,41 @@ import { FaCreditCard, FaWallet, FaUniversity, FaQrcode } from 'react-icons/fa';
 import PaymentMethodButton from './PaymentMethodButton';
 import OrderSummary from './OrderSummary';
 import PaymentForms from './PaymentForms';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 function Payment() {
+  const location = useLocation();
+  const { totalItems, totalPrice, canteenOrders } = location.state;
+  console.log(location);
+
+  const canteenToItems = Array.from(canteenOrders, ([canteenId, items]) => ({
+    canteenId,
+    fooditems: items,
+  }));
+
+  console.log(canteenToItems);
+
   const darkMode = useSelector((state) => state.theme.isDarkMode);
   const [selectedMethod, setSelectedMethod] = useState('card');
   const [expanded, setExpanded] = useState(true);
   const navigate = useNavigate();
 
-  const cartItems = useSelector((state) => state.cart.cart);
-  const subtotal = cartItems.reduce(
-    (sum, item) => sum + item.price * item.qty,
-    0
-  );
-  const discount = 0.2 * subtotal;
-  const total = subtotal - discount;
+  const cartItems = [...canteenOrders.values()].flatMap((items) => items);
+  console.log(cartItems);
 
-  const paymentMethods = [
-    { id: 'card', icon: FaCreditCard, label: 'Card' },
-    { id: 'upi', icon: FaQrcode, label: 'UPI' },
-    { id: 'netbanking', icon: FaUniversity, label: 'Net Banking' },
-    { id: 'wallet', icon: FaWallet, label: 'Wallet' },
-  ];
+  // const subtotal = cartItems.reduce(
+  //   (sum, item) => sum + item.price * item.qty,
+  //   0
+  // );
+  // const discount = 0.2 * subtotal;
+  // const total = subtotal - discount;
+
+  // const paymentMethods = [
+  //   { id: 'card', icon: FaCreditCard, label: 'Card' },
+  //   { id: 'upi', icon: FaQrcode, label: 'UPI' },
+  //   { id: 'netbanking', icon: FaUniversity, label: 'Net Banking' },
+  //   { id: 'wallet', icon: FaWallet, label: 'Wallet' },
+  // ];
 
   return (
     <div
@@ -72,9 +85,10 @@ function Payment() {
                   </div>
                 </div> */}
               <PaymentForms
-                selectedMethod={selectedMethod}
-                total={total}
+                // selectedMethod={selectedMethod}
+                total={totalPrice}
                 darkMode={darkMode}
+                allitemsbycanteen={canteenToItems}
               />
             </>
           </div>
@@ -82,9 +96,9 @@ function Payment() {
           <div className='lg:col-span-1'>
             <OrderSummary
               items={cartItems}
-              subtotal={subtotal}
-              discount={discount}
-              total={total}
+              // subtotal={subtotal}
+              // discount={discount}
+              total={totalPrice}
               expanded={expanded}
               onToggleExpand={() => setExpanded(!expanded)}
               darkMode={darkMode}

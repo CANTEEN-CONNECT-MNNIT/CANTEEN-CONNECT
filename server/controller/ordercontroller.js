@@ -29,9 +29,7 @@ export const getall = asynchandler(async (req, res, next) => {
   }
   return res.status(201).json({
     message: 'All Order fetched Sucessfully',
-    data: {
-      allorders,
-    },
+    data: allorders,
   });
 });
 

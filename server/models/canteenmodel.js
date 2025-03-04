@@ -24,8 +24,8 @@ const canteenSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    openTime: { type: String, required: true },
-    closeTime: { type: String, required: true },
+    openTime: { type: String },
+    closeTime: { type: String },
     fooditems: [
       {
         type: mongoose.Schema.Types.ObjectId,
