@@ -25,9 +25,18 @@ class CanteenService{
         }
     }
 
-    updateCanteen=async (data)=>{//name, description, gstin, phone, _id:canteen
+    updateCanteen=async (data)=>{//name, description, phone, _id:canteen
         try {
-            const response=await this.api.patch(`update/${data?._id}`,data);
+            const formData = new FormData();
+            Object.entries(data).forEach(([key, value]) => {
+                    formData.append(key, value);
+            });
+            const response=await this.api.patch(`update/${data?._id}`,formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+                timeout: 60000,
+            });
             console.log("canteenApi/updateCanteen: ",response);
             if(response){
                 return response?.data;

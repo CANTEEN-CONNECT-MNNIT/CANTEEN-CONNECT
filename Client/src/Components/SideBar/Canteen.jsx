@@ -45,6 +45,10 @@ export default function Canteen({ onClose }) {
     if (formData.description?.trim()==='') {
       newErrors.description = 'Description is required';
     }
+
+    if (formData.address?.trim()==='') {
+      newErrors.address = 'Address is required';
+    }
   
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0; // Returns true if no errors
@@ -95,6 +99,7 @@ export default function Canteen({ onClose }) {
                 { label: 'Canteen Name', icon: FaStore, name: 'name', placeholder: 'Enter canteen name' },
                 { label: 'Canteen Id', icon: FaIdCard, name: 'canteenId', placeholder: 'Enter Canteen Id' },
                 { label: 'Phone Number', icon: FaPhone, name: 'phone', placeholder: 'Enter phone number' },
+                { label: 'Address', icon: FaPhone, name: 'address', placeholder: 'Enter address' },
                 { label: 'Description', icon: FaEdit, name: 'description', placeholder: 'Enter canteen description', type: 'textarea' },
               ].map(({ label, icon: Icon, name, placeholder, type = 'text' }) => (
                 <div key={name}>

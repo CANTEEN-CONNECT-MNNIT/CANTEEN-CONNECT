@@ -1,13 +1,63 @@
-import React from 'react';
-import { FaWallet, FaClock, FaUtensils, FaTimes, FaPhone } from 'react-icons/fa';
-import {  useSelector } from 'react-redux';
+import React, { useState } from 'react';
+import { FaWallet, FaClock, FaUtensils, FaTimes, FaPhone, FaCamera } from 'react-icons/fa';
+import { useDispatch, useSelector } from 'react-redux';
+import canteenService from '../../ApiService/canteenService';
+import { setCanteen, setError, setSuccess } from '../../Redux/Slices/UserSlice';
+import { setMerchantProfileOpen } from '../../Redux/Slices/pageSlice';
 
-const MerchantProfile = ({onClose}) => {
+const MerchantProfile = ({ onClose }) => {
 
   const darkMode = useSelector((state) => state.theme.isDarkMode);
+  const { user, canteen } = useSelector((state) => state.user);
+  const [name, setName] = useState(canteen.name);
+  const [address, setAddress] = useState(canteen.address);
+  const [image, setImage] = useState(null);
+  const [currImage, setCurrImage] = useState(canteen.image);
+  const [edited, setEdited] = useState(false);
+  const dispatch=useDispatch();
 
-      {/* Merchant Details */}
-        {/*
+  const imageUpdate = (e) => {
+    const file = e.target.files[0];
+    setEdited(true);
+    setImage(file);
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setCurrImage(imageUrl);
+    }
+  }
+
+  const submitData = async (e) => {
+    e.preventDefault();
+    console.log('Updated Canteen:', { name, image, address, ...canteenData,_id:canteen._id });
+    try {
+      const res = await canteenService.updateCanteen({ name, image, address, ...canteenData,_id:canteen._id });
+      if (res) {
+        dispatch(setCanteen(res));
+        dispatch(setSuccess("Canteen Updated!"));
+      }
+    } catch (error) {
+      dispatch(setError(error.response.data.message));
+    }
+    dispatch(setMerchantProfileOpen(false));
+  };
+
+  const [canteenData, setCanteenData] = useState({
+    address: canteen?.address || '',
+    openingtime: canteen?.openingtime || '',
+    closingtime: canteen?.closingtime || '',
+  });
+
+
+
+  const handleCanteenChange = (e) => {
+    const { name, value } = e.target;
+    if (value.trim() === canteenData[name]) return;
+    setEdited(true);
+    setCanteenData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  {/* Merchant Details */ }
+  {/*
         Canteen Merchant Name
         Canteen Name
         canteen Email
@@ -32,14 +82,28 @@ const MerchantProfile = ({onClose}) => {
 
         {/* Profile Header */}
         <div className="flex flex-col items-center mb-6">
-          <div className={`w-20 h-20 rounded-full ${darkMode ? 'bg-gray-700' : 'bg-orange-100'} flex items-center justify-center mb-3`}>
-            <FaUtensils className="w-10 h-10 text-orange-500" />
-          </div>
+          <label htmlFor="imageInput" className={`w-20 h-20 rounded-full ${darkMode ? 'bg-gray-700' : 'bg-orange-100'} flex items-center justify-center mb-3 cursor-pointer relative`}>
+            {currImage ? (
+              <img src={currImage} alt="Profile" className="w-full h-full object-cover rounded-full" />
+            ) : (
+              <FaUtensils className="w-10 h-10 text-orange-500" />
+            )}
+            <div className="absolute bottom-0 right-0 bg-black bg-opacity-50 p-1 rounded-full">
+              <FaCamera className="text-white text-xs" />
+            </div>
+          </label>
+          <input type="file" id="imageInput" onChange={imageUpdate} className="hidden" />
           <div className="text-center text-xl">
-            <h2 className={`font-semibold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Jeevan</h2>
-            <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'} mb-1`}>Canteen Name: Campus Bites</p>
-            <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Email: merchant@example.com</p>
-            <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Phone: +91-9876543210</p>
+            <input onChange={(e) => {
+              if (e.target.value?.trim() !== canteen.name) {
+                setName(e.target.value?.trim());
+                setEdited(true);
+              }
+            }} value={canteen?.name} className={`font-semibold bg-transparent border-b w-full text-center outline-none ${darkMode ? 'text-white' : 'text-gray-800'}`} />
+            <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'} mb-1`}>Owner: {user?.name}
+            </p>
+            <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Email: {user?.email}</p>
+            {canteen?.phone && <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Phone: {canteen?.phone}</p>}
           </div>
         </div>
 
@@ -54,20 +118,52 @@ const MerchantProfile = ({onClose}) => {
           </div>
         </div>
 
-    
+
         <div className="space-y-3 mb-6">
-          {['Canteen Location', 'Operational Hours','Status'].map((label, index) => (
-            <div key={index} className={`flex justify-between items-center py-2 border-b ${darkMode ? 'border-gray-600' : 'border-gray-200'}`}>
-              <span className={`text-gray-600 ${darkMode ? 'text-white' : ''}`}>{label}</span>
-              <span className={`font-medium ${darkMode ? 'text-gray-100' : 'text-gray-800'}`}>
-                {label === 'Canteen Location' ? 'Block A, MNNIT Campus' : 
-                label === 'Operational Hours' ? '8 AM - 8 PM' : 
-                label === 'Specialty Cuisine' ? 'South Indian' : 
-                'Active'}
-              </span>
+          <div className="mb-6 flex justify-center items-center">
+            <label htmlFor="address" className={`block text-sm text-nowrap font-medium ${darkMode ? 'text-white' : 'text-gray-600'}`}>
+              Canteen Location:
+            </label>
+            <input
+              id="address"
+              name="address"
+              type="text"
+              placeholder="Enter canteen location"
+              onChange={handleCanteenChange}
+              value={canteenData.address || ''}
+              className={`font-semibold text-sm bg-transparent border-b w-full p-2 text-end outline-none focus:ring-2 focus:ring-orange-500 transition-all ${darkMode ? 'text-white border-gray-600' : 'text-gray-800'}`}
+            />
+          </div>
+
+          <div className="mb-6 grid grid-cols-2 gap-2">
+            <label htmlFor="timing" className={`block py-2 text-sm text-nowrap font-medium ${darkMode ? 'text-white' : 'text-gray-600'}`}>
+              Canteen Timing:
+            </label>
+            <div id='timing' className='flex justify-center items-center '>
+            <input
+              id="openingtime"
+              name="openingtime"
+              type="time"
+              onChange={handleCanteenChange}
+              value={canteenData.openingtime || '-'}
+              className={`font-semibold text-sm bg-transparent border-b w-full p-2 text-center outline-none focus:ring-2 rounded-md focus:ring-orange-500 transition-all ${darkMode ? 'text-white border-gray-600' : 'text-gray-800'}`}
+            />
+            <p className='mx-2'> - </p>
+            <input
+              id="closingtime"
+              name="closingtime"
+              type="time"
+              onChange={handleCanteenChange}
+              value={canteenData.closingtime || '-'}
+              className={`font-semibold text-sm bg-transparent border-b w-full p-2 text-center outline-none focus:ring-2 rounded-md focus:ring-orange-500 transition-all ${darkMode ? 'text-white border-gray-600' : 'text-gray-800'}`}
+            />
             </div>
-          ))}
+          </div>
         </div>
+
+        {edited && <button onClick={submitData} className="w-full bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600 transition-colors">
+          Save Changes
+        </button>}
 
         {/* Quick Stats */}
         <div className="grid grid-cols-2 gap-4 mb-6">
