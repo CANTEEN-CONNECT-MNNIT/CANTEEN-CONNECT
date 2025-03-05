@@ -1,7 +1,7 @@
 import express from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
-import { protect } from './controller/authcontroller.js';
+import { protect, restrict_to } from './controller/authcontroller.js';
 import authroute from './router/authrouter.js';
 import itemroute from './router/fooditemrouter.js';
 import canteenroute from './router/canteenrouter.js';
@@ -12,6 +12,7 @@ import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import orderroute from './router/orderroute.js';
 import paymentroute from './router/paymentrouter.js';
+import ratingroute from './router/reviewroute.js';
 
 const app = express();
 app.use(express.json());
@@ -38,6 +39,7 @@ app.use('/api/cart', cartrouter);
 app.use('/api/order', orderroute);
 app.use('/api/payment', paymentroute);
 app.use('/api/canteen', canteenroute);
+app.use('/api/rating', ratingroute);
 app.use(globalerrorhandler);
 
 export default app;

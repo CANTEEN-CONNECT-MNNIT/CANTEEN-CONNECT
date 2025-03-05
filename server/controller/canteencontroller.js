@@ -1,4 +1,5 @@
 import Canteen from '../models/canteenmodel.js';
+import Fooditem from '../models/fooditemmodel.js';
 import User from '../models/usermodel.js';
 import ApiError from '../utils/apierror.js';
 import asynchandler from '../utils/asynchandler.js';
@@ -121,7 +122,7 @@ export const deletecanteen = asynchandler(async (req, res, next) => {
 });
 
 export const getall = asynchandler(async (req, res, next) => {
-  let allcanteen;
+  let allcanteen, trending_items;
   if (req.user.role === 'Student') {
     allcanteen = await Canteen.aggregate([
       {
@@ -140,6 +141,10 @@ export const getall = asynchandler(async (req, res, next) => {
         },
       },
     ]);
+    trending_items = await Fooditem.find()
+      .sort({ averageRating: -1 })
+      .limit(8)
+      .populate('canteen');
   } else if (req.user.role === 'Canteen') {
     allcanteen = await Canteen.findOne({ owner: req.user._id }).populate(
       'fooditems'
@@ -148,6 +153,7 @@ export const getall = asynchandler(async (req, res, next) => {
   res.status(201).json({
     message: 'Canteen fetched sucessfully',
     data: allcanteen,
+    trending_items,
   });
 });
 

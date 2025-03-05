@@ -8,6 +8,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 function Payment() {
   const location = useLocation();
+  console.log(location);
   const { totalItems, totalPrice, canteenOrders } = location.state;
   console.log(location);
 

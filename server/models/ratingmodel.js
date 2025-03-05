@@ -13,13 +13,10 @@ const ratingSchema = new mongoose.Schema(
       max: 5,
       required: true,
     },
-    canteen: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Canteen',
-    },
     fooditem: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Fooditem',
+      required: true,
     },
     review: {
       type: String,
@@ -29,6 +26,16 @@ const ratingSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const Rating = mongoose.model('Rating', ratingSchema);
+ratingSchema.post('save', async function () {
+  const foodItem = await mongoose.model('Fooditem').findById(this.fooditem);
+  if (foodItem) {
+    foodItem.totalRatings += 1;
+    foodItem.averageRating =
+      (foodItem.averageRating * (foodItem.totalRatings - 1) + this.rating) /
+      foodItem.totalRatings;
+    await foodItem.save();
+  }
+});
 
+const Rating = mongoose.model('Rating', ratingSchema);
 export default Rating;

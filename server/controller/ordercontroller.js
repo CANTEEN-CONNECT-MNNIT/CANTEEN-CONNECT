@@ -16,7 +16,7 @@ export const getall = asynchandler(async (req, res, next) => {
     }
 
     allorders = await Order.find({ user: user_id }).populate(
-      'canteen fooditems.item'
+      'canteen fooditems._id'
     );
   } else {
     const reqcanteen = await Canteen.findOne({ owner: req.user._id });
@@ -24,7 +24,7 @@ export const getall = asynchandler(async (req, res, next) => {
       return next(new ApiError('Canteen Not found', 404));
     }
     allorders = await Order.find({ canteen: reqcanteen._id }).populate(
-      'canteen fooditems.item'
+      'canteen fooditems._id'
     );
   }
   return res.status(201).json({
@@ -36,8 +36,13 @@ export const getall = asynchandler(async (req, res, next) => {
 export const createorder = asynchandler(async (req, res, next) => {
   const { allitemsbycanteen } = req.body;
   if (!allitemsbycanteen || !allitemsbycanteen.length) {
-    return next(new ApiError('There must be some data to order', 409));
+    return false;
   }
+
+  console.log(allitemsbycanteen);
+  allitemsbycanteen.forEach((element) => {
+    console.log(element.fooditems);
+  });
   const orders = await Promise.all(
     allitemsbycanteen.map((eachcanteenorder) =>
       Order.create({
@@ -51,14 +56,15 @@ export const createorder = asynchandler(async (req, res, next) => {
   req.user.cart = [];
   await req.user.save({ validateBeforeSave: false });
   res.status(201).json({
-    message: 'Order placed Successfully',
-    data: orders,
+    message: 'success',
   });
 });
 
 export const updateorder = asynchandler(async (req, res, next) => {
   const order_id = req.params.id;
+  // console.log(order_id);
   const reqorder = await Order.findById(order_id);
+  // console.log(reqorder);
   if (!reqorder) {
     return next(new ApiError('Order not found', 404));
   }
@@ -70,7 +76,7 @@ export const updateorder = asynchandler(async (req, res, next) => {
     );
   }
 
-  const updateorder = Order.findByIdAndUpdate(
+  const updateorder = await Order.findByIdAndUpdate(
     order_id,
     { status },
     { new: true }
@@ -80,9 +86,4 @@ export const updateorder = asynchandler(async (req, res, next) => {
     message: 'order updated successfully',
     data: updateorder,
   });
-});
-
-export const cancelorder = asynchandler(async (req, res, next) => {
-  //refund
-  //notiflication
 });

@@ -25,12 +25,17 @@ const orderSchema = new mongoose.Schema(
     },
     fooditems: [
       {
-        item: {
+        _id: {
           type: mongoose.Schema.Types.ObjectId,
           ref: 'Fooditem',
           required: true,
         },
-        selectedQuantity: {
+        quantity: {
+          type: Number,
+          min: 1,
+          required: true,
+        },
+        price: {
           type: Number,
           min: 1,
           required: true,

@@ -96,7 +96,7 @@ function OrderTable({ filter, canteen }) {
             ) : (
               filteredOrders.map((order) => (
                 <tr
-                  key={order.id}
+                  key={order._id}
                   className={`hover:${darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}
                 >
                   <td
@@ -104,35 +104,42 @@ function OrderTable({ filter, canteen }) {
                       darkMode ? 'text-gray-200' : 'text-gray-900'
                     }`}
                   >
-                    {order.id}
+                    {order._id}
                   </td>
                   <td
                     className={`px-6 py-4 text-sm ${
                       darkMode ? 'text-gray-400' : 'text-gray-500'
                     }`}
                   >
-                    {order.name}
+                    {order.fooditems.map((item) => (
+                      <div
+                        key={item._id._id}
+                      >{`${item._id.name} * ${item.quantity}`}</div>
+                    ))}
                   </td>
                   <td
                     className={`px-6 py-4 text-sm ${
                       darkMode ? 'text-gray-400' : 'text-gray-500'
                     }`}
                   >
-                    {order.location}
+                    {order.canteen.name}
                   </td>
                   <td
                     className={`px-6 py-4 text-sm ${
                       darkMode ? 'text-gray-400' : 'text-gray-500'
                     }`}
                   >
-                    {order.date}
+                    {new Date(order.createdAt).toLocaleString()}
                   </td>
                   <td
                     className={`px-6 py-4 text-sm ${
                       darkMode ? 'text-gray-400' : 'text-gray-500'
                     }`}
                   >
-                    {order.amount}
+                    {order.fooditems.reduce(
+                      (total, item) => total + item.price * item.quantity,
+                      0
+                    )}
                   </td>
                   <td className='px-6 py-4'>
                     <span
@@ -143,7 +150,7 @@ function OrderTable({ filter, canteen }) {
                       {order.status}
                     </span>
                   </td>
-                  <td
+                  {/* <td
                     className={`px-6 py-4 text-sm ${
                       darkMode ? 'text-gray-400' : 'text-gray-500'
                     }`}
@@ -156,7 +163,7 @@ function OrderTable({ filter, canteen }) {
                     ) : (
                       '-'
                     )}
-                  </td>
+                  </td> */}
                   <td className='px-6 py-4'>
                     <button
                       onClick={() => handlePreview(order)}
