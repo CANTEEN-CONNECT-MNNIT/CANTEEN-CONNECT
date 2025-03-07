@@ -65,7 +65,7 @@ const App = () => {
   return (
     <AppProvider>
       <Toaster />
-      <div>
+      <div className='min-h-screen'>
         {activeMenu === 'Canteen' && <Canteen onClose={onClose} />}
         {activeMenu === 'Favorites' && <Favorite onClose={onClose} />}
 

@@ -26,6 +26,12 @@ const canteenSchema = new mongoose.Schema(
     },
     openTime: { type: String },
     closeTime: { type: String },
+    fooditems: [
+      {
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'Fooditem',
+      },
+    ],
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',

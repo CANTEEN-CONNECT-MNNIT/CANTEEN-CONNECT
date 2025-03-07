@@ -1,59 +1,61 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FaSearch, FaCoffee } from 'react-icons/fa';
 import OrderCard from './OrderCard';
 import OrderDetailsModal from './OrderDetailsModal';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { useAllOrders } from '../../Data/OrderData';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { setError, setSuccess } from '../../Redux/Slices/UserSlice';
+import orderService from '../../ApiService/orderService';
 
 function OrdersTable() {
-  const [orders, setOrders] = useState([
-    {
-      id: 'CNT001',
-      student: 'Jeevan',
-      studentId: 'ST2024001',
-      items: [
-        { name: 'Masala Dosa', quantity: 1, price: 60 },
-        { name: 'Chai', quantity: 1, price: 15 }
-      ],
-      total: 75,
-      status: 'Pending',
-      time: '10:30 AM',
-      counter: 'South Indian'
-    },
-    {
-      id: 'CNT002',
-      student: 'Daksh',
-      studentId: 'ST2024015',
-      items: [
-        { name: 'Vada Pav', quantity: 2, price: 30 },
-        { name: 'Samosa', quantity: 1, price: 15 },
-        { name: 'Lassi', quantity: 1, price: 40 }
-      ],
-      total: 85,
-      status: 'Preparing',
-      time: '10:45 AM',
-      counter: 'Snacks'
-    }
-  ]);
+
+  const { data: allOrders }= useAllOrders();
+  const queryClient=useQueryClient();
+  const dispatch=useDispatch();
+  console.log(allOrders);
+  
 
   const darkMode = useSelector((state) => state.theme.isDarkMode);
   const [selectedStatus, setSelectedStatus] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [filteredOrders,setFilteredOrders]=useState([]);
+
+  const mutation = useMutation({
+    mutationFn: orderService.updateOrder, 
+    onSuccess: () => {
+      // Invalidate and refetch the "orders" query to keep data fresh
+      queryClient.invalidateQueries(['allOrders']);
+      dispatch(setSuccess('Updated Status!'));
+    },
+    onError: (error) => {
+      console.error('Error updating order:', error.response.data.message);
+      dispatch(setError(error.response.data.message));
+    }
+  });
 
   const handleUpdateStatus = (orderId, newStatus) => {
-    setOrders(orders.map(order =>
-      order.id === orderId ? { ...order, status: newStatus } : order
-    ));
+    mutation.mutate({_id:orderId, status:newStatus});
   };
 
-  const filteredOrders = orders.filter(order => {
+  const filterTheOrders = ()=> {
+    setFilteredOrders(allOrders?.filter(order => {
     const matchesSearch =
-      order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.student.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.studentId.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = selectedStatus === 'All' || order.status === selectedStatus;
+      searchTerm?.length>2 ?
+      order._id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order?.user?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order?.user?._id?.toLowerCase().includes(searchTerm.toLowerCase())
+      :
+      true;
+    const matchesStatus = selectedStatus === 'All' || order?.status === selectedStatus;
     return matchesSearch && matchesStatus;
-  });
+  }) || [])
+};
+
+  useEffect(()=>{
+    filterTheOrders();
+  },[searchTerm,allOrders,selectedStatus]);
 
   return (
     <div
@@ -69,7 +71,8 @@ function OrdersTable() {
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-2">
             <FaCoffee className="h-6 w-6 text-orange-600" />
-            <h2 className="text-xl font-semibold">Today's Orders</h2>
+            <h2 className="text-xl font-semibold"> All Orders</h2>
+            {/* Today's Orders*/}
           </div>
           <select
           className={`border border-gray-200 rounded-lg pl-3 pr-10 py-2 text-sm 
@@ -77,10 +80,12 @@ function OrdersTable() {
           value={selectedStatus}
           onChange={(e) => setSelectedStatus(e.target.value)}
         >
-          <option className={`${darkMode ? 'bg-gray-700 text-white' : 'bg-white text-gray-700'}`}>All</option>
-          <option className={`${darkMode ? 'bg-gray-700 text-white' : 'bg-white text-gray-700'}`}>Pending</option>
-          <option className={`${darkMode ? 'bg-gray-700 text-white' : 'bg-white text-gray-700'}`}>Preparing</option>
-          <option className={`${darkMode ? 'bg-gray-700 text-white' : 'bg-white text-gray-700'}`}>Ready</option>
+          <option value={'All'} className={`${darkMode ? 'bg-gray-700 text-white' : 'bg-white text-gray-700'}`}>All</option>
+          <option value={'Pending'} className={`${darkMode ? 'bg-gray-700 text-white' : 'bg-white text-gray-700'}`}>Pending</option>
+          <option value={'Preparing'} className={`${darkMode ? 'bg-gray-700 text-white' : 'bg-white text-gray-700'}`}>Preparing</option>
+          <option value={'Ready for pickup'} className={`${darkMode ? 'bg-gray-700 text-white' : 'bg-white text-gray-700'}`}>Ready</option>
+          <option value={'Delivered'} className={`${darkMode ? 'bg-gray-700 text-white' : 'bg-white text-gray-700'}`}>Delivered</option>
+          <option value={'Success'} className={`${darkMode ? 'bg-gray-700 text-white' : 'bg-white text-gray-700'}`}>Success</option>
         </select>
 
         </div>
@@ -109,7 +114,7 @@ function OrdersTable() {
             >
               <th className="px-6 py-3 text-left text-xs font-medium">Order</th>
               <th className="px-6 py-3 text-left text-xs font-medium">Student</th>
-              <th className="px-6 py-3 text-left text-xs font-medium">Items</th>
+              <th className="px-6 py-3 text-left text-xs font-medium">Details</th>
               <th className="px-6 py-3 text-left text-xs font-medium">Status</th>
               <th className="px-6 py-3 text-left text-xs font-medium">Actions</th>
             </tr>
@@ -117,9 +122,9 @@ function OrdersTable() {
           <tbody className="divide-y divide-gray-200">
             {filteredOrders.map((order) => (
               <OrderCard
-                key={order.id}
+                key={order._id}
                 order={order}
-                onUpdateStatus={(newStatus) => handleUpdateStatus(order.id, newStatus)}
+                onUpdateStatus={(newStatus) => handleUpdateStatus(order._id, newStatus)}
                 onViewDetails={() => setSelectedOrder(order)}
                 darkMode={darkMode} 
               />

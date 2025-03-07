@@ -25,7 +25,7 @@ export const getall = asynchandler(async (req, res, next) => {
     }
     allorders = await Order.find({ canteen: reqcanteen._id }).populate(
       'canteen fooditems._id'
-    );
+    ).populate({ path: 'user', select: 'name' });
   }
   return res.status(201).json({
     message: 'All Order fetched Sucessfully',

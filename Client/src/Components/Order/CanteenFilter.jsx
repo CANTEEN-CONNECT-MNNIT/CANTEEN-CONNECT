@@ -1,15 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AiOutlineDown } from 'react-icons/ai';
 import { useSelector } from 'react-redux';
+import canteenService from '../../ApiService/canteenService';
 
-const canteens = [
-  'All Canteens',
-  'Ojha Canteen',
-  'Raj Canteen',
-  'Tirath Canteen'
-];
 
 function CanteenFilter({ selectedCanteen, setSelectedCanteen }) {
+  const [canteens,setCanteens]=useState([]);
   const darkMode = useSelector((state) => state.theme.isDarkMode);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -18,6 +14,22 @@ function CanteenFilter({ selectedCanteen, setSelectedCanteen }) {
     setSelectedCanteen(canteen);
     setIsOpen(false);
   };
+
+  const fetchCanteens=async()=>{
+    try {
+      const res=await canteenService.getCanteen();
+      if(res){
+        setCanteens(res);
+      }
+    } catch (error) {
+      console.error(error?.response?.data?.message);
+      
+    }
+  }
+
+  useEffect(()=>{
+    fetchCanteens();
+  },[]);
 
   return (
     <div className="relative inline-block text-left">
@@ -35,14 +47,22 @@ function CanteenFilter({ selectedCanteen, setSelectedCanteen }) {
       {isOpen && (
         <div className={`absolute left-0 mt-2 w-56 rounded-lg shadow-lg border border-gray-100 
           ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
-          {canteens.map((canteen) => (
             <button
-              key={canteen}
-              onClick={() => selectCanteen(canteen)}
+              key={"AllCanteens"}
+              onClick={() => selectCanteen('All Canteens')}
               className={`block w-full px-4 py-2 text-left text-sm 
                 ${darkMode ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-100'}`}
             >
-              {canteen}
+              All Canteens
+            </button>
+          {canteens && canteens?.length>0 && canteens?.map((canteen) => (
+            <button
+              key={canteen._id}
+              onClick={() => selectCanteen(canteen?.name)}
+              className={`block w-full px-4 py-2 text-left text-sm 
+                ${darkMode ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-100'}`}
+            >
+              {canteen?.name}
             </button>
           ))}
         </div>

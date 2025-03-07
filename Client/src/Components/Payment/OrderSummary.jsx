@@ -33,7 +33,7 @@ export default function OrderSummary({
       </div>
 
       {expanded && (
-        <div className='space-y-3 mb-4'>
+        <div className='space-y-3 mb-4 border-t pt-4'>
           {items.map((item, index) => (
             <div
               key={index}
@@ -50,7 +50,7 @@ export default function OrderSummary({
         </div>
       )}
 
-      <div className='border-t pt-4 space-y-2'>
+      <div className='space-y-2'>
         {subtotal && (
           <div
             className={`${

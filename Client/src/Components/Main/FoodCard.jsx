@@ -89,16 +89,6 @@ const FoodCard = ({
         </button>
 
         <div className='absolute bottom-3 left-3 right-3 flex justify-between items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300'>
-          <span className='px-3 py-1 rounded-full text-sm bg-white/20 backdrop-blur-md text-white'>
-            {Array.from({ length: 5 }, (_, index) => (
-              <FaStar
-                key={index}
-                className={`w-4 h-4 inline ${
-                  index < rating ? 'fill-yellow-400' : 'fill-gray-400'
-                }`}
-              />
-            ))}
-          </span>
           <span
             className={`px-3 py-1 rounded-full text-sm ${
               darkMode ? 'bg-gray-800/90' : 'bg-white/90'

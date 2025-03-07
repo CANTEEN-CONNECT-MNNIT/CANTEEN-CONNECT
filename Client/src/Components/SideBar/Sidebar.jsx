@@ -48,6 +48,7 @@ const Sidebar = () => {
       if (res) {
         dispatch(logout());
         dispatch(setOpen(false));
+        navigate('/');
       }
     } catch (error) {
       dispatch(setError(error?.response?.data?.message));

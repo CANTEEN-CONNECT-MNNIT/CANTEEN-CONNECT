@@ -1,9 +1,31 @@
 import React from 'react';
 import { FaTimes, FaClock, FaUserAlt } from 'react-icons/fa';
 import { useSelector} from 'react-redux';
+
 function OrderDetailsModal({ order, onClose }) {
+    console.log(order);
     
-    const darkMode = useSelector((state) => state.theme.isDarkMode);
+  const darkMode = useSelector((state) => state.theme.isDarkMode);
+  const createTime = order?.createdAt 
+  ? new Date(order.createdAt).toLocaleTimeString('en-GB', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    })
+  : '-';
+
+const createDate =
+  order?.createdAt && new Date(order.createdAt).toDateString() !== new Date().toDateString()
+    ? new Date(order.createdAt).toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: '2-digit'
+      }) // Format as DD/MM
+    : 'Today';
+
+  const total = order?.fooditems.reduce((total, item) => {
+    return total + item.price * item.quantity;
+  }, 0);
+
   return (
     <div className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 ${darkMode ? 'bg-opacity-80' : 'bg-opacity-50'}`}>
       <div className={`rounded-lg w-full max-w-md mx-4 ${darkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'}`}>
@@ -22,9 +44,9 @@ function OrderDetailsModal({ order, onClose }) {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <FaClock className={`h-4 w-4 ${darkMode ? 'text-gray-400' : 'text-gray-400'}`} />
-              <span className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>{order.time}</span>
+              <span className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>{createTime}, {createDate}</span>
             </div>
-            <span className={`text-sm font-medium ${darkMode ? 'text-gray-100' : 'text-gray-900'}`}>{order.id}</span>
+            <span className={`text-sm font-medium ${darkMode ? 'text-gray-100' : 'text-gray-900'}`}>orderId: {order?._id?.toString().slice(-8)}</span>
           </div>
 
           <div className="flex items-center space-x-3 py-3 border-b">
@@ -32,8 +54,8 @@ function OrderDetailsModal({ order, onClose }) {
               <FaUserAlt className="h-6 w-6 text-orange-500" />
             </div>
             <div>
-              <h4 className={`font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>{order.student}</h4>
-              <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{order.studentId}</p>
+              <h4 className={`font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>{order.user?.name}</h4>
+              <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{order.user?._id?.toString().slice(-8)}</p>
             </div>
           </div>
 
@@ -42,10 +64,10 @@ function OrderDetailsModal({ order, onClose }) {
             Order Summary
           </h4>
           <div className={`rounded-lg p-3 space-y-2 ${darkMode ? 'text-slate-50 bg-gray-800' : 'bg-gray-50'}`}>
-            {order.items.map((item, idx) => (
-              <div key={idx} className={`flex justify-between text-sm`}>
+            {order.fooditems?.map((item, idx) => (
+              <div key={item?._id+idx} className={`flex justify-between text-sm`}>
                 <span className={`${darkMode ? 'text-gray-300' : 'text-gray-900'}`}>
-                  {item.quantity}× {item.name}
+                  {item?.quantity}× {item?._id?.name}
                 </span>
                 <span className={`text-gray-100 ${darkMode ? 'text-gray-100' : 'text-gray-600'}`}>
                   ₹{item.price}
@@ -56,7 +78,7 @@ function OrderDetailsModal({ order, onClose }) {
               <div className={`flex justify-between font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                 <span>Total Amount</span>
                 <span className={`${darkMode ? 'text-gray-100' : 'text-gray-900'}`}>
-                  ₹{order.total}
+                  ₹{total}
                 </span>
               </div>
             </div>
@@ -65,10 +87,10 @@ function OrderDetailsModal({ order, onClose }) {
 
 
 
-          <div className={`bg-blue-50 rounded-lg p-3 ${darkMode ? 'bg-blue-600' : ''}`}>
+          {/* <div className={`bg-blue-50 rounded-lg p-3 ${darkMode ? 'bg-blue-600' : ''}`}>
             <h4 className={`text-sm font-medium ${darkMode ? 'text-blue-100' : 'text-blue-900'} mb-1`}>Counter Information</h4>
             <p className={`text-sm ${darkMode ? 'text-blue-300' : 'text-blue-500'}`}>{order.counter}</p>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

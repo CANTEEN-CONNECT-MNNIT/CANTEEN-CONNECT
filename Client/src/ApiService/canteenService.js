@@ -1,5 +1,7 @@
 import axios from 'axios';
 import { baseUrl } from './baseUrl';
+import{ Store }  from '../Redux/Store.js';
+import { logout } from '../Redux/Slices/UserSlice.jsx';
 
 class CanteenService {
   constructor(baseUrl) {
@@ -8,6 +10,17 @@ class CanteenService {
       timeout: 5000,
       withCredentials: true,
     });
+    // Add Response Interceptor
+    this.api.interceptors.response.use(
+    (response) => response, // Pass successful responses
+    (error) => {
+      if (error?.response && error.response?.status === 401) {
+        console.warn('Unauthorized! Logging out user...');
+        Store.dispatch(logout()); // Dispatch logout action
+      }
+      return Promise.reject(error); // Reject error for further handling
+    }
+  );
   }
 
   addCanteen = async (data) => {

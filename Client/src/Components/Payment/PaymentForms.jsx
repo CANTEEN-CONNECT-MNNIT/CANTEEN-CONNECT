@@ -70,14 +70,14 @@ export default function PaymentForms({
       if (res.message === 'success') {
         dispatch(setSuccess('Order successfull!'));
         dispatch(paymentDone());
-        navigate('/dashboard');
+        // navigate('/dashboard');
       }
     } catch (error) {
       console.log(error);
       dispatch(setError('Payment failed.'));
       //error is set but not toast  or show
-      navigate('/dashboard');
     }
+    navigate('/dashboard');
   };
 
   return (

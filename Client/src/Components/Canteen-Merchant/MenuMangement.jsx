@@ -11,6 +11,7 @@ export default function MenuManagement() {
   const [editItem, setEditItem] = useState(null);
   const [image, setImage] = useState(null);
   const [currImage, setCurrImage] = useState(null);
+  const [isloading,setIsLoading]=useState(false);
   const dispatch = useDispatch();
 
   const { canteen } = useSelector((state) => state.user);
@@ -21,7 +22,7 @@ export default function MenuManagement() {
       console.log(res);
       if (res) setMenuItems(res);
     } catch (error) {
-      dispatch(setError(error.response.data.message));
+      dispatch(setError(error?.response?.data.message));
       console.error(error);
     }
   };
@@ -43,7 +44,7 @@ export default function MenuManagement() {
         fetchItems();
       }
     } catch (error) {
-      dispatch(setError(error.response.data.message));
+      dispatch(setError(error?.response?.data.message));
       console.error(error);
     }
   };
@@ -67,6 +68,8 @@ export default function MenuManagement() {
       return;
     }
 
+    setIsLoading(true);
+
     try {
       const res = editItem?._id
         ? await foodService.updateitem({
@@ -82,11 +85,13 @@ export default function MenuManagement() {
           setSuccess(`${editItem._id ? 'Item updated!' : 'Item Added!'}`)
         );
         setEditItem(null);
-        setIsEditing(false);
         fetchItems();
+        setIsLoading(false);
+        setIsEditing(false);
       }
     } catch (error) {
       dispatch(setError(error.response.data.message));
+      setIsLoading(false);
     }
   };
 
@@ -104,7 +109,7 @@ export default function MenuManagement() {
           onClick={() => {
             setEditItem({
               name: '',
-              price: 0,
+              price: 1,
               description: '',
               available: 'in_stock',
               image: '',
@@ -279,12 +284,20 @@ export default function MenuManagement() {
                 <button
                   type='submit'
                   className={`px-4 py-2 ${
+                    isloading?
+                    darkMode
+                      ? 'bg-green-600 hover:bg-green-700'
+                      : 'bg-green-500 hover:bg-green-600'
+                    :
                     darkMode
                       ? 'bg-orange-600 hover:bg-orange-700'
                       : 'bg-orange-500 hover:bg-orange-600'
                   } text-white rounded-lg`}
                 >
-                  {editItem?._id ? 'Update' : 'Save'}
+                  {editItem?._id ? 
+                  isloading? 'Updating'  :'Update' 
+                  :
+                  isloading? 'Saving' : 'Save'}
                 </button>
               </div>
             </form>

@@ -19,6 +19,7 @@ const MerchantProfile = ({ onClose }) => {
   const [image, setImage] = useState(null);
   const [currImage, setCurrImage] = useState(canteen.image);
   const [edited, setEdited] = useState(false);
+  const [isloading,setIsLoading]=useState(false);
   const dispatch = useDispatch();
 
   const imageUpdate = (e) => {
@@ -59,6 +60,7 @@ const MerchantProfile = ({ onClose }) => {
 
   const submitData = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     if (!validateData()) return;
     console.log('Updated Canteen:', {
       name,
@@ -78,11 +80,13 @@ const MerchantProfile = ({ onClose }) => {
       if (res) {
         dispatch(setCanteen(res));
         dispatch(setSuccess('Canteen Updated!'));
+        dispatch(setMerchantProfileOpen(false));
+        setIsLoading(false);
       }
     } catch (error) {
       dispatch(setError(error.response.data.message));
+      setIsLoading(false);
     }
-    dispatch(setMerchantProfileOpen(false));
   };
 
   const [canteenData, setCanteenData] = useState({
@@ -298,10 +302,10 @@ const MerchantProfile = ({ onClose }) => {
 
         {edited && (
           <button
-            onClick={submitData}
-            className='mb-4 w-full bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600 transition-colors'
+            onClick={!isloading && submitData}
+            className={`mb-4 w-full ${isloading?'bg-green-500':'bg-orange-500 hover:bg-orange-600 '} text-white py-2 rounded-lg transition-colors`}
           >
-            Save Changes
+            {isloading?'Updating...':'Save Changes'}
           </button>
         )}
 
