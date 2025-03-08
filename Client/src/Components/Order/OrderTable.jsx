@@ -274,7 +274,7 @@ function OrderTable({ filter, canteen }) {
 
       {/* Order Preview */}
       {selectedOrder && <FoodPreview
-        onClose={() => setSelectedOrder(null) }
+        onClose={setSelectedOrder}
         order={selectedOrder}
       />}
     </>

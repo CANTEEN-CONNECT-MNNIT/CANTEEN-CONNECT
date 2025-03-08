@@ -108,7 +108,7 @@ export default function Favorite({ onClose }) {
                     >
                       <FaHeart
                         className={`w-5 h-5 ${
-                          darkMode ? 'text-gray-300' : 'text-orange-500'
+                          darkMode ? 'text-orange-600' : 'text-orange-500'
                         }`}
                       />
                     </button>

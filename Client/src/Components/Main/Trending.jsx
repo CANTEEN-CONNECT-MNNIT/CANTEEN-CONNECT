@@ -1,65 +1,31 @@
 import React, { useState, useEffect } from 'react';
+import { FaStar } from 'react-icons/fa';
 import { IoFlameSharp } from "react-icons/io5";
-import { useDispatch,useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
-const trendingItems = [
-  {
-    id: 't1',
-    name: 'Butter Chicken',
-    image: 'https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?auto=format&fit=crop&q=80&w=500',
-    price: 120,
-    orders: 280
-  },
-  {
-    id: 't2',
-    name: 'Biryani',
-    image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&q=80&w=500',
-    price: 100,
-    orders: 310
-  },
-  {
-    id: 't3',
-    name: 'Paneer Tikka',
-    image: 'https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?auto=format&fit=crop&q=80&w=500',
-    price: 50,
-    orders: 220
-  },
-  {
-    id: 't4',
-    name: 'Masala Dosa',
-    image: 'https://images.unsplash.com/photo-1630383249896-424e482df921?auto=format&fit=crop&q=80&w=500',
-    price: 70,
-    orders: 245
-  },
-  {
-    id: 't5',
-    name: 'Thali Special',
-    image: 'https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?auto=format&fit=crop&q=80&w=500',
-    price: 150,
-    orders: 190
-  }
-];
-
-const TrendingFood = () => {
-    const dispatch=useDispatch();
-    const darkMode = useSelector((state) => state.theme.isDarkMode);
+const TrendingFood = ({ list }) => {
+  const dispatch = useDispatch();
+  const darkMode = useSelector((state) => state.theme.isDarkMode);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const trending = list?.filter((item) => item?.available !== 'out_of_stock') || [];
 
+  if (trending.length < 3) return <></>;
   // Auto-slide effect
   useEffect(() => {
     const interval = setInterval(() => {
       handleNext();
-    }, 3000); 
-    return () => clearInterval(interval); 
+    }, 3000);
+    return () => clearInterval(interval);
   }, [currentIndex]);
 
   const handleNext = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 2) % trendingItems.length);
+    setCurrentIndex((prevIndex) => (prevIndex + 2) % trending.length);
   };
 
   const handlePrev = () => {
-    setCurrentIndex((prevIndex) => (prevIndex - 2 + trendingItems.length) % trendingItems.length);
+    setCurrentIndex((prevIndex) => (prevIndex - 2 + trending.length) % trending.length);
   };
+
 
   const translateX = -(currentIndex * 50); // Adjusted to show two items per view
 
@@ -79,20 +45,31 @@ const TrendingFood = () => {
           className="flex transition-transform duration-500 ease-in-out"
           style={{ transform: `translateX(${translateX}%)` }}
         >
-          {[...trendingItems, ...trendingItems].map((item, index) => (
-            <div key={index} className="min-w-[50%] flex-shrink-0 px-2"> {/* Adjusted width to 50% to show two items */}
+          {trending.map((item, idx) => (
+            <div key={item?._id || idx} className="min-w-[50%] flex-shrink-0 px-2"> {/* Adjusted width to 50% to show two items */}
               <div className="relative w-full h-72 rounded-2xl overflow-hidden group">
                 <img
-                  src={item.image}
-                  alt={item.name}
+                  src={item?.image}
+                  alt={item?.name}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent">
                   <div className="absolute bottom-0 left-0 right-0 p-4">
-                    <h3 className="text-white text-xl font-bold mb-2">{item.name}</h3>
-                    <div className="flex justify-between items-center">
-                      <span className="text-white text-lg">₹{item.price}</span>
-                      <span className="text-orange-400 text-xs">{item.orders}+ orders today</span>
+                    <h3 className="text-white text-xl font-bold mb-2">{item?.name}</h3>
+                    <div className="flex justify-between items-center my-2">
+                      {item.averageRating > 0 && <span className='px-3 py-1 rounded-full text-sm bg-white/20 backdrop-blur-md text-white'>
+                        {Array.from({ length: 5 }, (_, index) => (
+                          <FaStar
+                            key={index}
+                            className={`w-4 h-4 inline ${index < item.averageRating ? 'fill-yellow-400' : 'fill-gray-400'
+                              }`}
+                          />
+                        ))}
+                        {/* totalReview pending */}
+                      </span>}
+
+                      <span className={`px-3 py-1 rounded-full text-lg ml-auto ${darkMode ? 'bg-gray-800/90 text-gray-200' : 'bg-white/90 text-gray-800'
+                        }`}>₹{item?.price}</span>
                     </div>
                   </div>
                 </div>

@@ -1,5 +1,5 @@
-import { useRef, useState } from 'react';
-import { FaPlus, FaCheckCircle } from 'react-icons/fa';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { FaPlus, FaCheckCircle, FaHourglassHalf, FaBell, FaThumbsUp, FaFire } from 'react-icons/fa';
 import OrderTable from '../Components/Order/OrderTable';
 import CanteenFilter from '../Components/Order/CanteenFilter';
 import StatusFilter from '../Components/Order/StatusFilter';
@@ -11,29 +11,66 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setactiveMenu, setOpen, toggleOpen } from '../Redux/Slices/pageSlice';
 import { setOpen as setCartOpen } from '../Redux/Slices/CartSlice';
 import { Footer } from '../Components/Home/Footer';
+import { useAllOrders } from '../Data/OrderData';
 
 function Orderpage() {
+  const { data: orders } = useAllOrders();
   const isOpen = useSelector((state) => state.page.isOpen);
   const dispatch = useDispatch();
   const darkMode = useSelector((state) => state.theme.isDarkMode);
   const [activeFilter, setActiveFilter] = useState('All Orders');
   const [selectedCanteen, setSelectedCanteen] = useState('All Canteens');
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [orderDetails,setOrderDetails]=useState('');
+
+  const statusCounts = useMemo(() => {
+    if (!orders) return {};
+    console.log('orders');
+    
+    return orders.reduce((counts, order) => {
+      counts[order.status] = (counts[order.status] || 0) + 1;
+      return counts;
+    }, {});
+  }, [orders]);
+  
+  
 
   //All Ready Orders data
-  const orderDetails = 'Your order is ready for pickup!';
   const stats = [
     {
-      name: 'Ready for Pickup',
-      value: '5',
+      name: 'Ready for pickup',
+      icon: FaBell,
+      color: 'text-orange-500',
+    },
+    {
+      name: 'Pending',
+      value: 'Pending',
+      icon: FaHourglassHalf,
+      color: 'text-gray-500',
+    },
+    {
+      name: 'Delivered',
       icon: FaCheckCircle,
       color: 'text-green-500',
+    },
+    {
+      name: 'Success',
+      icon: FaThumbsUp,
+      color: 'text-blue-500',
+    },
+    {
+      name: 'Preparing',
+      value: 'Preparing',
+      icon: FaFire,
+      color: 'text-yellow-500',
     },
   ];
 
   const footerRef = useRef(null);
   const navigate = useNavigate();
 
+  console.log(statusCounts);
+  
   return (
     <div
       className={`flex flex-col min-h-screen ${
@@ -76,9 +113,9 @@ function Orderpage() {
             </button>
           </header>
 
-          <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4'>
-            {stats.map(({ name, value, icon: Icon, color }) => (
-              <div
+          <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-${Object.keys(statusCounts)?.length} gap-4`}>
+            {stats.map(({ name, icon: Icon, color }) => (
+              statusCounts[name]>0 && <div
                 key={name}
                 className={`p-4 rounded-xl shadow-lg border flex items-center cursor-pointer 
               ${
@@ -86,7 +123,7 @@ function Orderpage() {
                   ? 'bg-slate-800 border-slate-700'
                   : 'bg-white border-gray-100'
               }`}
-                onClick={() => setIsPopupOpen(true)}
+                onClick={() => setOrderDetails(`${statusCounts[name]} Orders are ${name?.toLocaleLowerCase()}`)}
               >
                 <div className={`p-3 rounded-full ${color} bg-opacity-10 mr-4`}>
                   <Icon className={`h-6 w-6 ${color}`} />
@@ -104,7 +141,7 @@ function Orderpage() {
                       darkMode ? 'text-white' : 'text-gray-900'
                     }`}
                   >
-                    {value}
+                    {statusCounts[name] || 0}
                   </p>
                 </div>
               </div>
@@ -127,11 +164,11 @@ function Orderpage() {
       </div>
 
       {/* Popup of Ready Orders */}
+      {orderDetails?.trim()?.length >0 &&
       <Popup
-        isOpen={isPopupOpen}
-        onClose={() => setIsPopupOpen(false)}
+        onClose={() => setOrderDetails('')}
         orderDetails={orderDetails}
-      />
+      />}
       <Footer ref={footerRef} />
     </div>
   );

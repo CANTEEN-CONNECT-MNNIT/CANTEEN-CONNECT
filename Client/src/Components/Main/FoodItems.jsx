@@ -33,9 +33,10 @@ const FoodItems = ({ FoodData }) => {
               name={food.name}
               price={food.price}
               desc={food.description}
-              // rating={food.rating}
-              img={food.image}
+              rating={food?.averageRating}
+              img={food?.image}
               // nutrients={food.nutrients}
+              totalReview={food?.totalRatings}
               handleToast={handleToast}
               favourite={food?.isFavourite || false}
             />

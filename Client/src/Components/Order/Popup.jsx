@@ -1,8 +1,8 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-const Popup = ({ isOpen, onClose, orderDetails }) => {
-  if (!isOpen) return null;
+const Popup = ({ onClose, orderDetails }) => {
+  if (orderDetails?.trim()?.length===0) return null;
   const darkMode = useSelector((state) => state.theme.isDarkMode);
 
   return (

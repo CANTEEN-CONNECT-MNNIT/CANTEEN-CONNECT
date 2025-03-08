@@ -70,8 +70,8 @@ class CanteenService {
       const response = await this.api.get('getall');
       console.log('canteenApi/getAll: ', response);
       if (response) {
-        return response?.data?.data;
-        //user canteen
+        return response?.data;
+        //data:user_canteen,trending_items
       }
     } catch (error) {
       console.log('canteenApi/getAll: ', error);

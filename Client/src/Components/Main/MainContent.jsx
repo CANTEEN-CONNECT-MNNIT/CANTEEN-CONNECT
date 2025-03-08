@@ -13,6 +13,7 @@ import canteenService from '../../ApiService/canteenService.js';
 const MainContent = () => {
   const [selectedCanteen, setSelectedCanteen] = useState(null);
   const [allCanteen, setAllCanteen] = useState([]);
+  const [trendingItems, setTrendingItems] = useState([]);
 
   const [foodList, setFoodList] = useState(null);
 
@@ -56,8 +57,11 @@ const MainContent = () => {
   const getAllCanteens = async () => {
     try {
       const res = await canteenService.getCanteen();
+      console.log(res);
+      
       if (res) {
-        setAllCanteen(res);
+        setAllCanteen(res?.data);
+        setTrendingItems(res?.trending_items);
       }
     } catch (error) {
       // Toaster(error?.response?.data?.message);
@@ -112,9 +116,9 @@ const MainContent = () => {
           </div>
         )}
 
-        <div className={`relative top-24 text-2xl font-bold mb-6`}>
-          <TrendingFood />
-        </div>
+        {trendingItems?.length>2 && <div className={`relative top-24 text-2xl font-bold mb-6`}>
+          <TrendingFood list={trendingItems} />
+        </div>}
 
         {allCanteen?.length > 0 &&
           allCanteen.map(

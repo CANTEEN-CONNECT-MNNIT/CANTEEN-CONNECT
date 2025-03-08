@@ -14,14 +14,14 @@ export const addreview = asynchandler(async (req, res, next) => {
   });
 
   if (!isorder) {
-    return next(new ApiError('You have to but to review it', 400));
+    return next(new ApiError('You have to accept the order to review it', 400));
   }
   const existed_review = await Rating.findOne({
     fooditem: f_id,
     user: req.user._id,
   });
   if (existed_review) {
-    return next(new ApiError('You are already review it', 400));
+    return next(new ApiError('You have already review it', 400));
   }
 
   const { rating, review } = req.body;
@@ -38,7 +38,7 @@ export const addreview = asynchandler(async (req, res, next) => {
   });
 
   if (!newreview) {
-    return next(new ApiError('Error in created review', 400));
+    return next(new ApiError('Error in creating review', 400));
   }
 
   res.status(201).json({
@@ -111,7 +111,7 @@ export const deletereview = asynchandler(async (req, res, next) => {
   await Rating.findByIdAndDelete(r_id);
 
   res.status(201).json({
-    message: 'Review Delete Successfully',
+    message: 'Review Deleted Successfully',
   });
 });
 
@@ -120,20 +120,36 @@ export const getall = asynchandler(async (req, res, next) => {
   let { page, limit } = req.query;
   page = parseInt(page) || 1;
   limit = parseInt(limit) || 5;
+  console.log(f_id);
+  
   const foodItem = await Fooditem.findById(f_id);
-
+  console.log(foodItem);
+  
   if (!foodItem) {
     return next(new ApiError('Food Item not Found', 400));
   }
   console.log(foodItem);
   console.log(f_id);
+
+  // Count total number of reviews
+  const totalReviews = await Rating.countDocuments({ fooditem: f_id });
+
   const allreviews = await Rating.find({ fooditem: f_id })
     .populate('user')
     .skip((page - 1) * limit)
     .limit(limit);
 
+  const userReview = await Rating.findOne({ fooditem: f_id, user: req.user?._id }).populate('user') || null;
+
+  const totalPages = Math.ceil(totalReviews / limit);
+
   res.status(201).json({
     message: 'All Review Fetched',
-    data: allreviews,
+    data: {
+      allreviews,
+      userReview,
+      currentPage: page,
+      totalPages: totalPages,
+    },
   });
 });

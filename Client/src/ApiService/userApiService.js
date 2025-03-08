@@ -23,9 +23,9 @@ class UserService {
   );
   }
 
-  logout = async (data) => {
+  logout = async () => {
     try {
-      const response = await this.api.get('logout', data);
+      const response = await this.api.get('logout');
       console.log('userApi/logout: ', response);
       if (response) {
         return true;
