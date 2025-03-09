@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { FaCamera, FaEdit, FaTrashAlt, FaUtensils } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
 import foodService from '../../ApiService/foodService';
@@ -7,12 +7,12 @@ import { setError, setSuccess } from '../../Redux/Slices/UserSlice';
 export default function MenuManagement() {
   const darkMode = useSelector((state) => state.theme.isDarkMode);
   const [menuItems, setMenuItems] = useState([]);
-  const [isEditing, setIsEditing] = useState(false);
   const [editItem, setEditItem] = useState(null);
   const [image, setImage] = useState(null);
   const [currImage, setCurrImage] = useState(null);
   const [isloading,setIsLoading]=useState(false);
   const dispatch = useDispatch();
+  const editItemRef=useRef(null);
 
   const { canteen } = useSelector((state) => state.user);
 
@@ -34,7 +34,6 @@ export default function MenuManagement() {
   const handleEdit = (item) => {
     setEditItem(item);
     setCurrImage(item?.image || null);
-    setIsEditing(true);
   };
 
   const handleDelete = async (id) => {
@@ -87,13 +86,26 @@ export default function MenuManagement() {
         setEditItem(null);
         fetchItems();
         setIsLoading(false);
-        setIsEditing(false);
       }
     } catch (error) {
       dispatch(setError(error.response.data.message));
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (editItemRef.current && !editItemRef.current.contains(e.target)) {
+        setEditItem(null);
+      }
+    };
+  
+    document.addEventListener('mousedown', handleClickOutside);
+    
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   return (
     <div
@@ -107,6 +119,8 @@ export default function MenuManagement() {
         <h3 className='text-lg font-semibold'>Menu Management</h3>
         <button
           onClick={() => {
+            setCurrImage(null);
+            setImage(null);
             setEditItem({
               name: '',
               price: 1,
@@ -114,7 +128,6 @@ export default function MenuManagement() {
               available: 'in_stock',
               image: '',
             });
-            setIsEditing(true);
           }}
           className={`${
             darkMode ? 'bg-orange-600' : 'bg-orange-500'
@@ -126,12 +139,13 @@ export default function MenuManagement() {
         </button>
       </div>
 
-      {isEditing && editItem && (
+      {editItem && (
         <div className='fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50'>
           <div
             className={`rounded-lg p-6 w-full max-w-md ${
               darkMode ? 'bg-slate-800' : 'bg-white'
             }`}
+            ref={editItemRef}
           >
             <div className='flex justify-between items-center mb-4'>
               <h4
@@ -144,7 +158,6 @@ export default function MenuManagement() {
               <button
                 onClick={() => {
                   setEditItem(null);
-                  setIsEditing(false);
                 }}
                 className={`text-gray-500 hover:text-gray-700 ${
                   darkMode ? 'text-gray-400 hover:text-gray-300' : ''
@@ -272,7 +285,7 @@ export default function MenuManagement() {
               <div className='flex justify-end space-x-3'>
                 <button
                   type='button'
-                  onClick={() => setIsEditing(false)}
+                  onClick={() => setEditItem(null)}
                   className={`px-4 py-2 border rounded-lg ${
                     darkMode
                       ? 'border-gray-600 text-gray-300 hover:bg-gray-700'

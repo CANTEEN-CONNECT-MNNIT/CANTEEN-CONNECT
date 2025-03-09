@@ -34,8 +34,8 @@ const Header = () => {
       ? getUniqueItemsByName(searchedData)?.slice(0, 3)
       : [];
   /*For Order Now Button on the Dashboard*/
-  const { cart: cartItems, isOpen } = useSelector((state) => state.cart);
-  const handleLessToast = (text) => toast.error(text || `Cart is Empty `);
+  // const { cart: cartItems, isOpen } = useSelector((state) => state.cart);
+  // const handleLessToast = (text) => toast.error(text || `Cart is Empty `);
 
   const setSearchText = (txt) => {
     if (txt?.trim() !== '') dispatch(setSearch(txt));
@@ -50,7 +50,7 @@ const Header = () => {
           darkMode ? 'bg-slate-800' : 'bg-white'
         } transition-all duration-300`}
       >
-        <div className='relative h-[600px] w-full overflow-hidden'>
+        <div className='relative h-[600px] w-full overflow-y-visible'>
           <img
             src='./src/assets/Foodnavbar.jpg'
             alt='Canteen Banner'
@@ -121,7 +121,7 @@ const Header = () => {
                 </ul>
               )}
             </div>
-            <div className='mt-12 flex gap-6'>
+            {/* <div className='mt-12 flex gap-6'>
               <button
                 className='px-8 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-full shadow-lg transition-all duration-300'
                 onClick={() => {
@@ -139,7 +139,7 @@ const Header = () => {
               >
                 View Menu
               </button>
-            </div>
+            </div> */}
           </div>
         </div>
       </header>

@@ -56,7 +56,7 @@ const FoodCard = ({
     <div
       className={`${cardBg} rounded-xl shadow-md overflow-hidden transform transition-all duration-300 ${
         isHovered ? 'scale-105' : ''
-      } max-w-xs`}
+      } min-w-fit`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -118,7 +118,7 @@ const FoodCard = ({
 
         <button
           onClick={handleAddToCart}
-          className='w-full flex items-center justify-center gap-4 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white py-2 rounded-xl transition-all duration-300 transform hover:shadow-lg'
+          className='w-full flex items-center px-6 justify-center gap-4 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white py-2 rounded-xl transition-all duration-300 transform hover:shadow-lg'
         >
           <FaShoppingCart className='w-4 h-4' />
           <span className='font-medium'>Add to Cart</span>
@@ -127,7 +127,7 @@ const FoodCard = ({
 
       {showInfo && (
         <div className='fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50'>
-          <div className='bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full'>
+          <div className='bg-white text-gray-700  dark:bg-gray-800 rounded-lg p-6 max-w-md w-full'>
             <h2 className='text-xl font-semibold mb-4'>More about {name}</h2>
             <div className='mb-4'>
               <p className='text-gray-700 dark:text-gray-300 mb-2'>{desc}</p>

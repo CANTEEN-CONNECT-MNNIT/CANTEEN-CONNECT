@@ -57,7 +57,7 @@ export default function LoginBox({
 
         if (res.role === 'Canteen') {
           const canteenData = await canteenService.getCanteen();
-          dispatch(setCanteen(canteenData));
+          dispatch(setCanteen(canteenData?.data));
           console.log(canteenData);
         }
         dispatch(loginSuccess(res));

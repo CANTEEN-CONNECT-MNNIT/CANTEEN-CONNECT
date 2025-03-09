@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   FaWallet,
   FaClock,
@@ -21,6 +21,7 @@ const MerchantProfile = ({ onClose }) => {
   const [edited, setEdited] = useState(false);
   const [isloading,setIsLoading]=useState(false);
   const dispatch = useDispatch();
+  const profileRef=useRef(null);
 
   const imageUpdate = (e) => {
     const file = e.target.files[0];
@@ -96,6 +97,21 @@ const MerchantProfile = ({ onClose }) => {
     phone: canteen?.phone || '',
   });
 
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (profileRef.current && !profileRef.current.contains(e.target)) {
+        dispatch(setMerchantProfileOpen(false));
+      }
+    };
+  
+    document.addEventListener('mousedown', handleClickOutside);
+    
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+  
+
   const handleCanteenChange = (e) => {
     const { name, value } = e.target;
     if (value.trim() === canteenData[name]) return;
@@ -128,6 +144,7 @@ const MerchantProfile = ({ onClose }) => {
         className={`relative w-full max-w-md p-6 rounded-2xl shadow-xl ${
           darkMode ? 'bg-slate-800 text-white' : 'bg-white text-gray-800'
         } animate-slideIn`}
+        ref={profileRef}
       >
         {/* Close Button */}
         <button

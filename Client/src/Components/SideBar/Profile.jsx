@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   FaWallet,
   FaClock,
@@ -23,6 +23,7 @@ const Profile = () => {
   const [name, setName] = useState(initialState.name);
   const [currImage, setCurrImage] = useState(initialState.image);
   const [edited, setEdited] = useState(false);
+  const profileRef=useRef(null);
 
   const submitData = async (e) => {
     e.preventDefault();
@@ -55,6 +56,20 @@ const Profile = () => {
     }
   };
 
+  useEffect(() => {
+      const handleClickOutside = (e) => {
+        if (profileRef.current && !profileRef.current.contains(e.target)) {
+          dispatch(setProfileOpen(false));
+        }
+      };
+    
+      document.addEventListener('mousedown', handleClickOutside);
+      
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }, []);
+
   return (
     <div
       className={`fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 animate-fadeIn`}
@@ -64,6 +79,7 @@ const Profile = () => {
         className={`relative w-full max-w-md p-6 rounded-2xl shadow-xl ${
           darkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-800'
         } animate-slideIn`}
+        ref={profileRef}
       >
         <button
           type='button'

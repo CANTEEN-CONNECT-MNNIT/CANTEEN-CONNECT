@@ -85,7 +85,7 @@ const MainContent = () => {
         isOpen ? 'pl-60' : 'pl-20'
       } ${darkMode ? 'bg-slate-800 text-white' : 'bg-slate-100 text-gray-800'}`}
     >
-      <div
+      {/* <div
         className={`pl-20 pt-6 flex flex-row flex-wrap gap-4 justify-center absolute`}
       >
         <button
@@ -104,7 +104,7 @@ const MainContent = () => {
         >
           Sort By
         </button>
-      </div>
+      </div> */}
 
       <div id='menu' className='relative flex flex-col gap-2'>
         {foodList && (

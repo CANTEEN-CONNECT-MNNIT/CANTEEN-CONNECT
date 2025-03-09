@@ -15,11 +15,14 @@ function CanteenFilter({ selectedCanteen, setSelectedCanteen }) {
     setIsOpen(false);
   };
 
+  console.log(canteens);
+  
+
   const fetchCanteens=async()=>{
     try {
       const res=await canteenService.getCanteen();
       if(res){
-        setCanteens(res);
+        setCanteens(res?.data);
       }
     } catch (error) {
       console.error(error?.response?.data?.message);
