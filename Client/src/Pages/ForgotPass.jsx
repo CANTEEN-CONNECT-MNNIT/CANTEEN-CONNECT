@@ -1,97 +1,98 @@
 import React, { useState } from 'react'
-import { useForm } from 'react-hook-form';
-import Input from '../Components/Input';
 import Loading from '../Components/Loading';
+import { useSelector } from 'react-redux';
+import ForgotPassword from '../Components/Home/ForgotPass';
+import { FaBars, FaMoon, FaSun, FaTimes } from 'react-icons/fa';
 
 
 function ForgotPass() {
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
-    const [emailfind, setEmailFind] = useState(false);
-    const [success, setSuccess] = useState("");
-    const { register, handleSubmit, getValues, setValue, formState: { errors }, } = useForm({
-        defaultValues: {
-            email: "",
-            password: "",
-            confirmpassword: "",
-            otp: "",
-        }
-    })
-    const dataSubmit = async (data) => {
-        console.log(data);
-    }
-    const getOtp = async () => {
-        // call to get otp-> getValues('email');
-        if (true && getValues('email').length) setEmailFind(true);
-        else setEmailFind(false);
-    }
-    if (loading) {
-        return <Loading />
-    }
+    
+  const darkMode = useSelector((state) => state.theme.isDarkMode);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     return (
-        <>
-            <div className='min-h-screen mx-auto py-32 flex justify-center items-center'>
-                <div className='border bg-slate-50 dark:bg-gray-900 border-blue-400 dark:border-slate-500  rounded-lg '>
-                    <form onSubmit={handleSubmit(dataSubmit)} className='pt-6 pb-2 px-4 flex flex-col justify-center items-center'>
-                        <h1 className='dark:text-gray-300 text-darken text-xl font-bold text-center text-gray-900'>Reset-Password</h1>
-                        <div className='flex flex-col pt-6'>
-                            <div>
-                                <Input label={"Email"} placeholder={"Enter your email..."} {...register("email", {
-                                    required: "Email is required!",
-                                    pattern: {
-                                        value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                                        message: "Invalid email address",
-                                    },
-                                })} />
-                                {errors && errors?.email && errors.email?.message.length > 0 && <p className='text-red-600 text-center mb-2 text-md'>{errors.email.message}</p>}
-                            </div>
-                            <div className='flex justify-center items-center'>
-                                <button onClick={getOtp} type='button' className="my-4 dark:hover:bg-gray-900 dark:bg-gray-950 bg-blue-500 w-fit hover:bg-blue-700 text-white font-bold 
-                                    py-1 px-4 border dark:border-neutral-800 dark:hover:border-black border-blue-700 rounded text-md">
-                                    Send OTP
-                                </button>
-                            </div>
-                            {
-                                emailfind && <div>
-                                    <div>
-                                        <Input label={"New Password"} type="password" placeholder={"New password..."} {...register("password", {
-                                            required: "Password is required",
-                                            pattern: {
-                                                value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-                                                message: "Password must contain at least one uppercase letter, one lowercase letter, one number, one special character, and be at least 8 characters long.",
-                                            },
-                                        })} />
-                                        {errors && errors?.password && errors.password?.message.length > 0 && <p className=' mb-2 text-center text-md text-red-600'>{errors.password.message}</p>}
-                                    </div>
-                                    <div>
-                                        <Input label={"Confirm Password"} type="password" placeholder={"Confirm password..."} {...register("confirmpassword", {
-                                            required: "Confirm Password is required",
-                                            validate: (value) => value === watch("password") || "Passwords do not match"
-                                        })} />
-                                        {errors && errors?.confirmpassword && errors.confirmpassword?.message.length > 0 && <p className=' mb-2 text-center text-md text-red-600'>{errors.confirmpassword.message}</p>}
-                                    </div>
-                                    <div>
-                                        <Input label={"OTP"}  placeholder={"Enter Otp..."} {...register("otp", {
-                                            required: "Otp is must!",
-                                        })} />
-                                        {errors && errors?.otp && errors.otp?.message.length > 0 && <p className=' mb-2 text-center text-md text-red-600'>{errors.otp.message}</p>}
-                                    </div>
-                                    <div className='flex justify-center items-center'>
-                                <button onClick={handleSubmit(dataSubmit)} className="my-4 dark:hover:bg-gray-900 dark:bg-gray-950 bg-blue-500 w-fit hover:bg-blue-700 text-white font-bold 
-                                    py-1 px-4 border dark:border-neutral-800 dark:hover:border-black border-blue-700 rounded text-md">
-                                    Reset
-                                </button>
-                            </div>
+        <div
+            className={`min-h-screen ${darkMode ? 'dark bg-gray-900' : 'bg-gray-50'}`}
+        >
+                    <nav className='fixed top-0 w-full z-50 bg-orange-50 dark:bg-gray-800 shadow-lg'>
+                        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+                            <div className='flex justify-between h-20'>
+                                <div className='left-0 flex-shrink-0 flex items-center'>
+                                    <h1 className='text-3xl font-bold text-orange-600 dark:text-orange-400'>
+                                        Canteen{' '}
+                                        <span className='text-slate-600 dark:text-white font-bold'>
+                                            Connect
+                                        </span>
+                                    </h1>
                                 </div>
-                            }
-                            <div>
-                                {error.length > 0 && <p className='text-red-600 text-center mb-2 text-md'>{error}</p>}
+
+                                <div className='hidden md:flex items-center space-x-5'>
+                                    <button
+                                        className='p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700'
+                                    >
+                                        {darkMode ? (
+                                            <FaSun className='h-7 w-7 text-orange-500' />
+                                        ) : (
+                                            <FaMoon className='h-5 w-5 text-orange-500' />
+                                        )}
+                                    </button>
+                                    <button
+                                        className='px-4 py-2 text-xl font-semibold text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors'
+                                    >
+                                        Login
+                                    </button>
+                                    <button
+                                        className='px-4 py-2 text-xl font-semibold text-white bg-orange-500 hover:bg-orange-600 rounded-lg'
+                                    >
+                                        Sign Up
+                                    </button>
+                                </div>
+
+                                <div className='md:hidden flex items-center'>
+                                    <button
+                                        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                                        className='p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors'
+                                    >
+                                        {mobileMenuOpen ? (
+                                            <FaTimes className='h-6 w-6' />
+                                        ) : (
+                                            <FaBars className='h-6 w-6' />
+                                        )}
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    </form>
-                </div>
-            </div>
-        </>
+
+                        <div
+                            className={`md:hidden transition-all duration-300 ease-in-out ${mobileMenuOpen ? 'max-h-48 opacity-100' : 'max-h-0 opacity-0'
+                                } overflow-hidden`}
+                        >
+                            <div className='px-2 pt-2 pb-3 space-y-1 sm:px-3'>
+                                <button
+                                    className='w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors'
+                                >
+                                    {darkMode ? 'Light Mode' : 'Dark Mode'}
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        setMobileMenuOpen(false);
+                                    }}
+                                    className='w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors'
+                                >
+                                    Login
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        setMobileMenuOpen(false);
+                                    }}
+                                    className='w-full text-left px-3 py-2 rounded-md text-base font-medium text-white bg-orange-500 hover:bg-orange-600 transition-colors'
+                                >
+                                    Sign Up
+                                </button>
+                            </div>
+                        </div>
+                    </nav>
+                        <ForgotPassword />
+        </div>
     )
 }
 

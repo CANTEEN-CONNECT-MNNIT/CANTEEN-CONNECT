@@ -4,7 +4,6 @@ import CanteenInfo from '../Components/Home/CanteenInfo';
 import LoginBox from '../Components/Home/LoginBox';
 import SignUpBox from '../Components/Home/SignUpBox';
 import FoodCarousel from '../Components/Home/FoodCarousel';
-import ForgotPassword from './ForgotPass';
 import { useNavigate } from 'react-router-dom';
 import Loading from '../Components/Home/Loading';
 import Hero from '../Components/Home/Hero';
@@ -20,7 +19,6 @@ function Home() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showSignUpModal, setShowSignUpModal] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false);
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
 
@@ -34,6 +32,8 @@ function Home() {
       }, 2000);
     }
   }, [success]);
+
+  
 
   return (
     <div
@@ -151,10 +151,6 @@ function Home() {
               setSuccess={setSuccess}
               setShowLoginModal={setShowLoginModal}
               setShowSignUpModal={setShowSignUpModal}
-              onforgetPass={() => {
-                setShowForgotPasswordModal(true);
-                setShowLoginModal(false);
-              }}
               onClose={() => setShowLoginModal(false)}
             />
           )}
@@ -165,9 +161,6 @@ function Home() {
               setShowSignUpModal={setShowSignUpModal}
               onClose={() => setShowSignUpModal(false)}
             />
-          )}
-          {showForgotPasswordModal && (
-            <ForgotPassword onClose={() => setShowForgotPasswordModal(false)} />
           )}
         </>
       )}

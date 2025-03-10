@@ -23,7 +23,6 @@ export default function LoginBox({
   setSuccess,
   setShowLoginModal,
   setShowSignUpModal,
-  onforgetPass,
   onClose,
 }) {
   const darkMode = useSelector((state) => state.theme.isDarkMode);
@@ -201,7 +200,8 @@ export default function LoginBox({
 
             {/* Forgot Password Link */}
             <button
-              onClick={onforgetPass}
+              type='button'
+              onClick={()=>navigate('/resetpassword')}
               className={`w-full text-slate-300 hover:text-orange-400 item-center text-sm ${
                 darkMode ? 'text-gray-300' : 'text-gray-600'
               }`}

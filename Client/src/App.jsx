@@ -19,6 +19,7 @@ import MerchantProfile from './Components/SideBar/MerchantProfile.jsx';
 import Payment from './Components/Payment/Payment.jsx';
 import { toast, Toaster } from 'react-hot-toast';
 import { clearError, clearSuccess } from './Redux/Slices/UserSlice.jsx';
+import ForgotPass from './Pages/ForgotPass.jsx';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -82,6 +83,14 @@ const App = () => {
             element={
               <Auth authentication={false}>
                 <Home />
+              </Auth>
+            }
+          />
+          <Route
+            path='/resetpassword/:token?'
+            element={
+              <Auth authentication={false}>
+                <ForgotPass />
               </Auth>
             }
           />
