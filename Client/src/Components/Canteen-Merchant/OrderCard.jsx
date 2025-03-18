@@ -1,25 +1,14 @@
 import React from 'react';
 import { FaClock, FaUserAlt, FaInfoCircle } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
+import { dateFormat } from '../../utility/dateFormat.js';
+import { timeFormat } from '../../utility/timeFormat.js';
 
 function OrderCard({ order, onUpdateStatus, onViewDetails }) {
   const darkMode = useSelector((state) => state.theme.isDarkMode);
-  const createTime = order?.createdAt
-    ? new Date(order.createdAt).toLocaleTimeString('en-GB', {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true,
-      })
-    : '-';
+  const createTime = timeFormat(order.createdAt );
 
-  const createDate =
-    order?.createdAt &&
-    new Date(order.createdAt).toDateString() !== new Date().toDateString()
-      ? new Date(order.createdAt).toLocaleDateString('en-GB', {
-          day: '2-digit',
-          month: '2-digit',
-        }) // Format as DD/MM
-      : 'Today';
+  const createDate = dateFormat(order?.createdAt);
 
   const getStatusStyle = (status) => {
     const styles = {

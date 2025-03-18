@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FaHeart, FaShoppingCart, FaStar, FaInfoCircle } from 'react-icons/fa'; // Import icons from react-icons
 import { useSelector, useDispatch } from 'react-redux';
 import userService from '../../ApiService/userApiService';
-import { setError, setSuccess } from '../../Redux/Slices/UserSlice';
+import { addFavourite, removeFavourite, setError, setSuccess } from '../../Redux/Slices/UserSlice';
 import cartService from '../../ApiService/cartService';
 import { setCart } from '../../Redux/Slices/CartSlice';
 
@@ -46,7 +46,10 @@ const FoodCard = ({
     const res = isFavourite
       ? await userService.removeFavourite({ _id: id })
       : await userService.addFavourite({ _id: id });
+      console.log(res);
+      
     if (res) {
+      isFavourite ? dispatch(removeFavourite(id)) : dispatch(addFavourite(id));
       setisFavourite(!isFavourite);
     }
   };

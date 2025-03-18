@@ -24,7 +24,7 @@ class RatingService {
   }
 
   getAll = async (data) => {
-    //required: fooditem_id
+    //required: _id:canteen_id
     //query: page,limit
     const { page = 1, limit = 5 } = data || {};
     try {
@@ -58,7 +58,7 @@ class RatingService {
   };
 
   addReview = async (data) => {
-    // required: foodItem_id
+    // required: canteen_id
     try {
       const response = await this.api.post(`create/${data?._id}`,data);
       console.log('ratingApi/addReview: ', response);
@@ -82,6 +82,20 @@ class RatingService {
       }
     } catch (error) {
       console.log('ratingApi/deleteReview: ', error);
+      throw error;
+    }
+  };
+  
+  foodRatings = async (data) => {
+    //required: array of fooditem_id:rating->  fooditem_ratings
+    try {
+      const response = await this.api.post(`fooditem_rating`,data);
+      console.log('ratingApi/foodRatings: ', response);
+      if (response) {
+        return response?.status===201;
+      }
+    } catch (error) {
+      console.log('ratingApi/foodRatings: ', error);
       throw error;
     }
   };

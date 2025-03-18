@@ -43,6 +43,16 @@ const userSlice = createSlice({
     clearSuccess: (state) => {
       state.success = '';
     },
+    addFavourite:(state,action)=>{
+      if(state.status && state.user){
+        state.user.favourite.push(action.payload);
+      }
+    },
+    removeFavourite:(state,action)=>{
+      if(state.status && state.user){
+        state.user.favourite=state.user.favourite.filter((item)=>item!==action.payload);
+      }
+    },
   },
 });
 
@@ -56,6 +66,8 @@ export const {
   setSuccess,
   setCanteen,
   clearSuccess,
+  addFavourite,
+  removeFavourite,
 } = userSlice.actions;
 
 export default userSlice.reducer;

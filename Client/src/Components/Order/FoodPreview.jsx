@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { AiOutlineClose, AiOutlineClockCircle } from 'react-icons/ai';
 import { useSelector, useDispatch } from 'react-redux';
 import FoodReview from './FoodReview';
+import { dateFormat } from '../../utility/dateFormat.js';
+import { timeFormat } from '../../utility/timeFormat.js';
 
 
 function FoodPreview({ onClose, order }) {
@@ -10,8 +12,7 @@ function FoodPreview({ onClose, order }) {
 
   const modalRef = useRef(null);
   const { _id, createdAt, updatedAt, fooditems, status } = order;
-  const canteen = order?.canteen?.name;
-
+  const canteen = order?.canteen;
 
   function handleClickOutside(event) {
     if (modalRef.current && !modalRef.current.contains(event.target)) {
@@ -75,17 +76,11 @@ function FoodPreview({ onClose, order }) {
             </div>}
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-500">Canteen</span>
-              <span className="text-sm font-medium text-gray-500">{canteen}</span>
+              <span className="text-sm font-medium text-gray-500">{canteen?.name}</span>
             </div>
             {createdAt && <div className="flex justify-between items-center">
               <span className="text-sm text-gray-500">Date</span>
-              <span className="text-sm font-medium text-gray-500">{new Date(createdAt).toDateString() !== new Date().toDateString()
-                ? new Date(createdAt).toLocaleDateString('en-GB', {
-                  day: '2-digit',
-                  month: '2-digit',
-                  year: 'numeric'
-                })
-                : 'Today'}</span>
+              <span className="text-sm font-medium text-gray-500">{dateFormat(createdAt)}</span>
             </div>}
             {fooditems && fooditems.length > 0 && <div className="flex justify-between items-center">
               <span className="text-sm text-gray-500">Amount</span>
@@ -114,11 +109,7 @@ function FoodPreview({ onClose, order }) {
                       year: 'numeric'
                     })
                     :
-                    `Today, ${new Date(updatedAt).toLocaleTimeString('en-GB', {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                      hour12: true
-                    })}`
+                    `Today, ${timeFormat(updatedAt)}`
                   }
                 </span>
               </div>
@@ -128,7 +119,7 @@ function FoodPreview({ onClose, order }) {
         {/* when got delivered then show review */}
         {(status === 'Delivered' || status ===
           'Success') && <div className="p-4 border-t ">
-            <FoodReview foodId={order?._id} />
+            <FoodReview foods={fooditems} canteen={canteen} />
           </div>
         }
       </div>

@@ -6,6 +6,7 @@ import { useAllOrders } from '../../Data/OrderData';
 import { useSelector } from 'react-redux';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import orderService from '../../ApiService/orderService';
+import { dateFormat } from '../../utility/dateFormat.js';
 
 function OrderTable({ filter, canteen }) {
   const { data: orders } = useAllOrders();
@@ -152,14 +153,7 @@ function OrderTable({ filter, canteen }) {
                     }`}
                   >
                     {order?.createdAt &&
-                    new Date(order.createdAt).toDateString() !==
-                      new Date().toDateString()
-                      ? new Date(order.createdAt).toLocaleDateString('en-GB', {
-                          day: '2-digit',
-                          month: '2-digit',
-                          year: 'numeric',
-                        })
-                      : 'Today'}
+                    dateFormat(order.createdAt)}
                   </td>
                   <td
                     className={`px-6 py-4 text-sm ${
@@ -263,14 +257,7 @@ function OrderTable({ filter, canteen }) {
                 <p>
                   Date:{' '}
                   {order?.createdAt &&
-                  new Date(order.createdAt).toDateString() !==
-                    new Date().toDateString()
-                    ? new Date(order.createdAt).toLocaleDateString('en-GB', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric',
-                      })
-                    : 'Today'}
+                  dateFormat(order.createdAt)}
                 </p>
                 <p>
                   Amount: &#8377;
