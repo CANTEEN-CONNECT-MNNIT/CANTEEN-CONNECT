@@ -20,9 +20,9 @@ export const addcanteen = asynchandler(async (req, res, next) => {
   const { name, description, canteenId, phone, address, openTime, closeTime } =
     req.body;
 
-  const uploadedfile = await uploadOnCloudinary(req.file.path);
+  const uploadedfile = await uploadOnCloudinary(req.file?.path);
 
-  if (!uploadedfile.url) {
+  if (uploadedfile && !uploadedfile.url) {
     return next(new ApiError('Error in image uploaing', 444));
   }
 
@@ -38,7 +38,7 @@ export const addcanteen = asynchandler(async (req, res, next) => {
     address,
     openTime,
     closeTime,
-    image: uploadedfile.url,
+    image: uploadedfile?.url || '',
     owner: req.user._id,
   });
 

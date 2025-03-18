@@ -45,7 +45,7 @@ export const processpayment = asynchandler(async (req, res, next) => {
   if (resp.success === true) {
     orderresp = await createorder(req, res, next);
   } else {
-    return next(new ApiError('Payment Failed', 412));
+    return next(new ApiError(resp.message, 412));
   }
 
   if (orderresp && orderresp !== true) {

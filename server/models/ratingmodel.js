@@ -13,9 +13,9 @@ const ratingSchema = new mongoose.Schema(
       max: 5,
       required: true,
     },
-    fooditem: {
+    canteen: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Fooditem',
+      ref: 'Canteen',
       required: true,
     },
     review: {
@@ -27,13 +27,13 @@ const ratingSchema = new mongoose.Schema(
 );
 
 ratingSchema.post('save', async function () {
-  const foodItem = await mongoose.model('Fooditem').findById(this.fooditem);
-  if (foodItem) {
-    foodItem.totalRatings += 1;
-    foodItem.averageRating =
-      (foodItem.averageRating * (foodItem.totalRatings - 1) + this.rating) /
-      foodItem.totalRatings;
-    await foodItem.save();
+  const reqcanteen = await mongoose.model('Canteen').findById(this.canteen);
+  if (reqcanteen) {
+    reqcanteen.totalRatings += 1;
+    reqcanteen.averageRating =
+      (reqcanteen.averageRating * (reqcanteen.totalRatings - 1) + this.rating) /
+      reqcanteen.totalRatings;
+    await reqcanteen.save();
   }
 });
 

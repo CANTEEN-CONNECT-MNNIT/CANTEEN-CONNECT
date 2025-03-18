@@ -24,24 +24,26 @@ export const signup = asynchandler(async (req, res, next) => {
   let { name, email, password, confirmpassword } = req.body;
   email = email.trim().toLowerCase();
   password = password.trim();
+  console.log(confirmpassword);
   confirmpassword = confirmpassword.trim();
   //check email password and confiem password are not missing
   if (!email || !password || !confirmpassword) {
     return next(new ApiError('All field are required', 400));
   }
   const user = await User.findOne({ email });
+  console.log(user);
   if (user) {
     return next(new ApiError('User are already exist', 404));
   }
-  const uploadedfile = await uploadOnCloudinary(req.file.path);
-
-  if (!uploadedfile.url) {
+  const uploadedfile = await uploadOnCloudinary(req.file?.path);
+  console.log(uploadedfile);
+  if (uploadedfile && !uploadedfile.url) {
     return next(new ApiError('Error in image uploaing', 444));
   }
   const newuser = await User.create({
     name,
     email,
-    image: uploadedfile.url,
+    image: uploadedfile?.url || '',
     password,
     confirmpassword,
   });
@@ -219,6 +221,8 @@ export const resetpassword = asynchandler(async (req, res, next) => {
   if (!resetToken || !password || !confirmpassword) {
     return next(new ApiError('Please fill all required field', 400));
   }
+
+  console.log(req);
 
   const hashedToken = crypto
     .createHash('sha256')

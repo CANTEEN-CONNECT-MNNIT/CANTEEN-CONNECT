@@ -28,7 +28,7 @@ const canteenSchema = new mongoose.Schema(
     closeTime: { type: String },
     fooditems: [
       {
-        type: mongoose.Schema.Types.ObjectId, 
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'Fooditem',
       },
     ],
@@ -36,6 +36,14 @@ const canteenSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: true,
+    },
+    averageRating: {
+      type: Number,
+      default: 0,
+    },
+    totalRatings: {
+      type: Number,
+      default: 0,
     },
   },
   { timestamps: true }
