@@ -243,7 +243,7 @@ export const resetpassword = asynchandler(async (req, res, next) => {
   requser.passwordResetToken = undefined;
   requser.passwordResetExpires = undefined;
   await requser.save();
-  const [acesstoken, refreshtoken] = createacessandrefreshtoken(requser._id);
+  const { acesstoken, refreshtoken } = createrefreshandacesstoken(requser._id);
 
   //check the acess and refreshtoken is generated or not
   if (!refreshtoken || !acesstoken) {

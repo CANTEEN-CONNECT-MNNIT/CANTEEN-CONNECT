@@ -66,6 +66,8 @@ const userSchema = new mongoose.Schema({
       ref: 'Fooditem',
     },
   ],
+  passwordResetToken: String,
+  passwordResetExpires: Date,
 });
 
 userSchema.pre('save', async function (next) {

@@ -26,6 +26,8 @@ export const addreview = asynchandler(async (req, res, next) => {
 
   const { rating, review } = req.body;
 
+  // console.log({ rating, review });
+
   if (!rating || !review) {
     return next(new ApiError('You do not enter all the fields', 400));
   }
@@ -61,15 +63,22 @@ export const editreview = asynchandler(async (req, res, next) => {
     return next(new ApiError('You do not enter all the fields', 400));
   }
 
+  console.log({ rating, review });
+
   if (rating) {
     const reqcanteen = await Canteen.findById(reqreview.canteen);
 
     if (!reqcanteen) {
       return next(new ApiError('Canteen Not found', 400));
     }
+    console.log({
+      av: reqcanteen.averageRating,
+      tt: reqcanteen.totalRatings,
+      rr: reqreview.rating,
+    });
     reqcanteen.averageRating =
       (reqcanteen.averageRating * reqcanteen.totalRatings - reqreview.rating) /
-      (reqcanteen.totalRatings - 1);
+        (reqcanteen.totalRatings - 1) || 0;
 
     reqcanteen.save();
   }
@@ -159,17 +168,21 @@ export const fooditemrating = asynchandler(async (req, res, next) => {
     return next(new ApiError('Cannot get the data', 404));
   }
   await Promise.all(
-    fooditem_ratings.map(async (each_item) => {
-      const reqfooditem = await Fooditem.findById(each_item._id);
+    fooditem_ratings.map(async ({ _id, rating }) => {
+      const reqfooditem = await Fooditem.findById(_id);
 
       if (!reqfooditem) {
-        throw new ApiError(`Food Item with ID ${each_item._id} not found`, 404);
+        throw new ApiError(`Food Item with ID ${_id} not found`, 404);
       }
 
       reqfooditem.totalRatings += 1;
+
+      if (isNaN(reqfooditem.averageRating)) {
+        reqfooditem.averageRating = 0;
+      }
       reqfooditem.averageRating =
-        (reqfooditem.averageRating * (reqfooditem.totalRatings - 1) +
-          each_item.rating) /
+        ((reqfooditem.averageRating || 0) * (reqfooditem.totalRatings - 1) +
+          rating) /
         reqfooditem.totalRatings;
 
       await reqfooditem.save();

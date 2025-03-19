@@ -18,14 +18,15 @@ export const getall = asynchandler(async (req, res, next) => {
     allorders = await Order.find({ user: user_id }).populate(
       'canteen fooditems._id'
     );
+    console.log(allorders);
   } else {
     const reqcanteen = await Canteen.findOne({ owner: req.user._id });
     if (!reqcanteen) {
       return next(new ApiError('Canteen Not found', 404));
     }
-    allorders = await Order.find({ canteen: reqcanteen._id }).populate(
-      'canteen fooditems._id'
-    ).populate({ path: 'user', select: 'name' });
+    allorders = await Order.find({ canteen: reqcanteen._id })
+      .populate('canteen fooditems._id')
+      .populate({ path: 'user', select: 'name' });
   }
   return res.status(201).json({
     message: 'All Order fetched Sucessfully',

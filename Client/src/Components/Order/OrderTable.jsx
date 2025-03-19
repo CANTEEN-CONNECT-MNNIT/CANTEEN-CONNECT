@@ -15,6 +15,8 @@ function OrderTable({ filter, canteen }) {
   const [filteredOrders, setFilteredOrders] = useState([]);
   const queryClient = useQueryClient();
 
+  console.log(orders);
+
   const getStatusColor = (status) => {
     return (
       {
@@ -152,8 +154,7 @@ function OrderTable({ filter, canteen }) {
                       darkMode ? 'text-gray-400' : 'text-gray-500'
                     }`}
                   >
-                    {order?.createdAt &&
-                    dateFormat(order.createdAt)}
+                    {order?.createdAt && dateFormat(order.createdAt)}
                   </td>
                   <td
                     className={`px-6 py-4 text-sm ${
@@ -254,11 +255,7 @@ function OrderTable({ filter, canteen }) {
                 }`}
               >
                 <p>Canteen: {order.canteen.name}</p>
-                <p>
-                  Date:{' '}
-                  {order?.createdAt &&
-                  dateFormat(order.createdAt)}
-                </p>
+                <p>Date: {order?.createdAt && dateFormat(order.createdAt)}</p>
                 <p>
                   Amount: &#8377;
                   {order.fooditems.reduce(
