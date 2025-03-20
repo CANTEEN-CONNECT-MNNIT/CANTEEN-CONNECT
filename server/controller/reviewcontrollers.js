@@ -71,15 +71,11 @@ export const editreview = asynchandler(async (req, res, next) => {
     if (!reqcanteen) {
       return next(new ApiError('Canteen Not found', 400));
     }
-    console.log({
-      av: reqcanteen.averageRating,
-      tt: reqcanteen.totalRatings,
-      rr: reqreview.rating,
-    });
     reqcanteen.averageRating =
-      (reqcanteen.averageRating * reqcanteen.totalRatings - reqreview.rating) /
-        (reqcanteen.totalRatings - 1) || 0;
-
+      (reqcanteen.averageRating * reqcanteen.totalRatings -
+        reqreview.rating +
+        rating) /
+        reqcanteen.totalRatings || 0;
     reqcanteen.save();
   }
 
