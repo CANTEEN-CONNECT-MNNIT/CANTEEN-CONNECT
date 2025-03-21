@@ -18,8 +18,15 @@ import { AppProvider } from './Context/AppContext.jsx';
 import MerchantProfile from './Components/SideBar/MerchantProfile.jsx';
 import Payment from './Components/Payment/Payment.jsx';
 import { toast, Toaster } from 'react-hot-toast';
-import { clearError, clearSuccess } from './Redux/Slices/UserSlice.jsx';
+import {
+  clearError,
+  clearSuccess,
+  loginSuccess,
+  setCanteen,
+} from './Redux/Slices/UserSlice.jsx';
 import ForgotPass from './Pages/ForgotPass.jsx';
+import userService from './ApiService/userApiService.js';
+import canteenService from './ApiService/canteenService.js';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -33,8 +40,6 @@ const App = () => {
   const { user, error, success, canteen, status } = useSelector(
     (state) => state.user
   );
-
-  console.log(user);
 
   /*For All Pop up Box Close */
   const onClose = function () {
@@ -50,6 +55,25 @@ const App = () => {
       dispatch(setactiveMenu('Dashboard'));
     }
   }, [location]);
+
+  const fetchUserData = async () => {
+    try {
+      if (status) {
+        const res = await userService.getMe();
+        dispatch(loginSuccess(res));
+        if (res.role === 'Canteen') {
+          const canteenData = await canteenService.getCanteen();
+          dispatch(setCanteen(canteenData?.data));
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
 
   useEffect(() => {
     if (error?.length > 0) {

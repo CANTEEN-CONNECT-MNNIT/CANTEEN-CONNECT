@@ -2,7 +2,12 @@ import React, { useState } from 'react';
 import { FaHeart, FaShoppingCart, FaStar, FaInfoCircle } from 'react-icons/fa'; // Import icons from react-icons
 import { useSelector, useDispatch } from 'react-redux';
 import userService from '../../ApiService/userApiService';
-import { addFavourite, removeFavourite, setError, setSuccess } from '../../Redux/Slices/UserSlice';
+import {
+  addFavourite,
+  removeFavourite,
+  setError,
+  setSuccess,
+} from '../../Redux/Slices/UserSlice';
 import cartService from '../../ApiService/cartService';
 import { setCart } from '../../Redux/Slices/CartSlice';
 
@@ -17,6 +22,7 @@ const FoodCard = ({
   handleToast,
   favourite,
   totalReview,
+  availability,
 }) => {
   const dispatch = useDispatch();
   const darkMode = useSelector((state) => state.theme.isDarkMode);
@@ -46,8 +52,8 @@ const FoodCard = ({
     const res = isFavourite
       ? await userService.removeFavourite({ _id: id })
       : await userService.addFavourite({ _id: id });
-      console.log(res);
-      
+    console.log(res);
+
     if (res) {
       isFavourite ? dispatch(removeFavourite(id)) : dispatch(addFavourite(id));
       setisFavourite(!isFavourite);
@@ -117,7 +123,20 @@ const FoodCard = ({
       </div>
 
       <div className='flex flex-col gap-3 p-5'>
-        <h3 className={`font-bold text-lg ${textColor} mb-1`}>{name}</h3>
+        <div className='flex'>
+          <h3 className={`font-bold text-lg ${textColor} mb-1`}>{name}</h3>
+          <span
+            className={`px-2 ml-auto text-md py-1 rounded-full ${
+              availability === 'in_stock'
+                ? 'bg-green-50 text-green-600'
+                : availability === 'limited_stock'
+                ? 'bg-yellow-50 text-yellow-600'
+                : 'bg-red-50 text-red-600'
+            }`}
+          >
+            {availability?.toUpperCase()}
+          </span>
+        </div>
         <p className={`text-sm ${descColor} line-clamp-2`}>{desc}</p>
 
         <button

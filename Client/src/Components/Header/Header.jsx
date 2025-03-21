@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FiSearch } from 'react-icons/fi';
 import { useDispatch, useSelector } from 'react-redux';
 import { useAppContext } from '../../Context/AppContext';
-import toast, { Toaster } from 'react-hot-toast';
+// import toast, { Toaster } from 'react-hot-toast';
 import { useSearchingItems } from '../../Data/SearchingFood';
 import { v4 as uuidv4 } from 'uuid';
 import { setSearch } from '../../Redux/Slices/SearchSlice';
@@ -44,7 +44,7 @@ const Header = () => {
 
   return (
     <>
-      <Toaster position='top-center' reverseOrder={false} />
+      {/* <Toaster position='top-center' reverseOrder={false} /> */}
       <header
         className={`relative w-full ${
           darkMode ? 'bg-slate-800' : 'bg-white'

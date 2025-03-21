@@ -6,7 +6,7 @@ import {
   FaQrcode,
 } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-import toast, { Toaster } from 'react-hot-toast';
+// import toast, { Toaster } from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
 import { setactiveMenu } from '../../Redux/Slices/pageSlice';
 import React, { useState, useEffect } from 'react';
@@ -76,8 +76,9 @@ export default function PaymentForms({
       console.log(error);
       dispatch(setError('Payment failed.'));
       //error is set but not toast  or show
+    } finally {
+      navigate('/dashboard');
     }
-    navigate('/dashboard');
   };
 
   return (
@@ -86,7 +87,7 @@ export default function PaymentForms({
         darkMode ? 'bg-gray-900' : 'bg-white'
       }`}
     >
-      <Toaster position='top-center' reverseOrder={false} />
+      {/* <Toaster position='top-center' reverseOrder={false} /> */}
       {clientToken && (
         <>
           <DropIn

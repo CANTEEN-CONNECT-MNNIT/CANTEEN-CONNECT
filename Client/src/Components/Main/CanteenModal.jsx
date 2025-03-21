@@ -14,7 +14,7 @@ const CanteenModal = ({ onClose, canteen }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('review:', { rating, review });
+    // console.log('review:', { rating, review });
     if (
       !userReview ||
       (userReview?.rating === rating && userReview?.review === review?.trim())
@@ -100,7 +100,7 @@ const CanteenModal = ({ onClose, canteen }) => {
         setTotalPages(res?.totalPages || 0);
         //res?.currentPage
         setUserReview(res?.userReview);
-        if (res?.allRreviews)
+        if (res?.allreviews)
           setAllReviews((prev) => [...prev, ...res.allreviews]);
         setRating(res?.userReview?.rating || 0);
         setReview(res?.userReview?.review || '');
@@ -109,16 +109,21 @@ const CanteenModal = ({ onClose, canteen }) => {
       console.error(error);
     }
   };
-
-  console.log({ rating, review, userReview });
+  console.log(allReviews);
 
   useEffect(() => {
     fetchReviewData();
   }, [currPage]);
 
+  console.log(totalPages, currPage);
+
   return (
     <div className='fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50'>
-      <div className='relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white text-gray-800 rounded-lg shadow-xl m-4'>
+      <div
+        className='relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white text-gray-800 rounded-lg shadow-xl m-4'
+        ref={reviewListRef}
+        onScroll={handleScroll}
+      >
         <button
           onClick={onClose}
           className='absolute right-4 top-4 text-gray-500 hover:text-gray-700 transition-colors'
@@ -178,20 +183,20 @@ const CanteenModal = ({ onClose, canteen }) => {
                 Your Review
               </h3>
               <form onSubmit={handleSubmit} className='space-y-4'>
-                <div>
-                  <label className='block text-sm font-medium mb-2'>
+                <div className='flex justify-between items-center px-2'>
+                  <label className='block text-md font-medium mb-2'>
                     Rating
                   </label>
                   <div className='flex gap-1'>{renderRatingInput()}</div>
                 </div>
 
                 <div>
-                  {/* <label
-                  htmlFor='feedback'
-                  className='block text-sm font-medium mb-2'
-                >
-                  Your Review
-                </label> */}
+                  <label
+                    htmlFor='feedback'
+                    className='block text-md font-medium px-2 mb-2'
+                  >
+                    Your Review
+                  </label>
                   <textarea
                     id='review'
                     rows={4}
@@ -218,34 +223,33 @@ const CanteenModal = ({ onClose, canteen }) => {
               <h3 className='text-2xl font-bold text-orange-600 mb-4'>
                 Customer Reviews
               </h3>
-              <div
-                className='space-y-4'
-                ref={reviewListRef}
-                onScroll={handleScroll}
-              >
-                {allReviews.map((comment) => (
-                  <div
-                    key={comment._id}
-                    className='bg-orange-50 p-4 rounded-lg'
-                  >
-                    <div className='flex items-center justify-between mb-2'>
-                      <span className='font-semibold'>
-                        {comment.user?.name}
-                      </span>
-                      <span className='text-sm text-gray-500'>
-                        {dateFormat(comment?.updatedAt)}
-                      </span>
-                    </div>
-                    <div className='flex mb-2'>
-                      {renderStars(comment.rating)}
-                    </div>
-                    <p className='mb-2'>{comment.review}</p>
-                    {/* <div className='flex items-center text-gray-500'>
+              <div className='space-y-4'>
+                {allReviews.map(
+                  (comment) =>
+                    (!userReview || comment?._id !== userReview?._id) && (
+                      <div
+                        key={comment._id}
+                        className='bg-orange-50 p-4 rounded-lg'
+                      >
+                        <div className='flex items-center justify-between mb-2'>
+                          <span className='font-semibold'>
+                            {comment.user?.name}
+                          </span>
+                          <span className='text-sm text-gray-500'>
+                            {dateFormat(comment?.updatedAt)}
+                          </span>
+                        </div>
+                        <div className='flex mb-2'>
+                          {renderStars(comment.rating)}
+                        </div>
+                        <p className='mb-2'>{comment.review}</p>
+                        {/* <div className='flex items-center text-gray-500'>
                     <FaThumbsUp className='w-4 h-4 mr-1' />
                     <span className='text-sm'>{comment.likes}</span>
                   </div> */}
-                  </div>
-                ))}
+                      </div>
+                    )
+                )}
               </div>
             </div>
           )}

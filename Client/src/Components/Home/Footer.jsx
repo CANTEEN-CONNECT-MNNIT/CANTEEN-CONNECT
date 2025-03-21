@@ -7,11 +7,12 @@ import {
   FaPhoneAlt,
   FaEnvelope,
 } from 'react-icons/fa';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setactiveMenu } from '../../Redux/Slices/pageSlice';
 
 export const Footer = React.forwardRef((props, ref) => {
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.user?.user);
   return (
     <footer ref={ref} className='bg-gray-900 text-gray-300 mt-10'>
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10'>
@@ -44,20 +45,11 @@ export const Footer = React.forwardRef((props, ref) => {
               </li>
               <li>
                 <a
-                  href='/Orderpage'
+                  href={user?.role === 'Canteen' ? '/dashboard' : 'Orderpage'}
                   onClick={() => dispatch(setactiveMenu('Track Order'))}
                   className='hover:text-orange-500 transition-colors duration-200'
                 >
                   Orders
-                </a>
-              </li>
-              <li>
-                <a
-                  href=''
-                  onClick={() => dispatch(setactiveMenu(''))}
-                  className='hover:text-orange-500 transition-colors duration-200'
-                >
-                  Contact
                 </a>
               </li>
             </ul>

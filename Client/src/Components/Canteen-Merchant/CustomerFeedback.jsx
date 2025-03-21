@@ -68,7 +68,11 @@ export default function CustomerFeedback() {
         </div>
       </div>
 
-      <div className='space-y-4' ref={reviewListRef} onScroll={handleScroll}>
+      <div
+        className='space-y-4 max-h-80 overflow-y-scroll'
+        ref={reviewListRef}
+        onScroll={handleScroll}
+      >
         {allReviews?.length > 0
           ? allReviews.map((review) => (
               <div

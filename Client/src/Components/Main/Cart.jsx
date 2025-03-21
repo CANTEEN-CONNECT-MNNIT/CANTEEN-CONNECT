@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { IoMdClose } from 'react-icons/io';
 import ItemCard from './ItemCard';
 import { useDispatch, useSelector } from 'react-redux';
 import { FaShoppingCart } from 'react-icons/fa';
-import toast, { Toaster } from 'react-hot-toast';
+// import toast, { Toaster } from 'react-hot-toast';
 import { setOpen, toggleOpen } from '../../Redux/Slices/CartSlice';
 import { useNavigate } from 'react-router-dom';
+import { setError } from '../../Redux/Slices/UserSlice';
 
 const Cart = () => {
   const { cart: cartItems, isOpen: activeCart } = useSelector(
@@ -18,19 +19,25 @@ const Cart = () => {
   const [totalPrice, setTotalPrice] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
 
+  const enable = useMemo(() => {
+    return !cartItems.some((item) => item?.available === 'out_of_stock');
+  }, [cartItems]);
+
   // Function to add or update an item in a canteen order
   const addOrUpdateItem = (canteenId, itemId, quantity, price, name) => {
     setCanteenOrders((prevOrders) => {
       const updatedOrders = new Map(prevOrders); // Clone the Map
       const items = updatedOrders.get(canteenId) || []; // Get existing or create new array
 
-      const existingItem = items.find((item) => item._id === itemId);
+      const existingItem = items.findIndex((item) => item._id === itemId); //existingItemIndex
 
-      if (existingItem) {
-        const quantityDiff = quantity - existingItem.quantity;
+      if (existingItem !== -1) {
+        const quantityDiff = quantity - items[existingItem].quantity;
         setTotalPrice((prev) => prev + quantityDiff * price);
         setTotalItems((prev) => prev + quantityDiff);
-        existingItem.quantity = quantity; // Update quantity
+        if (quantity)
+          items[existingItem].quantity = quantity; // Update quantity
+        else items.splice(existingItem, 1);
       } else {
         items.push({ _id: itemId, quantity, price, name }); // Add new item
         setTotalItems((prev) => prev + quantity);
@@ -44,11 +51,11 @@ const Cart = () => {
 
   console.log(canteenOrders);
 
-  const handleLessToast = () => toast.error(`Cart is Empty `);
+  const handleLessToast = () => dispatch(setError(`Cart is Empty `));
 
   return (
     <>
-      <Toaster position='top-center' reverseOrder={false} />
+      {/* <Toaster position='top-center' reverseOrder={false} /> */}
       <div
         className={`fixed right-0 top-0 w-full h-full sm:w-[46vh] p-2 shadow-2xl bg-slate-100 text-gray-800 ${
           activeCart ? 'translate-x-0' : 'translate-x-full'
@@ -77,6 +84,7 @@ const Cart = () => {
                 price={food.price}
                 img={food.image}
                 // qty={food.qty}
+                availability={food?.available}
                 canteen={food.canteen}
                 updateQuantity={addOrUpdateItem}
               />
@@ -113,7 +121,7 @@ const Cart = () => {
               });
             }}
             className='font-bold px-4 py-2 rounded-lg w-full bg-green-500 text-white hover:bg-green-600 transition-all duration-200'
-            disabled={totalItems === 0}
+            disabled={totalItems === 0 || !enable}
           >
             Checkout
           </button>

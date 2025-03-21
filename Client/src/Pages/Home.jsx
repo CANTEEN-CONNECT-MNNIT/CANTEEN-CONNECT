@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { FaSun, FaMoon, FaBars, FaTimes } from 'react-icons/fa';
-import CanteenInfo from '../Components/Home/CanteenInfo';
+// import CanteenInfo from '../Components/Home/CanteenInfo';
 import LoginBox from '../Components/Home/LoginBox';
 import SignUpBox from '../Components/Home/SignUpBox';
 import FoodCarousel from '../Components/Home/FoodCarousel';
@@ -32,8 +32,6 @@ function Home() {
       }, 2000);
     }
   }, [success]);
-
-  
 
   return (
     <div
@@ -140,9 +138,9 @@ function Home() {
 
             <FoodCarousel />
 
-            <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12'>
+            {/* <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12'>
               <CanteenInfo />
-            </div>
+            </div> */}
             <Footer />
           </main>
 
