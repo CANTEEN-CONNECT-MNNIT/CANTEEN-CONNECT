@@ -1,7 +1,8 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import FoodCard from './FoodCard';
-import toast, { Toaster } from 'react-hot-toast';
+// import toast, { Toaster } from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
+import { setSuccess } from '../../Redux/Slices/UserSlice';
 
 const FoodItems = ({ FoodData }) => {
   const dispatch = useDispatch();
@@ -9,17 +10,25 @@ const FoodItems = ({ FoodData }) => {
     useSelector((state) => state.user.user?.favourite) || [];
 
   const darkMode = useSelector((state) => state.theme.isDarkMode);
-  const handleToast = (name) => toast.success(`Added ${name} `);
+  const handleToast = (name) => dispatch(setSuccess(`Added ${name} `));
 
-  const updatedFoodData = useMemo(() => {
-    return FoodData.map((item) => ({
-      ...item,
-      isFavourite: userFavourite?.includes(item?._id),
-    }));
+  const [updatedFoodData, setUpdatedFooddata] = useState([]);
+
+  const modifyFoodData = () => {
+    setUpdatedFooddata(
+      FoodData.map((item) => ({
+        ...item,
+        isFavourite: userFavourite?.includes(item?._id),
+      }))
+    );
+  };
+
+  useEffect(() => {
+    modifyFoodData();
   }, [FoodData, userFavourite]);
   return (
     <>
-      <Toaster position='top-center' reverseOrder={false} />
+      {/* <Toaster position='top-center' reverseOrder={false} /> */}
       <div
         className={`${
           darkMode ? 'bg-slate-800 text-white' : 'bg-slate-100 text-slate-800'
@@ -39,6 +48,7 @@ const FoodItems = ({ FoodData }) => {
               totalReview={food?.totalRatings}
               handleToast={handleToast}
               favourite={food?.isFavourite || false}
+              availability={food?.available || 'out_of_stock'}
             />
           ))}
       </div>

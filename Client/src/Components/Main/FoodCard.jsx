@@ -2,7 +2,12 @@ import React, { useState } from 'react';
 import { FaHeart, FaShoppingCart, FaStar, FaInfoCircle } from 'react-icons/fa'; // Import icons from react-icons
 import { useSelector, useDispatch } from 'react-redux';
 import userService from '../../ApiService/userApiService';
-import { setError, setSuccess } from '../../Redux/Slices/UserSlice';
+import {
+  addFavourite,
+  removeFavourite,
+  setError,
+  setSuccess,
+} from '../../Redux/Slices/UserSlice';
 import cartService from '../../ApiService/cartService';
 import { setCart } from '../../Redux/Slices/CartSlice';
 
@@ -17,11 +22,11 @@ const FoodCard = ({
   handleToast,
   favourite,
   totalReview,
+  availability,
 }) => {
   const dispatch = useDispatch();
   const darkMode = useSelector((state) => state.theme.isDarkMode);
 
-  
   const [isFavourite, setisFavourite] = useState(favourite);
   const [isHovered, setIsHovered] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
@@ -47,7 +52,10 @@ const FoodCard = ({
     const res = isFavourite
       ? await userService.removeFavourite({ _id: id })
       : await userService.addFavourite({ _id: id });
+    console.log(res);
+
     if (res) {
+      isFavourite ? dispatch(removeFavourite(id)) : dispatch(addFavourite(id));
       setisFavourite(!isFavourite);
     }
   };
@@ -64,7 +72,7 @@ const FoodCard = ({
         <img
           src={img}
           alt={name}
-          className='w-full h-40 object-cover transform transition-transform duration-700 group-hover:scale-110'
+          className='w-96 aspect-video object-cover object-center transform transition-transform duration-700 group-hover:scale-110'
         />
         <div className='absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300' />
 
@@ -91,21 +99,23 @@ const FoodCard = ({
         </button>
 
         <div className='absolute bottom-3 left-3 right-3 flex justify-between items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300'>
-          {rating>0 && <span className='px-3 py-1 rounded-full text-sm bg-white/20 backdrop-blur-md text-white'>
-            {Array.from({ length: 5 }, (_, index) => (
-              <FaStar
-                key={index}
-                className={`w-4 h-4 inline ${
-                  index < rating ? 'fill-yellow-400' : 'fill-gray-400'
-                }`}
-              />
-            ))}
-            {/* totalReview pending */}
-          </span>}
+          {rating > 0 && (
+            <span className='px-3 py-1 rounded-full text-sm bg-white/20 backdrop-blur-md text-white'>
+              {Array.from({ length: 5 }, (_, index) => (
+                <FaStar
+                  key={index}
+                  className={`w-4 h-4 inline ${
+                    index < rating ? 'fill-yellow-400' : 'fill-gray-400'
+                  }`}
+                />
+              ))}
+              {/* totalReview pending */}
+            </span>
+          )}
           <span
             className={`px-3 py-1 rounded-full text-sm ${
               darkMode ? 'bg-gray-800/90' : 'bg-white/90'
-            } backdrop-blur-md ${textColor} ml-auto` }
+            } backdrop-blur-md ${textColor} ml-auto`}
           >
             ₹{price}
           </span>
@@ -113,7 +123,20 @@ const FoodCard = ({
       </div>
 
       <div className='flex flex-col gap-3 p-5'>
-        <h3 className={`font-bold text-lg ${textColor} mb-1`}>{name}</h3>
+        <div className='flex'>
+          <h3 className={`font-bold text-lg ${textColor} mb-1`}>{name}</h3>
+          <span
+            className={`px-2 ml-auto text-md py-1 rounded-full ${
+              availability === 'in_stock'
+                ? 'bg-green-50 text-green-600'
+                : availability === 'limited_stock'
+                ? 'bg-yellow-50 text-yellow-600'
+                : 'bg-red-50 text-red-600'
+            }`}
+          >
+            {availability?.toUpperCase()}
+          </span>
+        </div>
         <p className={`text-sm ${descColor} line-clamp-2`}>{desc}</p>
 
         <button

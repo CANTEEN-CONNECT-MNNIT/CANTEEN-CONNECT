@@ -1,30 +1,32 @@
+import Canteen from '../models/canteenmodel.js';
 import Fooditem from '../models/fooditemmodel.js';
-import Order from '../models/ordermodel.js';
 import Rating from '../models/ratingmodel.js';
 import ApiError from '../utils/apierror.js';
 import asynchandler from '../utils/asynchandler.js';
 
 export const addreview = asynchandler(async (req, res, next) => {
-  const f_id = req.params.id;
+  const c_id = req.params.id;
 
-  const isorder = await Order.find({
-    user: req.user._id,
-    status: { $in: ['Delivered', 'Success'] },
-    'fooditems._id': f_id,
-  });
+  // const isorder = await Order.find({
+  //   user: req.user._id,
+  //   status: { $in: ['Delivered', 'Success'] },
+  //   canteen: c_id,
+  // });
 
-  if (!isorder) {
-    return next(new ApiError('You have to accept the order to review it', 400));
-  }
-  const existed_review = await Rating.findOne({
-    fooditem: f_id,
-    user: req.user._id,
-  });
-  if (existed_review) {
-    return next(new ApiError('You have already review it', 400));
-  }
+  // if (!isorder) {
+  //   return next(new ApiError('You have to accept the order to review it', 400));
+  // }
+  // const existed_review = await Rating.findOne({
+  //   fooditem: f_id,
+  //   user: req.user._id,
+  // });
+  // if (existed_review) {
+  //   return next(new ApiError('You have already review it', 400));
+  // }
 
   const { rating, review } = req.body;
+
+  // console.log({ rating, review });
 
   if (!rating || !review) {
     return next(new ApiError('You do not enter all the fields', 400));
@@ -34,7 +36,7 @@ export const addreview = asynchandler(async (req, res, next) => {
     rating,
     review,
     user: req.user._id,
-    fooditem: f_id,
+    canteen: c_id,
   });
 
   if (!newreview) {
@@ -61,18 +63,20 @@ export const editreview = asynchandler(async (req, res, next) => {
     return next(new ApiError('You do not enter all the fields', 400));
   }
 
+  console.log({ rating, review });
+
   if (rating) {
-    const reqfooditem = await Fooditem.findById(reqreview.fooditem);
+    const reqcanteen = await Canteen.findById(reqreview.canteen);
 
-    if (!reqfooditem) {
-      return next(new ApiError('FoodItem Not found', 400));
+    if (!reqcanteen) {
+      return next(new ApiError('Canteen Not found', 400));
     }
-    reqfooditem.averageRating =
-      (reqfooditem.averageRating * reqfooditem.totalRatings -
-        reqreview.rating) /
-      (reqfooditem.totalRatings - 1);
-
-    reqfooditem.save();
+    reqcanteen.averageRating =
+      (reqcanteen.averageRating * reqcanteen.totalRatings -
+        reqreview.rating +
+        rating) /
+        reqcanteen.totalRatings || 0;
+    reqcanteen.save();
   }
 
   const updatedreview = await Rating.findByIdAndUpdate(
@@ -97,17 +101,17 @@ export const deletereview = asynchandler(async (req, res, next) => {
     return next(new ApiError('Review not found to delete', 400));
   }
 
-  const reqfooditem = await Fooditem.findById(reqreview.fooditem);
-  console.log(reqfooditem);
+  const reqcanteen = await Canteen.findById(reqreview.canteen);
+  console.log(reqcanteen);
   console.log(reqreview);
-  if (!reqfooditem) {
-    return next(new ApiError('FoodItem Not found', 400));
+  if (!reqcanteen) {
+    return next(new ApiError('Canteen Not found', 400));
   }
-  reqfooditem.averageRating =
-    (reqfooditem.averageRating * reqfooditem.totalRatings - reqreview.rating) /
-      (reqfooditem.totalRatings - 1) || 0;
-  reqfooditem.totalRatings -= 1;
-  reqfooditem.save();
+  reqcanteen.averageRating =
+    (reqcanteen.averageRating * reqcanteen.totalRatings - reqreview.rating) /
+      (reqcanteen.totalRatings - 1) || 0;
+  reqcanteen.totalRatings -= 1;
+  reqcanteen.save();
   await Rating.findByIdAndDelete(r_id);
 
   res.status(201).json({
@@ -116,30 +120,30 @@ export const deletereview = asynchandler(async (req, res, next) => {
 });
 
 export const getall = asynchandler(async (req, res, next) => {
-  const f_id = req.params.id;
+  const c_id = req.params.id;
   let { page, limit } = req.query;
   page = parseInt(page) || 1;
   limit = parseInt(limit) || 5;
-  console.log(f_id);
-  
-  const foodItem = await Fooditem.findById(f_id);
-  console.log(foodItem);
-  
-  if (!foodItem) {
-    return next(new ApiError('Food Item not Found', 400));
+
+  const reqcanteen = await Canteen.findById(c_id);
+
+  if (!reqcanteen) {
+    return next(new ApiError('Canteen not Found', 400));
   }
-  console.log(foodItem);
-  console.log(f_id);
 
-  // Count total number of reviews
-  const totalReviews = await Rating.countDocuments({ fooditem: f_id });
+  const totalReviews = await Rating.countDocuments({ canteen: c_id });
 
-  const allreviews = await Rating.find({ fooditem: f_id })
-    .populate('user')
+  const allreviews = await Rating.find({ canteen: c_id })
+    .populate({ path: 'user', select: 'name image' })
+    .sort({ [`${req.user?.role === 'Canteen' ? 'rating' : 'updatedAt'}`]: -1 })
     .skip((page - 1) * limit)
     .limit(limit);
 
-  const userReview = await Rating.findOne({ fooditem: f_id, user: req.user?._id }).populate('user') || null;
+  const userReview =
+    (await Rating.findOne({ canteen: c_id, user: req.user?._id }).populate({
+      path: 'user',
+      select: 'name image',
+    })) || null;
 
   const totalPages = Math.ceil(totalReviews / limit);
 
@@ -151,5 +155,37 @@ export const getall = asynchandler(async (req, res, next) => {
       currentPage: page,
       totalPages: totalPages,
     },
+  });
+});
+
+export const fooditemrating = asynchandler(async (req, res, next) => {
+  const { fooditem_ratings } = req.body;
+  if (!fooditem_ratings) {
+    return next(new ApiError('Cannot get the data', 404));
+  }
+  await Promise.all(
+    fooditem_ratings.map(async ({ _id, rating }) => {
+      const reqfooditem = await Fooditem.findById(_id);
+
+      if (!reqfooditem) {
+        throw new ApiError(`Food Item with ID ${_id} not found`, 404);
+      }
+
+      reqfooditem.totalRatings += 1;
+
+      if (isNaN(reqfooditem.averageRating)) {
+        reqfooditem.averageRating = 0;
+      }
+      reqfooditem.averageRating =
+        ((reqfooditem.averageRating || 0) * (reqfooditem.totalRatings - 1) +
+          rating) /
+        reqfooditem.totalRatings;
+
+      await reqfooditem.save();
+    })
+  );
+
+  res.status(201).json({
+    message: 'Food item rated sucessfully',
   });
 });

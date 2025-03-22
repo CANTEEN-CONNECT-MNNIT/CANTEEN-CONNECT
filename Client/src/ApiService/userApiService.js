@@ -12,15 +12,15 @@ class UserService {
     });
     // Add Response Interceptor
     this.api.interceptors.response.use(
-    (response) => response, // Pass successful responses
-    (error) => {
-      if (error?.response && error.response?.status === 401) {
-        console.warn('Unauthorized! Logging out user...');
-        Store.dispatch(logout()); // Dispatch logout action
+      (response) => response, // Pass successful responses
+      (error) => {
+        if (error?.response && error.response?.status === 401) {
+          console.warn('Unauthorized! Logging out user...');
+          Store.dispatch(logout()); // Dispatch logout action
+        }
+        return Promise.reject(error); // Reject error for further handling
       }
-      return Promise.reject(error); // Reject error for further handling
-    }
-  );
+    );
   }
 
   logout = async () => {
@@ -63,7 +63,7 @@ class UserService {
       const response = await this.api.get('me');
       console.log('userApi/getMe: ', response);
       if (response) {
-        return response?.data;
+        return response?.data?.data?.getuser;
       }
     } catch (error) {
       console.log('userApi/getMe: ', error);

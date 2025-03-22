@@ -34,19 +34,22 @@ export default function OrderSummary({
 
       {expanded && (
         <div className='space-y-3 mb-4 border-t pt-4'>
-          {items.map((item, index) => (
-            <div
-              key={index}
-              className={`${
-                darkMode ? 'text-gray-300' : 'text-gray-700'
-              } flex justify-between text-sm`}
-            >
-              <span>
-                {item.name} x {item.quantity}
-              </span>
-              <span>₹{(item.price * item.quantity).toFixed(2)}</span>
-            </div>
-          ))}
+          {items.map(
+            (item, index) =>
+              item?.quantity > 0 && (
+                <div
+                  key={index}
+                  className={`${
+                    darkMode ? 'text-gray-300' : 'text-gray-700'
+                  } flex justify-between text-sm`}
+                >
+                  <span>
+                    {item.name} x {item.quantity}
+                  </span>
+                  <span>₹{(item.price * item.quantity).toFixed(2)}</span>
+                </div>
+              )
+          )}
         </div>
       )}
 

@@ -2,11 +2,11 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   user: null,
-  canteen:null,
+  canteen: null,
   status: false,
   loading: false,
   error: '',
-  success:'',
+  success: '',
 };
 
 const userSlice = createSlice({
@@ -21,15 +21,15 @@ const userSlice = createSlice({
       state.loading = false;
       // console.log(action.payload)
       state.user = action.payload;
-      state.status=true;
+      state.status = true;
     },
     loginFailure: (state, action) => {
       state.loading = false;
       state.error = action.payload;
     },
     logout: () => initialState,
-    setCanteen:(state,action)=>{
-      state.canteen=action.payload;
+    setCanteen: (state, action) => {
+      state.canteen = action.payload;
     },
     setError: (state, action) => {
       state.error = action.payload;
@@ -42,6 +42,18 @@ const userSlice = createSlice({
     },
     clearSuccess: (state) => {
       state.success = '';
+    },
+    addFavourite: (state, action) => {
+      if (state.status && state.user) {
+        state.user.favourite.push(action.payload);
+      }
+    },
+    removeFavourite: (state, action) => {
+      if (state.status && state.user) {
+        state.user.favourite = state.user.favourite.filter(
+          (item) => item !== action.payload
+        );
+      }
     },
   },
 });
@@ -56,6 +68,8 @@ export const {
   setSuccess,
   setCanteen,
   clearSuccess,
+  addFavourite,
+  removeFavourite,
 } = userSlice.actions;
 
 export default userSlice.reducer;

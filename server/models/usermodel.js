@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import validator from 'validator';
-
+import crypto from 'crypto';
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -66,6 +66,8 @@ const userSchema = new mongoose.Schema({
       ref: 'Fooditem',
     },
   ],
+  passwordResetToken: String,
+  passwordResetExpires: Date,
 });
 
 userSchema.pre('save', async function (next) {
