@@ -19,9 +19,9 @@ const MerchantProfile = ({ onClose }) => {
   const [image, setImage] = useState(null);
   const [currImage, setCurrImage] = useState(canteen.image);
   const [edited, setEdited] = useState(false);
-  const [isloading,setIsLoading]=useState(false);
+  const [isloading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
-  const profileRef=useRef(null);
+  const profileRef = useRef(null);
 
   const imageUpdate = (e) => {
     const file = e.target.files[0];
@@ -61,8 +61,8 @@ const MerchantProfile = ({ onClose }) => {
 
   const submitData = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
     if (!validateData()) return;
+    setIsLoading(true);
     console.log('Updated Canteen:', {
       name,
       image,
@@ -103,14 +103,13 @@ const MerchantProfile = ({ onClose }) => {
         dispatch(setMerchantProfileOpen(false));
       }
     };
-  
+
     document.addEventListener('mousedown', handleClickOutside);
-    
+
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
-  
 
   const handleCanteenChange = (e) => {
     const { name, value } = e.target;
@@ -320,9 +319,11 @@ const MerchantProfile = ({ onClose }) => {
         {edited && (
           <button
             onClick={!isloading && submitData}
-            className={`mb-4 w-full ${isloading?'bg-green-500':'bg-orange-500 hover:bg-orange-600 '} text-white py-2 rounded-lg transition-colors`}
+            className={`mb-4 w-full ${
+              isloading ? 'bg-green-500' : 'bg-orange-500 hover:bg-orange-600 '
+            } text-white py-2 rounded-lg transition-colors`}
           >
-            {isloading?'Updating...':'Save Changes'}
+            {isloading ? 'Updating...' : 'Save Changes'}
           </button>
         )}
 

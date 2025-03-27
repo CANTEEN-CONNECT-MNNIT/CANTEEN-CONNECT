@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import mongooseAggregatePaginate from 'mongoose-aggregate-paginate-v2';
 
 const orderSchema = new mongoose.Schema(
   {
@@ -42,10 +43,15 @@ const orderSchema = new mongoose.Schema(
         },
       },
     ],
+    total_price: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );
 
+orderSchema.plugin(mongooseAggregatePaginate);
 const Order = mongoose.model('Order', orderSchema);
 
 export default Order;

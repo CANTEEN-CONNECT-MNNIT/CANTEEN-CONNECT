@@ -5,7 +5,7 @@ import ApiError from '../utils/apierror.js';
 import asynchandler from '../utils/asynchandler.js';
 
 export const getall = asynchandler(async (req, res, next) => {
-  let allorders;
+  let allorders, pendingcount;
   if (req.user.role === 'Student') {
     const user_id = req.user._id;
 
@@ -19,6 +19,10 @@ export const getall = asynchandler(async (req, res, next) => {
       'canteen fooditems._id'
     );
     console.log(allorders);
+    pendingcount = await Order.countDocuments({
+      status: { $in: ['Pending', 'Preparing', 'Ready for pickup'] },
+      user: user_id,
+    });
   } else {
     const reqcanteen = await Canteen.findOne({ owner: req.user._id });
     if (!reqcanteen) {
@@ -27,10 +31,16 @@ export const getall = asynchandler(async (req, res, next) => {
     allorders = await Order.find({ canteen: reqcanteen._id })
       .populate('canteen fooditems._id')
       .populate({ path: 'user', select: 'name' });
+
+    pendingcount = await Order.countDocuments({
+      status: { $in: ['Pending', 'Preparing', 'Ready for pickup'] },
+      canteen: reqcanteen._id,
+    });
   }
   return res.status(201).json({
     message: 'All Order fetched Sucessfully',
     data: allorders,
+    pendingcount,
   });
 });
 
@@ -45,13 +55,17 @@ export const createorder = asynchandler(async (req, res, next) => {
     console.log(element.fooditems);
   });
   const orders = await Promise.all(
-    allitemsbycanteen.map((eachcanteenorder) =>
-      Order.create({
+    allitemsbycanteen.map((eachcanteenorder) => {
+      const total_price = eachcanteenorder.fooditems.reduce((acc, cur) => {
+        return acc + cur.price;
+      }, 0);
+      return Order.create({
         user: req.user._id,
         canteen: eachcanteenorder.canteenId,
         fooditems: eachcanteenorder.fooditems,
-      })
-    )
+        total_price,
+      });
+    })
   );
 
   req.user.cart = [];

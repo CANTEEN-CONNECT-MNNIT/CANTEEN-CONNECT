@@ -5,6 +5,7 @@ import {
   getall,
   getcanteen,
   deletecanteen,
+  dashboard,
 } from '../controller/canteencontroller.js';
 import { upload } from '../controller/filecontrollers.js';
 import { restrict_to } from '../controller/authcontroller.js';
@@ -20,4 +21,5 @@ router.patch(
   upload.single('image'),
   updatecanteen
 );
+router.get('/dashboard', dashboard);
 export default router;

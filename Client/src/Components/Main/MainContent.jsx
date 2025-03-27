@@ -58,7 +58,7 @@ const MainContent = () => {
     try {
       const res = await canteenService.getCanteen();
       console.log(res);
-      
+
       if (res) {
         setAllCanteen(res?.data);
         setTrendingItems(res?.trending_items);
@@ -116,9 +116,11 @@ const MainContent = () => {
           </div>
         )}
 
-        {trendingItems?.length>2 && <div className={`relative top-24 text-2xl font-bold mb-6`}>
-          <TrendingFood list={trendingItems} />
-        </div>}
+        {trendingItems?.length > 2 && (
+          <div className={`relative top-24 text-2xl font-bold mb-6`}>
+            <TrendingFood list={trendingItems} />
+          </div>
+        )}
 
         {allCanteen?.length > 0 &&
           allCanteen.map(

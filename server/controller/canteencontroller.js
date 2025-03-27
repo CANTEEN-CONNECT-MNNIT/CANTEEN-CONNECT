@@ -1,5 +1,6 @@
 import Canteen from '../models/canteenmodel.js';
 import Fooditem from '../models/fooditemmodel.js';
+import Order from '../models/ordermodel.js';
 import User from '../models/usermodel.js';
 import ApiError from '../utils/apierror.js';
 import asynchandler from '../utils/asynchandler.js';
@@ -17,8 +18,16 @@ export const addcanteen = asynchandler(async (req, res, next) => {
     return next(new ApiError('User is Not found', 401));
   }
 
-  const { name, description, canteenId, phone, address, openTime, closeTime } =
-    req.body;
+  const {
+    name,
+    description,
+    canteenId,
+    phone,
+    address,
+    openTime,
+    closeTime,
+    daily_target,
+  } = req.body;
 
   const uploadedfile = await uploadOnCloudinary(req.file?.path);
 
@@ -40,6 +49,7 @@ export const addcanteen = asynchandler(async (req, res, next) => {
     closeTime,
     image: uploadedfile?.url || '',
     owner: req.user._id,
+    daily_target,
   });
 
   if (!newcanteen) {
@@ -64,6 +74,7 @@ export const updatecanteen = asynchandler(async (req, res, next) => {
     address,
     openingtime: openTime,
     closingtime: closeTime,
+    daily_target,
   } = req.body;
 
   const id = req.params.id;
@@ -93,6 +104,7 @@ export const updatecanteen = asynchandler(async (req, res, next) => {
       closeTime,
       image: uploadedfile?.url || reqcanteen.image,
       owner: req.user._id,
+      daily_target,
     },
     { new: true, runValidators: true }
   );
@@ -170,6 +182,122 @@ export const getcanteen = asynchandler(async (req, res, next) => {
     message: 'Canteen fetch sucessfully',
     data: {
       reqcanteen,
+    },
+  });
+});
+
+export const dashboard = asynchandler(async (req, res, next) => {
+  const nowdate = new Date();
+  const onemonthago = new Date();
+  onemonthago.setMonth(nowdate.getMonth() - 1);
+  const oneweekago = new Date();
+  oneweekago.setDate(nowdate.getDate() - 7);
+  const onedayago = new Date();
+  onedayago.setDate(nowdate.getDate() - 1);
+  const canteen = await Canteen.findOne({ owner: req.user._id });
+  const c_id = canteen._id;
+  const orders = await Order.aggregate([
+    {
+      $match: {
+        canteen: c_id,
+      },
+    },
+    {
+      $facet: {
+        month: [
+          {
+            $match: {
+              createdAt: { $gte: onemonthago },
+            },
+          },
+          {
+            $group: {
+              totalmonthrevenue: { $sum: '$total_price' },
+              totalmonthsale: { $sum: 1 },
+            },
+          },
+          {
+            $addFields: {
+              revenueInMonth: '$totalmonthrevenue',
+              saleCountInMonth: '$totalmonthsale',
+            },
+          },
+        ],
+        week: [
+          {
+            $match: {
+              createdAt: { $gte: oneweekago },
+            },
+          },
+          {
+            $group: {
+              totalweekrevenue: { $sum: '$total_price' },
+              totalweeksale: { $sum: 1 },
+            },
+          },
+          {
+            $addFields: {
+              revenueInweek: '$totalweekrevenue',
+              saleCountInweek: '$totalweeksale',
+            },
+          },
+        ],
+        day: [
+          {
+            $match: {
+              createdAt: { $gte: onedayago },
+            },
+          },
+          {
+            $group: {
+              totaldayrevenue: { $sum: '$total_price' },
+              totaldaysale: { $sum: 1 },
+            },
+          },
+          {
+            $addFields: {
+              revenueInday: '$totaldayrevenue',
+              saleCountInday: '$totaldaysale',
+            },
+          },
+        ],
+        peak_hour: [
+          {
+            $match: {
+              createdAt: { $gte: oneweekago },
+            },
+          },
+          {
+            $project: {
+              hour: {
+                $hour: '$createdAt',
+              },
+            },
+          },
+          {
+            $group: {
+              _id: '$hour',
+              ordercount: { $sum: 1 },
+            },
+          },
+          {
+            $sort: { ordercount: -1 },
+          },
+          {
+            $limit: 1,
+          },
+        ],
+      },
+    },
+  ]);
+
+  const num_fooditems = await Fooditem.countDocuments({ canteen: c_id });
+
+  res.status(201).json({
+    message: 'Dashboard Data fetch Sucessfully',
+    data: {
+      orders,
+      num_fooditems,
     },
   });
 });
