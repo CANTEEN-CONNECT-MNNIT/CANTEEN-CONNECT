@@ -45,7 +45,7 @@ const MainContent = () => {
       console.log(res);
 
       if (res) {
-        setFoodList(res);
+        setFoodList(res?.allitems);
         dispatch(setSearch(''));
       }
     } catch (error) {

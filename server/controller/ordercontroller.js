@@ -6,6 +6,11 @@ import asynchandler from '../utils/asynchandler.js';
 
 export const getall = asynchandler(async (req, res, next) => {
   let allorders, pendingcount;
+  let totalPages=0;
+  let totalOrders=0;
+  let { page, limit } = req.query;
+  page = parseInt(page) || 1;
+  limit = parseInt(limit) || 5;
   if (req.user.role === 'Student') {
     const user_id = req.user._id;
 
@@ -15,9 +20,17 @@ export const getall = asynchandler(async (req, res, next) => {
       return next(new ApiError('User Not Found', 403));
     }
 
-    allorders = await Order.find({ user: user_id }).populate(
+    allorders = await Order.find({ user: user_id })
+    .sort({ createdAt: -1 })
+    .skip((page - 1) * limit)
+    .limit(limit)
+    .populate(
       'canteen fooditems._id'
     );
+
+    totalOrders = await Order.countDocuments({ user: user_id });
+    totalPages = Math.ceil(totalOrders / limit);
+
     console.log(allorders);
     pendingcount = await Order.countDocuments({
       status: { $in: ['Pending', 'Preparing', 'Ready for pickup'] },
@@ -29,8 +42,14 @@ export const getall = asynchandler(async (req, res, next) => {
       return next(new ApiError('Canteen Not found', 404));
     }
     allorders = await Order.find({ canteen: reqcanteen._id })
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit)
       .populate('canteen fooditems._id')
       .populate({ path: 'user', select: 'name' });
+    
+    totalOrders = await Order.countDocuments({ canteen: reqcanteen._id });
+    totalPages = Math.ceil(totalOrders / limit);
 
     pendingcount = await Order.countDocuments({
       status: { $in: ['Pending', 'Preparing', 'Ready for pickup'] },
@@ -39,8 +58,12 @@ export const getall = asynchandler(async (req, res, next) => {
   }
   return res.status(201).json({
     message: 'All Order fetched Sucessfully',
-    data: allorders,
-    pendingcount,
+    data: {
+      allorders,
+      totalPages,
+      pendingcount,
+      totalOrders,
+    }
   });
 });
 

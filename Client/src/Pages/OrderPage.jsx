@@ -11,27 +11,27 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setactiveMenu, setOpen, toggleOpen } from '../Redux/Slices/pageSlice';
 import { setOpen as setCartOpen } from '../Redux/Slices/CartSlice';
 import { Footer } from '../Components/Home/Footer';
-import { useAllOrders } from '../Data/OrderData';
+// import { useAllOrders } from '../Data/OrderData';
 
 function Orderpage() {
-  const { data: orders } = useAllOrders();
+  // const { data: orders } = useAllOrders();
   const isOpen = useSelector((state) => state.page.isOpen);
   const dispatch = useDispatch();
   const darkMode = useSelector((state) => state.theme.isDarkMode);
   const [activeFilter, setActiveFilter] = useState('All Orders');
   const [selectedCanteen, setSelectedCanteen] = useState('All Canteens');
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  // const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [orderDetails,setOrderDetails]=useState('');
 
-  const statusCounts = useMemo(() => {
-    if (!orders) return {};
-    console.log('orders');
+  // const statusCounts = useMemo(() => {
+  //   if (!orders) return {};
+  //   console.log('orders');
     
-    return orders.reduce((counts, order) => {
-      counts[order.status] = (counts[order.status] || 0) + 1;
-      return counts;
-    }, {});
-  }, [orders]);
+  //   return orders?.allorders.reduce((counts, order) => {
+  //     counts[order.status] = (counts[order.status] || 0) + 1;
+  //     return counts;
+  //   }, {});
+  // }, [orders]);
   
   
 
@@ -69,7 +69,6 @@ function Orderpage() {
   const footerRef = useRef(null);
   const navigate = useNavigate();
 
-  console.log(statusCounts);
   
   return (
     <div
@@ -113,7 +112,7 @@ function Orderpage() {
             </button>
           </header>
 
-          <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-${Object.keys(statusCounts)?.length} gap-4`}>
+          {/* <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-${Object.keys(statusCounts)?.length} gap-4`}>
             {stats.map(({ name, icon: Icon, color }) => (
               statusCounts[name]>0 && <div
                 key={name}
@@ -146,7 +145,7 @@ function Orderpage() {
                 </div>
               </div>
             ))}
-          </div>
+          </div> */}
 
           <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
             <CanteenFilter

@@ -21,5 +21,5 @@ router.patch(
   upload.single('image'),
   updatecanteen
 );
-router.get('/dashboard', dashboard);
+router.get('/dashboard',restrict_to('Canteen'), dashboard);
 export default router;

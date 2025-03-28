@@ -3,33 +3,53 @@ import { FaCamera, FaEdit, FaTrashAlt, FaUtensils } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
 import foodService from '../../ApiService/foodService';
 import { setError, setSuccess } from '../../Redux/Slices/UserSlice';
+import { v4 as uuid } from 'uuid';
 
 export default function MenuManagement() {
   const darkMode = useSelector((state) => state.theme.isDarkMode);
   const [menuItems, setMenuItems] = useState([]);
+  const [currPage,setCurrPage]=useState(1);
+  const [totalPages,setTotalPages]=useState(1);
   const [editItem, setEditItem] = useState(null);
   const [image, setImage] = useState(null);
   const [currImage, setCurrImage] = useState(null);
   const [isloading,setIsLoading]=useState(false);
   const dispatch = useDispatch();
   const editItemRef=useRef(null);
+  const menuRef=useRef(null);
 
   const { canteen } = useSelector((state) => state.user);
 
   const fetchItems = async () => {
     try {
-      const res = await foodService.getAll({ canteen: canteen?._id });
-      console.log(res);
-      if (res) setMenuItems(res);
+      const res = await foodService.getAll({ canteen: canteen?._id ,page: currPage, limit:5});
+      if (res) {
+        setMenuItems((prev) => [...prev, ...res?.allitems]);
+        setTotalPages(res?.totalPages);
+      }
     } catch (error) {
       dispatch(setError(error?.response?.data.message));
       console.error(error);
     }
   };
 
+  const handleScroll = () => {
+    if (!menuRef.current) return;
+
+    const { scrollTop, scrollHeight, clientHeight } = menuRef.current;
+
+    // Check if scrolled to bottom of the container
+    if (
+      scrollTop + clientHeight >= scrollHeight - 10 &&
+      currPage < totalPages
+    ) {
+      setCurrPage((prev) => prev + 1); // Load more
+    }
+  };
+
   useEffect(() => {
     fetchItems();
-  }, []);
+  }, [currPage]);
 
   const handleEdit = (item) => {
     setEditItem(item);
@@ -319,27 +339,32 @@ export default function MenuManagement() {
       )}
 
       <div className='overflow-x-auto'>
-        <table className='w-full table-auto'>
-          <thead>
-            <tr className='text-left border-b border-gray-200'>
-              <th className='pb-3 text-sm font-medium'>Item Name</th>
-              <th className='pb-3 text-sm font-medium'>Price (&#8377;)</th>
-              <th className='pb-3 text-sm font-medium'>Description</th>
-              <th className='pb-3 text-sm font-medium'>available</th>
-              <th className='pb-3 text-sm font-medium'>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
+          <div>
+              <ul className=' grid grid-cols-5 text-left border-b border-gray-200'>
+              <li className='pb-3 text-sm font-medium'>Item Name</li>
+              <li className='pb-3 text-sm font-medium'>Price (&#8377;)</li>
+              <li className='pb-3 text-sm font-medium'>Description</li>
+              <li className='pb-3 text-sm font-medium'>available</li>
+              <li className='pb-3 text-sm font-medium'>Actions</li>
+            </ul>
+          </div>
+          <div 
+          className='max-h-56 overflow-y-scroll hide-scrollbar'
+          ref={menuRef}
+          onScroll={handleScroll}>
+          <ul
+          >
             {menuItems.length > 0 ? (
               menuItems.map((item) => (
-                <tr
-                  key={item._id}
-                  className='border-b border-gray-100 last:border-0'
+                <li 
+                key={uuid()}>
+                <ul
+                  className=' grid grid-cols-5 border-b border-gray-100 last:border-0'
                 >
-                  <td className='py-4'>{item.name}</td>
-                  <td className='py-4'>₹{item.price}</td>
-                  <td className='py-4'>{item.description}</td>
-                  <td className='py-4'>
+                  <li className='py-4'>{item.name}</li>
+                  <li className='py-4'>₹{item.price}</li>
+                  <li className='py-4'>{item.description}</li>
+                  <li className='py-4'>
                     <span
                       className={`px-2 py-1 rounded-full ${
                         item.available === 'in_stock'
@@ -351,8 +376,8 @@ export default function MenuManagement() {
                     >
                       {item.available?.toUpperCase()}
                     </span>
-                  </td>
-                  <td className='py-4 space-x-2'>
+                  </li>
+                  <li className='text-center py-4 space-x-2'>
                     <button
                       onClick={() => handleEdit(item)}
                       className='text-orange-500 hover:text-orange-600'
@@ -365,18 +390,19 @@ export default function MenuManagement() {
                     >
                       <FaTrashAlt className='inline-block w-5 h-5' />
                     </button>
-                  </td>
-                </tr>
+                  </li>
+                  </ul>
+                </li>
               ))
             ) : (
-              <tr>
-                <td colSpan='5' className='py-4 text-center'>
+              <li>
+                <p className='py-4 text-center'>
                   No Items to show!
-                </td>
-              </tr>
+                </p>
+              </li>
             )}
-          </tbody>
-        </table>
+          </ul>
+          </div>
       </div>
     </div>
   );

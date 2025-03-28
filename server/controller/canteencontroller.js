@@ -187,6 +187,7 @@ export const getcanteen = asynchandler(async (req, res, next) => {
 });
 
 export const dashboard = asynchandler(async (req, res, next) => {
+  // Get current date and calculate date ranges
   const nowdate = new Date();
   const onemonthago = new Date();
   onemonthago.setMonth(nowdate.getMonth() - 1);
@@ -194,8 +195,15 @@ export const dashboard = asynchandler(async (req, res, next) => {
   oneweekago.setDate(nowdate.getDate() - 7);
   const onedayago = new Date();
   onedayago.setDate(nowdate.getDate() - 1);
+
+  // Find the canteen associated with the current user
   const canteen = await Canteen.findOne({ owner: req.user._id });
+  if (!canteen) {
+    return res.status(404).json({ message: 'Canteen not found for the user' });
+  }
   const c_id = canteen._id;
+
+  // Aggregation pipeline to get the dashboard data
   const orders = await Order.aggregate([
     {
       $match: {
@@ -212,14 +220,9 @@ export const dashboard = asynchandler(async (req, res, next) => {
           },
           {
             $group: {
+              _id: 'month',
               totalmonthrevenue: { $sum: '$total_price' },
               totalmonthsale: { $sum: 1 },
-            },
-          },
-          {
-            $addFields: {
-              revenueInMonth: '$totalmonthrevenue',
-              saleCountInMonth: '$totalmonthsale',
             },
           },
         ],
@@ -231,14 +234,9 @@ export const dashboard = asynchandler(async (req, res, next) => {
           },
           {
             $group: {
+              _id: 'week',
               totalweekrevenue: { $sum: '$total_price' },
               totalweeksale: { $sum: 1 },
-            },
-          },
-          {
-            $addFields: {
-              revenueInweek: '$totalweekrevenue',
-              saleCountInweek: '$totalweeksale',
             },
           },
         ],
@@ -250,14 +248,9 @@ export const dashboard = asynchandler(async (req, res, next) => {
           },
           {
             $group: {
+              _id: 'day',
               totaldayrevenue: { $sum: '$total_price' },
               totaldaysale: { $sum: 1 },
-            },
-          },
-          {
-            $addFields: {
-              revenueInday: '$totaldayrevenue',
-              saleCountInday: '$totaldaysale',
             },
           },
         ],
@@ -269,9 +262,7 @@ export const dashboard = asynchandler(async (req, res, next) => {
           },
           {
             $project: {
-              hour: {
-                $hour: '$createdAt',
-              },
+              hour: { $hour: '$createdAt' },
             },
           },
           {
@@ -291,12 +282,14 @@ export const dashboard = asynchandler(async (req, res, next) => {
     },
   ]);
 
+  // Get the number of food items for the canteen
   const num_fooditems = await Fooditem.countDocuments({ canteen: c_id });
 
-  res.status(201).json({
-    message: 'Dashboard Data fetch Sucessfully',
+  // Respond with the data
+  res.status(200).json({
+    message: 'Dashboard data fetched successfully',
     data: {
-      orders,
+      orders: orders[0], // Access the first (and only) result from the facet aggregation
       num_fooditems,
     },
   });

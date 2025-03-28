@@ -68,12 +68,20 @@ export const getall = asynchandler(async (req, res, next) => {
   let queryobj = req.query;
   let allitems = [];
   console.log(queryobj);
+  let totalPages=0;
   if (req.user.role === 'Canteen') {
     const reqcanteen = await Canteen.findOne({ owner: req.user._id });
     if (!reqcanteen) {
       return next(new ApiError('Canteen Not found', 404));
     }
-    allitems = await Fooditem.find({ canteen: reqcanteen._id });
+    let { page, limit } = req.query;
+    page = parseInt(page) || 1;
+    limit = parseInt(limit) || 5;
+    allitems = await Fooditem.find({ canteen: reqcanteen._id })
+    .skip((page - 1) * limit)
+    .limit(limit);
+    totalPages = await Fooditem.countDocuments({ canteen: reqcanteen._id });
+    totalPages = Math.ceil(totalPages / limit);
   } else {
     const applyfilter = new Apifeature(Fooditem.find(), queryobj).filter();
 
@@ -83,6 +91,7 @@ export const getall = asynchandler(async (req, res, next) => {
     message: 'sucess',
     data: {
       allitems,
+      totalPages,
     },
   });
 });
