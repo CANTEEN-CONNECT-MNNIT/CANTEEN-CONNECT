@@ -7,6 +7,7 @@ import RevenueStats from '../Components/Canteen-Merchant/RevenueStats';
 import MenuManagement from '../Components/Canteen-Merchant/MenuMangement';
 import CustomerFeedback from '../Components/Canteen-Merchant/CustomerFeedback';
 import { useDispatch, useSelector } from 'react-redux';
+import { DetailedAnalytics } from '../Components/Canteen-Merchant/DetailedAnalytics';
 const CanteenPage = () => {
   const CurrentPage = useSelector((state) => state.page.currentPage);
   const isOpen = useSelector((state) => state.page.isOpen);
@@ -31,7 +32,8 @@ const CanteenPage = () => {
         </div>
         {/* Main Content Sections */}
         <div className='flex flex-col gap-8 h-full mb-32 w-full'>
-          <RevenueStats />
+          {/* <RevenueStats /> */}
+          <DetailedAnalytics/>
           <OrdersDetails />
           <MenuManagement />
           <CustomerFeedback />

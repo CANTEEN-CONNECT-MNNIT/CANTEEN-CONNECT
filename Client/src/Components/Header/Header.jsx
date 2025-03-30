@@ -94,7 +94,7 @@ const Header = () => {
                   className={`absolute z-20 top-full left-0 w-full ${
                     darkMode
                       ? 'bg-slate-700 text-white'
-                      : 'bg-white/15 backdrop-blur-sm text-black'
+                      : 'bg-white/95 backdrop-blur-sm text-black'
                   } shadow-lg rounded-lg mt-2 max-h-60 overflow-y-auto`}
                 >
                   {searching ? (

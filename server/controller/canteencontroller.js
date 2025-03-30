@@ -241,18 +241,16 @@ export const dashboard = asynchandler(async (req, res, next) => {
           },
         ],
         day: [
-          {
-            $match: {
-              createdAt: { $gte: onedayago },
-            },
-          },
-          {
+          { $match: { createdAt: { $gte: oneweekago } } },
+          { 
             $group: {
-              _id: 'day',
-              totaldayrevenue: { $sum: '$total_price' },
+              _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+              totaldayrevenue: { $sum: "$total_price" },
               totaldaysale: { $sum: 1 },
-            },
+              totalfooditems: { $sum: { $sum: "$fooditems.quantity" } } // Avoids `$unwind`
+            }
           },
+          { $sort: { _id: 1 } }
         ],
         peak_hour: [
           {
@@ -262,12 +260,18 @@ export const dashboard = asynchandler(async (req, res, next) => {
           },
           {
             $project: {
-              hour: { $hour: '$createdAt' },
+              localHour: {
+                $dateToString: {
+                  format: "%H", // Extracts hour (00-23) in local time
+                  date: "$createdAt",
+                  timezone: "Asia/Kolkata", // Change this to your region's timezone
+                },
+              },
             },
           },
           {
             $group: {
-              _id: '$hour',
+              _id: "$localHour",
               ordercount: { $sum: 1 },
             },
           },
@@ -277,7 +281,7 @@ export const dashboard = asynchandler(async (req, res, next) => {
           {
             $limit: 1,
           },
-        ],
+        ],        
       },
     },
   ]);
@@ -285,12 +289,17 @@ export const dashboard = asynchandler(async (req, res, next) => {
   // Get the number of food items for the canteen
   const num_fooditems = await Fooditem.countDocuments({ canteen: c_id });
 
+  const trendingFoodItems = await Fooditem.find({ canteen: c_id })
+      .sort({ averageRating: -1 })
+      .limit(5);
+
   // Respond with the data
   res.status(200).json({
     message: 'Dashboard data fetched successfully',
     data: {
       orders: orders[0], // Access the first (and only) result from the facet aggregation
       num_fooditems,
+      trendingFoodItems,
     },
   });
 });

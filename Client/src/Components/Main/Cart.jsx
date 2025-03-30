@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { IoMdClose } from 'react-icons/io';
 import ItemCard from './ItemCard';
 import { useDispatch, useSelector } from 'react-redux';
@@ -19,9 +19,9 @@ const Cart = () => {
   const [totalPrice, setTotalPrice] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
 
-  const enable = useMemo(() => {
-    return !cartItems.some((item) => item?.available === 'out_of_stock');
-  }, [cartItems]);
+  // const enable = useMemo(() => {
+  //   return !cartItems.some((item) => item?.available === 'out_of_stock');
+  // }, [cartItems]);
 
   // Function to add or update an item in a canteen order
   const addOrUpdateItem = (canteenId, itemId, quantity, price, name) => {
@@ -52,6 +52,12 @@ const Cart = () => {
   console.log(canteenOrders);
 
   const handleLessToast = () => dispatch(setError(`Cart is Empty `));
+
+  useEffect(()=>{
+    if(activeCart && totalItems===0){
+      dispatch(toggleOpen());
+    }
+  },[totalItems]);
 
   return (
     <>
@@ -136,7 +142,9 @@ const Cart = () => {
 
       {/* Cart Icon */}
       <FaShoppingCart
-        onClick={() => dispatch(toggleOpen())}
+        onClick={() => {
+          totalItems>0 ? dispatch(toggleOpen()): dispatch(setError("Add Items to Cart!"));
+        }}
         className={`rounded-full size-14 cursor-pointer bg-white shadow-md text-5xl text-slate-700 p-3 fixed bottom-4 right-4 ${
           cartItems?.length > 0 && 'animate-bounce delay-500 transition-all'
         }`}

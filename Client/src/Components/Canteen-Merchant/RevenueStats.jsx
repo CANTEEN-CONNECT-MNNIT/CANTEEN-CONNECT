@@ -1,21 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import {  GiChefToque } from 'react-icons/gi';
+// import {  GiChefToque } from 'react-icons/gi';
 import { useSelector } from 'react-redux';
-import { DetailedAnalytics } from './DetailedAnalytics';
 import canteenService from '../../ApiService/canteenService';
 import { FaChartBar, FaClock, FaRupeeSign, FaUtensils } from 'react-icons/fa';
 
 
 export default function RevenueStats() {
   const [data, setData] = useState(null);
-  const [isAnalyticsOpen, setIsAnalyticsOpen] = useState(false); 
+  // const [isAnalyticsOpen, setIsAnalyticsOpen] = useState(false); 
 
   const fetchData = async () => {
     try {
       let res = await canteenService.getCanteenData();
-      if(!res){
-        res = await canteenService.getAnalyticsData(); 
-      }
       if (res) setData(res);
     } catch (error) {
       console.log(error);
@@ -25,6 +21,8 @@ export default function RevenueStats() {
   useEffect(() => {
     fetchData();
   }, []);
+
+  
 
   const darkMode = useSelector((state) => state.theme.isDarkMode);
 
@@ -54,7 +52,7 @@ export default function RevenueStats() {
 
             <p className="text-sm mt-2 text-gray-400">
               {data?.orders?.peak_hour[0]?._id % 12 || 12} {data?.orders?.peak_hour[0]?._id < 12 ? "AM" : "PM"} - 
-              {(data?.orders?.peak_hour[0]?._id + 1) % 12 || 1} {(data?.orders?.peak_hour[0]?._id + 1) < 12 ? "AM" : "PM"} Rush
+              {(Number(data?.orders?.peak_hour[0]?._id )+1) % 12 || 1} {(Number(data?.orders?.peak_hour[0]?._id )+ 1) < 12 ? "AM" : "PM"} Rush
             </p>
           </div>
 
@@ -70,7 +68,7 @@ export default function RevenueStats() {
 
 
         {/* View Detailed Analytics Button */}
-        <div className="col-span-1 md:col-span-3 mt-6 flex justify-center">
+        {/* <div className="col-span-1 md:col-span-3 mt-6 flex justify-center">
           <button
             onClick={() => setIsAnalyticsOpen((prev) => !prev)}
             className={`${
@@ -86,11 +84,11 @@ export default function RevenueStats() {
             <GiChefToque className="w-4 h-4 mr-2" />
             {isAnalyticsOpen ? "Close Detailed Analytics" : "View Detailed Analytics"}
           </button>
-        </div>
+        </div> */}
       </div>
 
       {/* Detailed Analytics Modal */}
-      {isAnalyticsOpen && <DetailedAnalytics isOpen={isAnalyticsOpen} onToggle={() => setIsAnalyticsOpen(false)} />}
+      {/* {isAnalyticsOpen && <DetailedAnalytics isOpen={isAnalyticsOpen} onToggle={() => setIsAnalyticsOpen(false)} />} */}
     </>
   );
 }

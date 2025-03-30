@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import canteenService from '../../ApiService/canteenService';
 import { setCanteen, setError, setSuccess } from '../../Redux/Slices/UserSlice';
 import { setMerchantProfileOpen } from '../../Redux/Slices/pageSlice';
+import { dateFormat } from '../../utility/dateFormat.js';
 
 const MerchantProfile = ({ onClose }) => {
   const darkMode = useSelector((state) => state.theme.isDarkMode);
@@ -22,6 +23,7 @@ const MerchantProfile = ({ onClose }) => {
   const [isloading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const profileRef = useRef(null);
+  const [todayData,setTodayData] =useState(null);
 
   const imageUpdate = (e) => {
     const file = e.target.files[0];
@@ -105,12 +107,14 @@ const MerchantProfile = ({ onClose }) => {
       console.log(res);
       if(res){
         setCanteenStats(res);
+        setTodayData( res?.orders?.day.find((item)=>dateFormat(item._id)==='Today') || null);
       }
     } catch (error) {
       console.log(error);
       
     }
   }
+  
 
   useEffect(() => {
     fetchData();
@@ -133,23 +137,6 @@ const MerchantProfile = ({ onClose }) => {
     setEdited(true);
     setCanteenData((prev) => ({ ...prev, [name]: value }));
   };
-
-  {
-    /* Merchant Details */
-  }
-  {
-    /*
-        Canteen Merchant Name
-        Canteen Name
-        canteen Email
-        canteen phone no
-        canteen earning 
-        canteen location
-        canteen hours
-        canteen status
-        canteen orders in each day
-        canteen orders per month*/
-  }
 
   return (
     <div
@@ -356,7 +343,7 @@ const MerchantProfile = ({ onClose }) => {
                 darkMode ? 'text-white' : 'text-gray-800'
               }`}
             >
-              30
+              {todayData?.totaldaysale || '-'}
             </div>
             <div
               className={`text-xs ${
@@ -377,7 +364,7 @@ const MerchantProfile = ({ onClose }) => {
                 darkMode ? 'text-white' : 'text-gray-800'
               }`}
             >
-              200
+              {canteenStats?.orders?.month[0]?.totalmonthsale || '-'}
             </div>
             <div
               className={`text-xs ${

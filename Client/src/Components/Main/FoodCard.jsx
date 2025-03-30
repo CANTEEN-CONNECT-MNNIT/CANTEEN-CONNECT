@@ -35,14 +35,15 @@ const FoodCard = ({
 
   const handleAddToCart = async () => {
     try {
+      if(availability==="out_of_stock") return;
       const res = await cartService.updateCart({ _id: id });
         if (res) {
           // console.log("Checking cart response:", res);
-        const addedItem = res.cart.find((item) => item._id === id);
-        if (addedItem?.available === "out_of_stock") {
-          toast.error("Item Out of Stock! ");
-          return; 
-        }
+          //   if (addedItem?.available === "out_of_stock") {
+          //     toast.error("Item Out of Stock! ");
+          //     return; 
+          //   }
+          // const addedItem = res.cart.find((item) => item._id === id);
         dispatch(setCart(res?.cart));
         dispatch(setSuccess('Added to Cart!'));
       }
@@ -147,13 +148,13 @@ const FoodCard = ({
         </div>
         <p className={`text-sm ${descColor} line-clamp-2`}>{desc}</p>
 
-        <button
+        {availability!=="out_of_stock" && <button
           onClick={handleAddToCart}
           className='w-full flex items-center px-6 justify-center gap-4 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white py-2 rounded-xl transition-all duration-300 transform hover:shadow-lg'
         >
           <FaShoppingCart className='w-4 h-4' />
           <span className='font-medium'>Add to Cart</span>
-        </button>
+        </button>}
       </div>
 
       {showInfo && (
