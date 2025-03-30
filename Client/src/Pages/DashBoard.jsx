@@ -7,7 +7,7 @@ import { Footer } from '../Components/Home/Footer';
 import { useDispatch, useSelector } from 'react-redux';
 import Cart from '../Components/Main/Cart';
 import cartService from '../ApiService/cartService';
-import { setCart } from '../Redux/Slices/CartSlice';
+import { setCart } from '../Redux/Slices/cartSlice';
 
 const Dashboard = () => {
   const isOpen = useSelector((state) => state.page.isOpen);

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { MdDelete } from 'react-icons/md';
 import { CiSquarePlus, CiSquareMinus } from 'react-icons/ci';
 import { useDispatch } from 'react-redux';
-import { setCart } from '../../Redux/Slices/CartSlice';
+import { setCart } from '../../Redux/Slices/cartSlice';
 import { setError, setSuccess } from '../../Redux/Slices/UserSlice';
 import cartService from '../../ApiService/cartService';
 

@@ -9,7 +9,7 @@ import Popup from '../Components/Order/Popup';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { setactiveMenu, setOpen, toggleOpen } from '../Redux/Slices/pageSlice';
-import { setOpen as setCartOpen } from '../Redux/Slices/CartSlice';
+import { setOpen as setCartOpen } from '../Redux/Slices/cartSlice';
 import { Footer } from '../Components/Home/Footer';
 // import { useAllOrders } from '../Data/OrderData';
 

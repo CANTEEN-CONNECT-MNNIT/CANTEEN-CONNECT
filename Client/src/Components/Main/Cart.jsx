@@ -4,7 +4,7 @@ import ItemCard from './ItemCard';
 import { useDispatch, useSelector } from 'react-redux';
 import { FaShoppingCart } from 'react-icons/fa';
 // import toast, { Toaster } from 'react-hot-toast';
-import { setOpen, toggleOpen } from '../../Redux/Slices/CartSlice';
+import { setOpen, toggleOpen } from '../../Redux/Slices/cartSlice';
 import { useNavigate } from 'react-router-dom';
 import { setError } from '../../Redux/Slices/UserSlice';
 
@@ -12,7 +12,6 @@ const Cart = () => {
   const { cart: cartItems, isOpen: activeCart } = useSelector(
     (state) => state.cart
   );
-
   const [canteenOrders, setCanteenOrders] = useState(new Map());
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -115,6 +114,7 @@ const Cart = () => {
           <hr className='my-2 border-gray-300' />
           <button
             onClick={() => {
+              console.log('Total Items:', totalItems);
               dispatch(setOpen(false));
               navigate('/paymentGateway', {
                 state: { totalItems, totalPrice, canteenOrders },

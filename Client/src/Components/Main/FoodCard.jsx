@@ -9,7 +9,9 @@ import {
   setSuccess,
 } from '../../Redux/Slices/UserSlice';
 import cartService from '../../ApiService/cartService';
-import { setCart } from '../../Redux/Slices/CartSlice';
+import { setCart } from '../../Redux/Slices/cartSlice';
+import { toast, Toaster } from 'react-hot-toast';
+
 
 const FoodCard = ({
   id,
@@ -26,7 +28,7 @@ const FoodCard = ({
 }) => {
   const dispatch = useDispatch();
   const darkMode = useSelector((state) => state.theme.isDarkMode);
-
+ 
   const [isFavourite, setisFavourite] = useState(favourite);
   const [isHovered, setIsHovered] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
@@ -35,6 +37,12 @@ const FoodCard = ({
     try {
       const res = await cartService.updateCart({ _id: id });
       if (res) {
+        console.log("checking cart")
+        console.log(id);
+        if(res?.cart[id]?.available==="out_of_stock"){
+          toast.error("Item Out of Stock! ");
+          return;
+        }
         dispatch(setCart(res?.cart));
         dispatch(setSuccess('Added to Cart!'));
       }

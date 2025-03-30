@@ -5,7 +5,6 @@ import { dateFormat } from '../../utility/dateFormat.js';
 import { timeFormat } from '../../utility/timeFormat.js';
 
 function OrderDetailsModal({ order, onClose }) {
-  console.log(order);
 
   const darkMode = useSelector((state) => state.theme.isDarkMode);
   const createTime = timeFormat(order?.createdAt);
@@ -148,10 +147,6 @@ function OrderDetailsModal({ order, onClose }) {
             </div>
           </div>
 
-          {/* <div className={`bg-blue-50 rounded-lg p-3 ${darkMode ? 'bg-blue-600' : ''}`}>
-            <h4 className={`text-sm font-medium ${darkMode ? 'text-blue-100' : 'text-blue-900'} mb-1`}>Counter Information</h4>
-            <p className={`text-sm ${darkMode ? 'text-blue-300' : 'text-blue-500'}`}>{order.counter}</p>
-          </div> */}
         </div>
       </div>
     </div>
