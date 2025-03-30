@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { FaHeart, FaShoppingCart, FaStar, FaInfoCircle } from 'react-icons/fa'; // Import icons from react-icons
 import { useSelector, useDispatch } from 'react-redux';
 import userService from '../../ApiService/userApiService';
-import toast from 'react-hot-toast';
 import {
   addFavourite,
   removeFavourite,
@@ -37,12 +36,12 @@ const FoodCard = ({
   const handleAddToCart = async () => {
     try {
       const res = await cartService.updateCart({ _id: id });
-      if (res) {
-        console.log("checking cart")
-        console.log(id);
-        if(res?.cart[id]?.available==="out_of_stock"){
+        if (res) {
+          // console.log("Checking cart response:", res);
+        const addedItem = res.cart.find((item) => item._id === id);
+        if (addedItem?.available === "out_of_stock") {
           toast.error("Item Out of Stock! ");
-          return;
+          return; 
         }
         dispatch(setCart(res?.cart));
         dispatch(setSuccess('Added to Cart!'));
