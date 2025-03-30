@@ -19,7 +19,6 @@ const menuItems = [
   { icon: LuUtensils, label: 'Canteen' },
   { icon: SlLocationPin, label: 'Track Order' },
   { icon: MdFavoriteBorder, label: 'Favorites' },
-  { icon: IoGiftOutline, label: 'Offers' },
   { icon: MdHeadphones, label: 'Contact Us' },
 ];
 

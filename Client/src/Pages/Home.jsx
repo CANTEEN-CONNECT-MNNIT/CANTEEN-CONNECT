@@ -135,8 +135,9 @@ function Home() {
                 Today's Special
               </h2>
             </div>
-
-            <FoodCarousel />
+              <div id='menu'>
+                  <FoodCarousel />
+              </div>
 
             {/* <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12'>
               <CanteenInfo />

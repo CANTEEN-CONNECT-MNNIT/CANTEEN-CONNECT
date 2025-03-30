@@ -10,3 +10,14 @@
     box-sizing: border-box;
     margin: 0; 
 }
+
+@layer utilities {
+    .hide-scrollbar {
+      -ms-overflow-style: none; /* For Internet Explorer and Edge */
+      scrollbar-width: none; /* For Firefox */
+    }
+  
+    .hide-scrollbar::-webkit-scrollbar {
+      display: none; /* Hides scrollbar for WebKit browsers */
+    }
+  }

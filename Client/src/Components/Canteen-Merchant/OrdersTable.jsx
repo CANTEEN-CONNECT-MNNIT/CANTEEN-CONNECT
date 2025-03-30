@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { FaSearch, FaCoffee } from 'react-icons/fa';
 import OrderCard from './OrderCard';
 import OrderDetailsModal from './OrderDetailsModal';
@@ -7,13 +7,18 @@ import { useAllOrders } from '../../Data/OrderData';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { setError, setSuccess } from '../../Redux/Slices/UserSlice';
 import orderService from '../../ApiService/orderService';
+import { v4 as uuid} from 'uuid';
 
 function OrdersTable() {
 
-  const { data: allOrders }= useAllOrders();
+  const [currPage,setCurrPage]=useState(1);
+  const limit=10;
+  const ordersRef=useRef(null);
+  const { data: fetchedData }= useAllOrders(1,currPage*limit);// always same 1st page but varying limit;
+  const totalOrders=fetchedData?.totalOrders || 1;
+  const allOrders=fetchedData?.allorders || [];
   const queryClient=useQueryClient();
   const dispatch=useDispatch();
-  console.log(allOrders);
   
 
   const darkMode = useSelector((state) => state.theme.isDarkMode);
@@ -39,23 +44,35 @@ function OrdersTable() {
     mutation.mutate({_id:orderId, status:newStatus});
   };
 
-  const filterTheOrders = ()=> {
-    setFilteredOrders(allOrders?.filter(order => {
-    const matchesSearch =
-      searchTerm?.length>2 ?
-      order._id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order?.user?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order?.user?._id?.toLowerCase().includes(searchTerm.toLowerCase())
-      :
-      true;
-    const matchesStatus = selectedStatus === 'All' || order?.status === selectedStatus;
-    return matchesSearch && matchesStatus;
-  }) || [])
-};
-
   useEffect(()=>{
-    filterTheOrders();
+    if(!allOrders || allOrders?.length<1) return;
+    setFilteredOrders(allOrders?.filter(order => {
+      const matchesSearch =
+        searchTerm?.length>2 ?
+        order._id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        order?.user?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        order?.user?._id?.toLowerCase().includes(searchTerm.toLowerCase())
+        :
+        true;
+      const matchesStatus = selectedStatus === 'All' || order?.status === selectedStatus;
+      return matchesSearch && matchesStatus;
+    }) || []);
+    
   },[searchTerm,allOrders,selectedStatus]);
+
+  const handleScroll = () => {
+    if (!ordersRef.current) return;
+
+    const { scrollTop, scrollHeight, clientHeight } = ordersRef.current;
+
+    // Check if scrolled to bottom of the container
+    if (
+      scrollTop + clientHeight >= scrollHeight - 10 &&
+      currPage < Math.ceil(totalOrders/limit)
+    ) {
+      setCurrPage((prev) => prev + 1); // Load more
+    }
+  };
 
   return (
     <div
@@ -105,22 +122,27 @@ function OrdersTable() {
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead>
-            <tr
-              className={`${
+          <div>
+            <ul
+              className={`grid grid-cols-5 ${
                 darkMode ? 'bg-gray-700 text-white' : 'bg-gray-50 text-gray-500'
               }`}
             >
-              <th className="px-6 py-3 text-left text-xs font-medium">Order</th>
-              <th className="px-6 py-3 text-left text-xs font-medium">Student</th>
-              <th className="px-6 py-3 text-left text-xs font-medium">Details</th>
-              <th className="px-6 py-3 text-left text-xs font-medium">Status</th>
-              <th className="px-6 py-3 text-left text-xs font-medium">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
-            {filteredOrders.map((order) => (
+              <li className="px-6 py-3 text-left text-xs font-medium">Order</li>
+              <li className="px-6 py-3 text-left text-xs font-medium">Student</li>
+              <li className="px-6 py-3 text-left text-xs font-medium">Details</li>
+              <li className="px-6 py-3 text-left text-xs font-medium">Status</li>
+              <li className="px-6 py-3 text-left text-xs font-medium">Actions</li>
+            </ul>
+          </div>
+          <div 
+          className='max-h-96 overflow-y-scroll divide-y divide-gray-200 hide-scrollbar'
+          ref={ordersRef}
+          onScroll={handleScroll}>
+          <ul
+          >
+            {filteredOrders.length > 0 ? filteredOrders.map((order) => (
+              <li key={uuid()}>
               <OrderCard
                 key={order._id}
                 order={order}
@@ -128,9 +150,16 @@ function OrdersTable() {
                 onViewDetails={() => setSelectedOrder(order)}
                 darkMode={darkMode} 
               />
-            ))}
-          </tbody>
-        </table>
+              </li>
+            )):
+            <li>
+                <p className='py-4 text-center'>
+                  No Orders to show!
+                </p>
+              </li>
+            }
+            </ul>
+          </div>
       </div>
 
       {selectedOrder && (

@@ -54,9 +54,12 @@ class OrderService {
     }
   };
 
-  getOrder = async () => {
+  getOrder = async (data) => {
+    const query = Object.fromEntries(
+      Object.entries(data).filter(([_, v]) => v !== '')
+    );
     try {
-      const response = await this.api.get('all');
+      const response = await this.api.get('all', { params: query });
       console.log('orderApi/getOrder: ', response);
       if (response) {
         return response?.data?.data;

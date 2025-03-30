@@ -5,7 +5,12 @@ import ApiError from '../utils/apierror.js';
 import asynchandler from '../utils/asynchandler.js';
 
 export const getall = asynchandler(async (req, res, next) => {
-  let allorders;
+  let allorders, pendingcount;
+  let totalPages=0;
+  let totalOrders=0;
+  let { page, limit } = req.query;
+  page = parseInt(page) || 1;
+  limit = parseInt(limit) || 5;
   if (req.user.role === 'Student') {
     const user_id = req.user._id;
 
@@ -15,22 +20,50 @@ export const getall = asynchandler(async (req, res, next) => {
       return next(new ApiError('User Not Found', 403));
     }
 
-    allorders = await Order.find({ user: user_id }).populate(
+    allorders = await Order.find({ user: user_id })
+    .sort({ createdAt: -1 })
+    .skip((page - 1) * limit)
+    .limit(limit)
+    .populate(
       'canteen fooditems._id'
     );
+
+    totalOrders = await Order.countDocuments({ user: user_id });
+    totalPages = Math.ceil(totalOrders / limit);
+
     console.log(allorders);
+    pendingcount = await Order.countDocuments({
+      status: { $in: ['Pending', 'Preparing', 'Ready for pickup'] },
+      user: user_id,
+    });
   } else {
     const reqcanteen = await Canteen.findOne({ owner: req.user._id });
     if (!reqcanteen) {
       return next(new ApiError('Canteen Not found', 404));
     }
     allorders = await Order.find({ canteen: reqcanteen._id })
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit)
       .populate('canteen fooditems._id')
       .populate({ path: 'user', select: 'name' });
+    
+    totalOrders = await Order.countDocuments({ canteen: reqcanteen._id });
+    totalPages = Math.ceil(totalOrders / limit);
+
+    pendingcount = await Order.countDocuments({
+      status: { $in: ['Pending', 'Preparing', 'Ready for pickup'] },
+      canteen: reqcanteen._id,
+    });
   }
   return res.status(201).json({
     message: 'All Order fetched Sucessfully',
-    data: allorders,
+    data: {
+      allorders,
+      totalPages,
+      pendingcount,
+      totalOrders,
+    }
   });
 });
 
@@ -45,13 +78,17 @@ export const createorder = asynchandler(async (req, res, next) => {
     console.log(element.fooditems);
   });
   const orders = await Promise.all(
-    allitemsbycanteen.map((eachcanteenorder) =>
-      Order.create({
+    allitemsbycanteen.map((eachcanteenorder) => {
+      const total_price = eachcanteenorder.fooditems.reduce((acc, cur) => {
+        return acc + cur.price;
+      }, 0);
+      return Order.create({
         user: req.user._id,
         canteen: eachcanteenorder.canteenId,
         fooditems: eachcanteenorder.fooditems,
-      })
-    )
+        total_price,
+      });
+    })
   );
 
   req.user.cart = [];

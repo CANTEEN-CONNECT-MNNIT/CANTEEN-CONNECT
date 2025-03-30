@@ -24,6 +24,9 @@ const canteenSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    daily_target: {
+      type: Number,
+    },
     openTime: { type: String },
     closeTime: { type: String },
     fooditems: [

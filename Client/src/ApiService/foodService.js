@@ -77,7 +77,7 @@ class FoodService {
       const response = await this.api.get('getall', { params: query });
       console.log('itemApi/getAll: ', response);
       if (response) {
-        return response?.data?.data?.allitems;
+        return response?.data?.data;
       }
     } catch (error) {
       console.log('itemApi/getAll: ', error);

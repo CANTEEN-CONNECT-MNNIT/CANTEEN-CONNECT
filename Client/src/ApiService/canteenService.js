@@ -108,6 +108,20 @@ class CanteenService {
       throw error;
     }
   };
+
+  getCanteenData = async () => {
+    try {
+      const response = await this.api.get(`dashboard`);
+      console.log('canteenApi/getCanteenData: ', response);
+      if (response) {
+        return response?.data?.data;
+      }
+      return false;
+    } catch (error) {
+      console.log('canteenApi/getCanteenData: ', error);
+      throw error;
+    }
+  };
 }
 
 const canteenService = new CanteenService(baseUrl);

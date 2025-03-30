@@ -81,12 +81,12 @@ const CanteenModal = ({ onClose, canteen }) => {
 
     const { scrollTop, scrollHeight, clientHeight } = reviewListRef.current;
 
-    // Check if scrolled to bottom of the review container
+    // Check if scrolled to bottom of the container
     if (
       scrollTop + clientHeight >= scrollHeight - 10 &&
       currPage < totalPages
     ) {
-      setCurrPage((prev) => prev + 1); // Load next page of reviews
+      setCurrPage((prev) => prev + 1); // Load more
     }
   };
 
@@ -109,20 +109,16 @@ const CanteenModal = ({ onClose, canteen }) => {
       console.error(error);
     }
   };
-  console.log(allReviews);
 
   useEffect(() => {
     fetchReviewData();
   }, [currPage]);
 
-  console.log(totalPages, currPage);
 
   return (
     <div className='fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50'>
       <div
-        className='relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white text-gray-800 rounded-lg shadow-xl m-4'
-        ref={reviewListRef}
-        onScroll={handleScroll}
+        className='relative w-full max-w-2xl overflow-hidden bg-white text-gray-800 rounded-lg shadow-xl m-4'
       >
         <button
           onClick={onClose}
@@ -143,6 +139,11 @@ const CanteenModal = ({ onClose, canteen }) => {
             )}
             <h2 className='text-3xl font-bold'>{canteen.name}</h2>
           </div>
+
+          <div 
+          className='max-h-96 overflow-y-auto hide-scrollbar'
+          ref={reviewListRef}
+          onScroll={handleScroll}>
 
           <div className='space-y-4 mb-8'>
             {canteen.address && (
@@ -178,7 +179,7 @@ const CanteenModal = ({ onClose, canteen }) => {
 
           {/* Feedback Form */}
           {userReview && (
-            <div className='border-t border-gray-200 pt-6'>
+            <div className='border-t border-gray-200 pt-4'>
               <h3 className='text-2xl font-bold text-orange-600 mb-4'>
                 Your Review
               </h3>
@@ -195,7 +196,7 @@ const CanteenModal = ({ onClose, canteen }) => {
                     htmlFor='feedback'
                     className='block text-md font-medium px-2 mb-2'
                   >
-                    Your Review
+                    {/* Your Review */}
                   </label>
                   <textarea
                     id='review'
@@ -253,6 +254,7 @@ const CanteenModal = ({ onClose, canteen }) => {
               </div>
             </div>
           )}
+          </div>
         </div>
       </div>
     </div>

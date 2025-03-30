@@ -16,12 +16,12 @@ export default function CustomerFeedback() {
 
     const { scrollTop, scrollHeight, clientHeight } = reviewListRef.current;
 
-    // Check if scrolled to bottom of the review container
+    // Check if scrolled to bottom of the container
     if (
       scrollTop + clientHeight >= scrollHeight - 10 &&
       currPage < totalPages
     ) {
-      setCurrPage((prev) => prev + 1); // Load next page of reviews
+      setCurrPage((prev) => prev + 1); // Load more
     }
   };
 
@@ -69,7 +69,7 @@ export default function CustomerFeedback() {
       </div>
 
       <div
-        className='space-y-4 max-h-80 overflow-y-scroll'
+        className='space-y-4 max-h-80 overflow-y-scroll hide-scrollbar'
         ref={reviewListRef}
         onScroll={handleScroll}
       >

@@ -12,11 +12,11 @@ import { setactiveMenu } from '../../Redux/Slices/pageSlice';
 
 export const Footer = React.forwardRef((props, ref) => {
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.user?.user);
+  const { status, user } = useSelector((state) => state.user);
   return (
     <footer ref={ref} className='bg-gray-900 text-gray-300 mt-10'>
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10'>
-        <div className='grid grid-cols-1 md:grid-cols-4 gap-8'>
+        <div className='grid grid-cols-1 md:grid-cols-3 gap-8'>
           {/* Canteen Connect Description */}
           <div>
             <h3 className='text-white text-xl font-semibold mb-4'>
@@ -29,7 +29,7 @@ export const Footer = React.forwardRef((props, ref) => {
           </div>
 
           {/* Quick Links */}
-          <div>
+          {/* {status && <div>
             <h3 className='text-white text-xl font-semibold mb-4'>
               Quick Links
             </h3>
@@ -45,7 +45,7 @@ export const Footer = React.forwardRef((props, ref) => {
               </li>
               <li>
                 <a
-                  href={user?.role === 'Canteen' ? '/dashboard' : 'Orderpage'}
+                  href={user?.role === 'Canteen' ? '/dashboard' : '/Orderpage'}
                   onClick={() => dispatch(setactiveMenu('Track Order'))}
                   className='hover:text-orange-500 transition-colors duration-200'
                 >
@@ -53,7 +53,7 @@ export const Footer = React.forwardRef((props, ref) => {
                 </a>
               </li>
             </ul>
-          </div>
+          </div>} */}
 
           {/* Contact Info */}
           <div>

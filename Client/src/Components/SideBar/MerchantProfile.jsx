@@ -19,9 +19,9 @@ const MerchantProfile = ({ onClose }) => {
   const [image, setImage] = useState(null);
   const [currImage, setCurrImage] = useState(canteen.image);
   const [edited, setEdited] = useState(false);
-  const [isloading,setIsLoading]=useState(false);
+  const [isloading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
-  const profileRef=useRef(null);
+  const profileRef = useRef(null);
 
   const imageUpdate = (e) => {
     const file = e.target.files[0];
@@ -61,8 +61,8 @@ const MerchantProfile = ({ onClose }) => {
 
   const submitData = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
     if (!validateData()) return;
+    setIsLoading(true);
     console.log('Updated Canteen:', {
       name,
       image,
@@ -97,20 +97,35 @@ const MerchantProfile = ({ onClose }) => {
     phone: canteen?.phone || '',
   });
 
+  const [canteenStats,setCanteenStats]=useState(null);
+
+  const fetchData=async()=>{
+    try {
+      const res=await canteenService.getCanteenData();
+      console.log(res);
+      if(res){
+        setCanteenStats(res);
+      }
+    } catch (error) {
+      console.log(error);
+      
+    }
+  }
+
   useEffect(() => {
+    fetchData();
     const handleClickOutside = (e) => {
       if (profileRef.current && !profileRef.current.contains(e.target)) {
         dispatch(setMerchantProfileOpen(false));
       }
     };
-  
+
     document.addEventListener('mousedown', handleClickOutside);
-    
+
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
-  
 
   const handleCanteenChange = (e) => {
     const { name, value } = e.target;
@@ -212,7 +227,7 @@ const MerchantProfile = ({ onClose }) => {
         </div>
 
         {/* Earnings Card */}
-        {/* <div
+        <div
           className={`rounded-lg p-4 mb-6 ${
             darkMode ? 'bg-gray-700' : 'bg-orange-50'
           }`}
@@ -225,7 +240,7 @@ const MerchantProfile = ({ onClose }) => {
                   darkMode ? 'text-orange-300' : 'text-orange-700'
                 }`}
               >
-                Total Earnings
+                Monthly Earnings 
               </span>
             </div>
             <span
@@ -233,10 +248,10 @@ const MerchantProfile = ({ onClose }) => {
                 darkMode ? 'text-orange-400' : 'text-orange-600'
               }`}
             >
-              ₹12,500
+              ₹{canteenStats?.orders?.month[0]?.totalmonthrevenue || '0'}
             </span>
           </div>
-        </div> */}
+        </div>
 
         <div className='space-y-3 mb-6'>
           <div className='mb-6 flex justify-center items-center'>
@@ -320,9 +335,11 @@ const MerchantProfile = ({ onClose }) => {
         {edited && (
           <button
             onClick={!isloading && submitData}
-            className={`mb-4 w-full ${isloading?'bg-green-500':'bg-orange-500 hover:bg-orange-600 '} text-white py-2 rounded-lg transition-colors`}
+            className={`mb-4 w-full ${
+              isloading ? 'bg-green-500' : 'bg-orange-500 hover:bg-orange-600 '
+            } text-white py-2 rounded-lg transition-colors`}
           >
-            {isloading?'Updating...':'Save Changes'}
+            {isloading ? 'Updating...' : 'Save Changes'}
           </button>
         )}
 

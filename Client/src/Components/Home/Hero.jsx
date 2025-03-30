@@ -11,7 +11,7 @@ export default function Hero() {
   const handleViewMenuClick = () => {
     const targetArea = document.getElementById('menu');
     if (targetArea) {
-      targetArea.scrollIntoView({ behavior: 'smooth' });
+      targetArea.scrollIntoView({ behavior: 'smooth', block:'center' });
     }
   };
 
@@ -146,7 +146,7 @@ export default function Hero() {
                 <div className='w-10 h-10 bg-orange-500/20 rounded-full flex items-center justify-center'>
                   <FaHamburger className='w-6 h-6 text-orange-500' />
                 </div>
-                <div id='menu'>
+                <div>
                   <p
                     className={`font-medium ${
                       isDarkMode ? 'text-white' : 'text-gray-800'

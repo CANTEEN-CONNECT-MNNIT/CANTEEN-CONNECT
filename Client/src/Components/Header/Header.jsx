@@ -30,8 +30,8 @@ const Header = () => {
   };
 
   const searchlist =
-    searchedData?.length > 0
-      ? getUniqueItemsByName(searchedData)?.slice(0, 3)
+    searchedData?.allitems?.length > 0
+      ? getUniqueItemsByName(searchedData.allitems)?.slice(0, 3)
       : [];
   /*For Order Now Button on the Dashboard*/
   // const { cart: cartItems, isOpen } = useSelector((state) => state.cart);

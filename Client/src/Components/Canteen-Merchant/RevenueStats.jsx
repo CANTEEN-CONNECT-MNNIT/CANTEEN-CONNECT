@@ -1,8 +1,25 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { GiCoffeeCup, GiMeal, GiChart, GiChefToque } from 'react-icons/gi';
 import { useSelector } from 'react-redux';
+import canteenService from '../../ApiService/canteenService';
 export default function RevenueStats() {
+  const [data,setData]=useState(null);
+  const fetchData=async()=>{
+    try {
+      const res=await canteenService.getCanteenData();
+      console.log(res);
+      if(res){
+        setData(res);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
+    useEffect(()=>{
+      fetchData();
+    },[]);
+    
     const darkMode = useSelector((state) => state.theme.isDarkMode);
   return (
     <div
@@ -20,8 +37,8 @@ export default function RevenueStats() {
           <GiCoffeeCup className="w-6 h-6 text-orange-500" />
           <p className="text-sm font-medium">Today's Sales</p>
         </div>
-        <p className="text-xl font-semibold">₹8,450</p>
-        <p className="text-xs mt-2">75% of daily target reached</p>
+        <p className="text-xl font-semibold">₹{data?.orders?.day[0]?.totaldayrevenue || '0'}</p>
+        {/* <p className="text-xs mt-2">75% of daily target reached</p> */}
       </div>
 
       {/* Peak Hour Orders Card */}
@@ -34,8 +51,8 @@ export default function RevenueStats() {
           <GiMeal className="w-6 h-6 text-orange-500" />
           <p className="text-sm font-medium">Peak Hour Orders</p>
         </div>
-        <p className="text-xl font-semibold">142</p>
-        <p className="text-xs mt-2">12 PM - 2 PM lunch rush</p>
+        <p className="text-xl font-semibold">{data?.orders?.peak_hour[0]?.ordercount}</p>
+      <p className="text-xs mt-2">{data?.orders?.peak_hour[0]?._id || '11'} hr - {data?.orders?.peak_hour[0]?._id + 1 < 24 ? data?.orders?.peak_hour[0]?._id + 1 : '00' || '12'} hr rush</p>
       </div>
 
       {/* Active Meal Plans Card */}
@@ -46,10 +63,10 @@ export default function RevenueStats() {
       >
         <div className="flex items-center gap-2 mb-4">
           <GiChart className="w-6 h-6 text-orange-500" />
-          <p className="text-sm font-medium">Active Meal Plans</p>
+          <p className="text-sm font-medium">Active Meal Items</p>
         </div>
-        <p className="text-xl font-semibold">385</p>
-        <p className="text-xs mt-2">65% student participation</p>
+        <p className="text-xl font-semibold">{data?.num_fooditems || '0'}</p>
+        {/* <p className="text-xs mt-2">65% student participation</p> */}
       </div>
 
       {/* View Detailed Analytics Button */}

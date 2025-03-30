@@ -20,12 +20,12 @@ function OrderCard({ order, onUpdateStatus, onViewDetails }) {
   };
 
   return (
-    <tr
-      className={` ${
+    <ul
+      className={`grid grid-cols-5 ${
         darkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'
       }`}
     >
-      <td
+      <li
         className={`px-6 py-4 ${darkMode ? 'text-gray-100' : 'text-gray-900'}`}
       >
         <div className='flex flex-col'>
@@ -43,15 +43,15 @@ function OrderCard({ order, onUpdateStatus, onViewDetails }) {
             </span>
           </div>
         </div>
-      </td>
-      <td
+      </li>
+      <li
         className={`px-6 py-4 ${darkMode ? 'text-gray-100' : 'text-gray-900'}`}
       >
         <div className='flex items-center'>
           <div
             className={`h-8 w-8 ${
               darkMode ? 'bg-blue-900' : 'bg-blue-100'
-            } rounded-full p-1.5 text-blue-600 mr-3 flex justify-center items-center`}
+            } rounded-full p-1.5 text-blue-600 mr-3 sm:flex justify-center items-center hidden`}
           >
             <FaUserAlt className='h-6 w-6' />
           </div>
@@ -66,14 +66,14 @@ function OrderCard({ order, onUpdateStatus, onViewDetails }) {
             <div
               className={`text-sm ${
                 darkMode ? 'text-gray-400' : 'text-gray-500'
-              }`}
+              } `}
             >
               #{order.user?._id?.toString().slice(-8)}
             </div>
           </div>
         </div>
-      </td>
-      <td
+      </li>
+      <li
         className={`px-4 py-4 ${darkMode ? 'text-gray-100' : 'text-gray-900'}`}
       >
         <div className='flex items-center justify-between'>
@@ -119,8 +119,8 @@ function OrderCard({ order, onUpdateStatus, onViewDetails }) {
             <FaInfoCircle className='h-5 w-5' />
           </button>
         </div>
-      </td>
-      <td
+      </li>
+      <li
         className={`px-6 py-4 ${darkMode ? 'text-gray-100' : 'text-gray-900'}`}
       >
         <span
@@ -130,8 +130,8 @@ function OrderCard({ order, onUpdateStatus, onViewDetails }) {
         >
           {order?.status}
         </span>
-      </td>
-      <td
+      </li>
+      <li
         className={`px-6 py-4 ${darkMode ? 'text-gray-100' : 'text-gray-900'}`}
       >
         {order.status === 'Pending' && (
@@ -164,8 +164,8 @@ function OrderCard({ order, onUpdateStatus, onViewDetails }) {
             Delivered ?
           </button>
         )}
-      </td>
-    </tr>
+      </li>
+    </ul>
   );
 }
 
