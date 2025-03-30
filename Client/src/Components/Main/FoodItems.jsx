@@ -26,6 +26,7 @@ const FoodItems = ({ FoodData }) => {
   useEffect(() => {
     modifyFoodData();
   }, [FoodData, userFavourite]);
+  // console.log(updatedFoodData)
   return (
     <>
       {/* <Toaster position='top-center' reverseOrder={false} /> */}

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { FaHeart, FaShoppingCart, FaStar, FaInfoCircle } from 'react-icons/fa'; // Import icons from react-icons
 import { useSelector, useDispatch } from 'react-redux';
 import userService from '../../ApiService/userApiService';
+import toast from 'react-hot-toast';
 import {
   addFavourite,
   removeFavourite,
@@ -35,6 +36,7 @@ const FoodCard = ({
     try {
       const res = await cartService.updateCart({ _id: id });
       if (res) {
+         
         dispatch(setCart(res?.cart));
         dispatch(setSuccess('Added to Cart!'));
       }
@@ -134,7 +136,7 @@ const FoodCard = ({
                 : 'bg-red-50 text-red-600'
             }`}
           >
-            {availability?.toUpperCase()}
+            {availability?.replaceAll("_", " ").toUpperCase()}
           </span>
         </div>
         <p className={`text-sm ${descColor} line-clamp-2`}>{desc}</p>
