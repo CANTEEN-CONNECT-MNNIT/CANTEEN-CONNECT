@@ -7,6 +7,7 @@ import { FaShoppingCart } from 'react-icons/fa';
 import { setOpen, toggleOpen } from '../../Redux/Slices/cartSlice';
 import { useNavigate } from 'react-router-dom';
 import { setError } from '../../Redux/Slices/UserSlice';
+import toast from 'react-hot-toast';
 
 const Cart = () => {
   const { cart: cartItems, isOpen: activeCart } = useSelector(
@@ -114,14 +115,19 @@ const Cart = () => {
           <hr className='my-2 border-gray-300' />
           <button
             onClick={() => {
-              console.log('Total Items:', totalItems);
+               if(totalItems==0){
+                toast.error("Please add items to the cart");
+
+                dispatch(setOpen(false));
+                return;
+              }
               dispatch(setOpen(false));
               navigate('/paymentGateway', {
                 state: { totalItems, totalPrice, canteenOrders },
               });
             }}
             className='font-bold px-4 py-2 rounded-lg w-full bg-green-500 text-white hover:bg-green-600 transition-all duration-200'
-            disabled={totalItems === 0 || !enable}
+           
           >
             Checkout
           </button>

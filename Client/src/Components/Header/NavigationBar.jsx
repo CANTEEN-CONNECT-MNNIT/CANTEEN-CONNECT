@@ -36,15 +36,16 @@ const NavigationBar = () => {
     }
   };
 
+  console.log(location.pathname)
   return (
     <div
       className={`absolute ${
-        darkMode &&location.pathname === '/dashboard'
+        darkMode 
           ? user?.role==='Canteen'
             ? 'bg-slate-100/20'
             : 'bg-transparent'
           : user?.role==='Student'
-          ? ''
+          ? !darkMode && location.pathname === '/OrderPage' ?  'bg-stone-800 shadow-lg':''
           : 'bg-stone-800 shadow-lg'
       } top-0 z-10 left-0 right-0 px-4`}
     >
