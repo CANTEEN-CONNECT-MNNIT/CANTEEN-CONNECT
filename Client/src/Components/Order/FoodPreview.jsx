@@ -111,7 +111,7 @@ function FoodPreview({ onClose, order }) {
               <span className='text-sm text-gray-500'>Status</span>
               <span
                 className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                  status === 'Delivered'
+                  status === 'Success'?'text-white bg-green-600':status === 'Delivered'
                     ? 'bg-green-100 text-green-800'
                     : status === 'Pending'
                     ? 'bg-red-100 text-red-800'
@@ -141,7 +141,7 @@ function FoodPreview({ onClose, order }) {
         {/* when got delivered then show review */}
         {(status === 'Delivered' || status === 'Success') && (
           <div className='p-4 border-t '>
-            <FoodReview foods={fooditems} canteen={canteen} />
+            <FoodReview orderId={order?._id} foods={fooditems} status={status} canteen={canteen} onClose={onClose} />
           </div>
         )}
       </div>

@@ -137,7 +137,7 @@ export const DetailedAnalytics = () => {
                 <BarChart data={allData?.trendingFoodItems || []} layout="vertical">
                   <XAxis type="number" stroke={darkMode ? "#D1D5DB" : "#374151"} />
                   <YAxis dataKey="name" type="category" width={100} stroke={darkMode ? "#D1D5DB" : "#374151"} />
-                  <Tooltip formatter={(value, name) => [`${value} ⭐`, "Rating"]}
+                  <Tooltip formatter={(value, name) => [`${(value).toFixed(2)} ⭐`, "Rating"]}
                   contentStyle={{ backgroundColor: darkMode ? "#333" : "#fff", borderRadius: "8px", color: darkMode ? "#fff" : "#333" }} // Background & border styling
                    />
                   <Bar dataKey="averageRating" fill="#f97316" barSize={20} />

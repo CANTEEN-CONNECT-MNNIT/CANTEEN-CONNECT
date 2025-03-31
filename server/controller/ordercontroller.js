@@ -31,7 +31,6 @@ export const getall = asynchandler(async (req, res, next) => {
     totalOrders = await Order.countDocuments({ user: user_id });
     totalPages = Math.ceil(totalOrders / limit);
 
-    console.log(allorders);
     pendingcount = await Order.countDocuments({
       status: { $in: ['Pending', 'Preparing', 'Ready for pickup'] },
       user: user_id,
@@ -73,14 +72,13 @@ export const createorder = asynchandler(async (req, res, next) => {
     return false;
   }
 
-  console.log(allitemsbycanteen);
-  allitemsbycanteen.forEach((element) => {
-    console.log(element.fooditems);
-  });
+  // allitemsbycanteen.forEach((element) => {
+  //   console.log(element.fooditems);
+  // });
   const orders = await Promise.all(
     allitemsbycanteen.map((eachcanteenorder) => {
       const total_price = eachcanteenorder.fooditems.reduce((acc, cur) => {
-        return acc + cur.price;
+        return acc + (cur.price*cur.quantity);
       }, 0);
       return Order.create({
         user: req.user._id,
@@ -114,6 +112,9 @@ export const updateorder = asynchandler(async (req, res, next) => {
     );
   }
 
+  if(status!=='Success' && req.user.role==='Student'){
+    return next(new ApiError('You Cannot perform that action', 403));
+  }
   const updateorder = await Order.findByIdAndUpdate(
     order_id,
     { status },

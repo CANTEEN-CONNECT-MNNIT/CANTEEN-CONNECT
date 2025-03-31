@@ -1,11 +1,13 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FaStar } from 'react-icons/fa';
 import ratingService from '../../ApiService/ratingService';
 import { useDispatch, useSelector } from 'react-redux';
 import { setError } from '../../Redux/Slices/UserSlice';
 import FoodRating from './FoodRating';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import orderService from '../../ApiService/orderService';
 
-const FoodReview = ({ foods, canteen }) => {
+const FoodReview = ({ foods, canteen, status, orderId, onClose }) => {
   const [userReview, setUserReview] = useState(null);
   const [canteenRating, setCanteenRating] = useState(userReview?.rating || 0);
   const [foodRatings, setFoodRatings] = useState({});
@@ -15,7 +17,8 @@ const FoodReview = ({ foods, canteen }) => {
   const [fetchingUserReview, setFetchingUserReview] = useState(true);
   const darkMode = useSelector((state) => state.theme.isDarkMode);
   const dispatch = useDispatch();
-
+  const queryClient=useQueryClient();
+  
   useEffect(() => {
     fetchReviewData();
   }, []);
@@ -36,6 +39,22 @@ const FoodReview = ({ foods, canteen }) => {
     }
   };
 
+  const mutation = useMutation({
+    mutationFn: orderService.updateOrder, 
+    onSuccess: () => {
+      // Invalidate and refetch the "orders" query to keep data fresh
+      queryClient.invalidateQueries(['allOrders']);
+    },
+    onError: (error) => {
+      console.error('Error updating order status:', error?.response?.data?.message);
+      //toOpt
+    }
+  });
+
+  const handleUpdateStatus = () => {
+    mutation.mutate({_id:orderId, status:'Success'});
+  };
+
   const updateReview = async () => {
     if (canteenRating == 0) {
       dispatch(setError('Rating 🌟 is required!'));
@@ -47,24 +66,27 @@ const FoodReview = ({ foods, canteen }) => {
     }
     setIsloading(true);
     try {
-      const res = userReview?._id
-        ? await ratingService.updateReview({
-            ...userReview,
-            rating: canteenRating,
-            review: review,
-          })
-        : await ratingService.addReview({
-            _id: canteen._id,
-            rating: canteenRating,
-            review,
-          });
-      if (res) {
-        console.log(res);
-        setUserReview(res);
-        setCanteenRating(res?.rating);
-        setReview(res?.review);
+      if(!userReview || review !== userReview?.review ||
+        canteenRating !== userReview?.rating){
+        const res = userReview?._id
+          ? await ratingService.updateReview({
+              ...userReview,
+              rating: canteenRating,
+              review: review,
+            })
+          : await ratingService.addReview({
+              _id: canteen._id,
+              rating: canteenRating,
+              review,
+            });
+        if (res) {
+          console.log(res);
+          setUserReview(res);
+          setCanteenRating(res?.rating);
+          setReview(res?.review);
+        }
       }
-      if (!userReview) {
+      if (status === 'Delivered') {
         const fooditem_ratings = Object.keys(foodRatings).map((foodId) => ({
           _id: foodId, // Convert string to number (if necessary)
           rating: foodRatings[foodId], // Get the corresponding rating
@@ -72,12 +94,16 @@ const FoodReview = ({ foods, canteen }) => {
         const ratingRes = await ratingService.foodRatings({ fooditem_ratings });
         if (ratingRes) {
           setFoodRatings({});
+          handleUpdateStatus();
         }
       }
     } catch (error) {
-      console.error(error);
+      dispatch(setError('Try again later...'));
     }
-    setIsloading(false);
+    finally{
+      setIsloading(false);
+      onClose();
+    }
   };
 
   console.log(userReview);
@@ -100,7 +126,7 @@ const FoodReview = ({ foods, canteen }) => {
       </div>
 
       {/* List of Items with Star Ratings */}
-      {!fetchingUserReview && !userReview && (
+      {!fetchingUserReview && status === 'Delivered' && (
         <div className='mb-4'>
           <h3 className='text-lg font-mediumm mb-2'>Items:</h3>
           {foods.map((item) => (
@@ -142,7 +168,7 @@ const FoodReview = ({ foods, canteen }) => {
           className='w-full p-2 border rounded-md mb-4 text-black text-sm'
         />
 
-        {(!userReview ||
+        {(status==='Delivered' || !userReview ||
           review !== userReview?.review ||
           canteenRating !== userReview?.rating) && (
           <button
@@ -150,7 +176,7 @@ const FoodReview = ({ foods, canteen }) => {
             className='w-full bg-orange-500 text-white rounded-lg py-2 text-sm font-medium hover:bg-orange-600'
           >
             {!isloading
-              ? userReview
+              ? userReview && status==='Success'
                 ? 'Update Review'
                 : 'Submit Review'
               : 'Loading...'}

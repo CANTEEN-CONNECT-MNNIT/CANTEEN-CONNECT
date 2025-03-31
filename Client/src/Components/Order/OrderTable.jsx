@@ -12,16 +12,20 @@ import { v4 as uuid } from 'uuid';
 function OrderTable({ filter, canteen }) {
   const orderRef=useRef(null);
   const mobileRef=useRef(null);
-  const [currPage,setCurrPage]=useState(1);
+  const limit=10;
+  const [currLimitMul,setCurrLimitMul]=useState(1);
   const [allOrders, setAllOrders] = useState([]);
-  const { data: orders } = useAllOrders(currPage,10);
+  const { data: orders } = useAllOrders(1,currLimitMul*limit);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const darkMode = useSelector((state) => state.theme.isDarkMode);
   const [filteredOrders, setFilteredOrders] = useState([]);
   // const queryClient = useQueryClient();
-  const totalPages=orders?.totalPages || 1;
+  const totalOrders=orders?.totalOrders || 1;
 
   console.log(orders);
+  
+
+  console.log(selectedOrder);
 
   const getStatusColor = (status) => {
     return (
@@ -72,7 +76,7 @@ function OrderTable({ filter, canteen }) {
 
   useEffect(() => {
     if(!orders || orders?.allorders?.length==0) return;
-    setAllOrders((prev)=>[...prev,...orders.allorders]);
+    setAllOrders(orders.allorders);
   }, [orders]);
   
   const handleScroll = () => {
@@ -84,10 +88,10 @@ function OrderTable({ filter, canteen }) {
     // Check if scrolled to bottom of the container
     if (
       (scrollTop + clientHeight >= scrollHeight - 10 &&
-      currPage < totalPages) || (mobileTop + mobileClientHeight >= mobileHeight - 10 &&
-        currPage < totalPages)
+      currLimitMul < totalOrders/limit) || (mobileTop + mobileClientHeight >= mobileHeight - 10 &&
+        currLimitMul < totalOrders/limit)
     ) {
-      setCurrPage((prev) => prev + 1); // Load more
+      setCurrLimitMul((prev) => prev + 1); // Load more
     }
   };
 
